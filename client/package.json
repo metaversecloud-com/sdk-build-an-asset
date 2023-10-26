@@ -15,6 +15,7 @@
     "classnames": "^2.3.2",
     "history": "^5.3.0",
     "install": "^0.13.0",
+    "merge-images": "^2.0.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
     "npm": "^9.9.0",

@@ -1,4 +1,4 @@
-# Stride Build-an-Asset 🎩⛄
+# Build-an-Asset 🎩⛄
 
 Welcome to the Build-an-Asset project! This is your go-to spot for building custom snowmen in the virtual world. Developed with Node.js and React, this project lets you create, customize, and place your very own snowman within the game.
 Currently we are using this project to build a Snowman!
@@ -15,7 +15,7 @@ Currently we are using this project to build a Snowman!
 - **Customizable**: Pick a hat, choose a scarf, and decide on the arm style.
 - **Real-Time Preview**: As you make selections, watch your snowman come to life.
 
-### Deploy Your Snowman ⛄
+### Drop Your Snowman in the World ⛄
 
 - **Instant Placement**: Hit "Add Snowman" and voilà, your creation is part of the Stride world.
 - **Admin Panel**: For game admins, you can manage all snowmen and gather analytics.
