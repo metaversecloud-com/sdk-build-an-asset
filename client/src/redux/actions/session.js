@@ -5,8 +5,8 @@ import axios from "axios";
 export const {
   setVisitor,
   setDroppedAsset,
-  setPet,
-  setPetAssetOwner,
+  setAsset,
+  setAssetAssetOwner,
   setError,
 } = session.actions;
 
@@ -41,15 +41,15 @@ export const getVisitor = () => async (dispatch) => {
 export const executeAction = (action) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/pet/action?${queryParams}`;
+    const url = `/backend/asset/action?${queryParams}`;
     const response = await axios.post(url, { action });
 
     if (response.status === 200) {
-      dispatch(setPet(response?.data?.pet));
+      dispatch(setAsset(response?.data?.asset));
       return true;
     }
   } catch (error) {
-    dispatch(setError("There was an error while training the pet"));
+    dispatch(setError("There was an error while training the asset"));
     if (error.response && error.response.data) {
     } else {
     }
@@ -57,17 +57,17 @@ export const executeAction = (action) => async (dispatch) => {
   }
 };
 
-export const spawnPet = () => async (dispatch) => {
+export const spawnAsset = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/pet/spawn?${queryParams}`;
+    const url = `/backend/asset/spawn?${queryParams}`;
     const response = await axios.post(url);
 
     if (response.status === 200) {
-      dispatch(getPet());
+      dispatch(getAsset());
     }
   } catch (error) {
-    dispatch(setError("There was an error while spawning the pet"));
+    dispatch(setError("There was an error while spawning the asset"));
     if (error.response && error.response.data) {
     } else {
     }
@@ -75,19 +75,18 @@ export const spawnPet = () => async (dispatch) => {
   }
 };
 
-export const pickupPet = (isSpawnedDroppedAsset) => async (dispatch) => {
+export const pickupAsset = (isSpawnedDroppedAsset) => async (dispatch) => {
   try {
-    console.log("isSpawnedDroppedAsset pickupPet", isSpawnedDroppedAsset);
+    console.log("isSpawnedDroppedAsset pickupAsset", isSpawnedDroppedAsset);
     const queryParams = getQueryParams();
-    // isSpawnedDroppedAsset is a variable that shows if the asset being pickup is the spawned asset (like dragon). If it's empty or undefined, it's value is the Pet House.
-    const url = `/backend/pet/pickup?${queryParams}&isSpawnedDroppedAsset=${isSpawnedDroppedAsset}`;
+    const url = `/backend/asset/pickup?${queryParams}&isSpawnedDroppedAsset=${isSpawnedDroppedAsset}`;
     const response = await axios.post(url);
 
     if (response.status === 200) {
-      dispatch(getPet());
+      dispatch(getAsset());
     }
   } catch (error) {
-    dispatch(setError("There was an error while spawning the pet"));
+    dispatch(setError("There was an error while spawning the asset"));
     if (error.response && error.response.data) {
     } else {
     }
@@ -113,22 +112,22 @@ export const getDroppedAsset = () => async (dispatch) => {
   }
 };
 
-export const getPet = () => async (dispatch) => {
+export const getAsset = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/pet?${queryParams}`;
+    const url = `/backend/asset?${queryParams}`;
 
     const response = await axios.get(url);
-    const pet = response?.data?.pet;
+    const asset = response?.data?.asset;
     const visitor = response?.data?.visitor;
-    const isPetAssetOwner = response?.data?.isPetAssetOwner;
+    const isAssetAssetOwner = response?.data?.isAssetAssetOwner;
     if (response.status === 200) {
-      if (!pet) {
+      if (!asset) {
         return dispatch(push(`/mascot-selector?${queryParams}`));
       }
-      dispatch(setPet(pet));
+      dispatch(setAsset(asset));
       dispatch(setVisitor(visitor));
-      dispatch(setPetAssetOwner(isPetAssetOwner));
+      dispatch(setAssetAssetOwner(isAssetAssetOwner));
     }
   } catch (error) {
     console.error("error", error);
@@ -138,18 +137,18 @@ export const getPet = () => async (dispatch) => {
   }
 };
 
-export const createPet = (petType, name) => async (dispatch) => {
+export const createAsset = (assetType, name) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/pet?${queryParams}`;
+    const url = `/backend/asset?${queryParams}`;
 
-    const response = await axios.post(url, { petType, name });
-    const pet = response?.data?.pet;
+    const response = await axios.post(url, { assetType, name });
+    const asset = response?.data?.asset;
     if (response.status === 200) {
-      if (!pet) {
+      if (!asset) {
         return dispatch(push(`/mascot-selector?${queryParams}`));
       }
-      dispatch(setPet(response?.data?.pet));
+      dispatch(setAsset(response?.data?.asset));
       return dispatch(push(`/?${queryParams}`));
     }
   } catch (error) {
@@ -160,22 +159,22 @@ export const createPet = (petType, name) => async (dispatch) => {
   }
 };
 
-export const namePet = (name) => async (dispatch) => {
+export const nameAsset = (name) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/pet/name?${queryParams}`;
+    const url = `/backend/asset/name?${queryParams}`;
 
     const response = await axios.post(url, { name });
-    const pet = response?.data?.pet;
+    const asset = response?.data?.asset;
     if (response.status === 200) {
-      if (!pet) {
+      if (!asset) {
         return dispatch(push(`/mascot-selector?${queryParams}`));
       }
-      dispatch(setPet(response?.data?.pet));
+      dispatch(setAsset(response?.data?.asset));
       return dispatch(push(`/?${queryParams}`));
     }
   } catch (error) {
-    console.error("Error Naming the pet", JSON.stringify(error));
+    console.error("Error Naming the asset", JSON.stringify(error));
     if (error.response && error.response.data) {
     } else {
     }
@@ -185,7 +184,7 @@ export const namePet = (name) => async (dispatch) => {
 export const deleteAll = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/pet?${queryParams}`;
+    const url = `/backend/asset?${queryParams}`;
 
     const response = await axios.delete(url);
     if (response.status === 200) {

@@ -19,12 +19,8 @@ function StartAssetView() {
   }, []);
 
   const updateSnowman = (type, image) => {
-    // Crie uma cópia atualizada do estado "selected"
     const updatedSelected = { ...selected, [type]: image };
-
     setSelected(updatedSelected);
-
-    // Use "updatedSelected" para atualizar o snowman
     const imagesToMerge = [
       { src: "/assets/snowman/snowman.png", x: 0, y: 0 },
       ...Object.values(updatedSelected).map((item) => ({
