@@ -53,3 +53,11 @@
 //   align-items: center;
 //   cursor: pointer;
 // }
+
+.footer-fixed {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  width: 320px;
+  transform: translateX(-50%);
+}

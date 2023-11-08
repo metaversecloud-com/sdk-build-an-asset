@@ -37,7 +37,6 @@ export const get = async (req, res) => {
     ) {
       isAssetAssetOwner = true;
     } else {
-      // not owner view
       const user = User.create({
         profileId: assetSpawnedDroppedAsset?.dataObject?.profileId,
       });

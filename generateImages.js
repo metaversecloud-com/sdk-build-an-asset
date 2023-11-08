@@ -2,9 +2,9 @@ import sharp from "sharp";
 import path from "path";
 
 const accessories = {
-  scarf: ["scarf_0.png", "scarf_1.png", "scarf_2.png"],
+  body: ["body_0.png", "body_1.png", "body_2.png"],
   arms: ["arms_0.png", "arms_1.png", "arms_2.png"],
-  hat: ["hat_0.png", "hat_1.png", "hat_2.png"],
+  head: ["head_0.png", "head_1.png", "head_2.png"],
 };
 
 const createSnowman = async (images, outputName) => {
@@ -24,16 +24,16 @@ const createSnowman = async (images, outputName) => {
 };
 
 const main = async () => {
-  for (let scarf of accessories.scarf) {
+  for (let body of accessories.body) {
     for (let arms of accessories.arms) {
-      for (let hat of accessories.hat) {
+      for (let head of accessories.head) {
         const imagesToMerge = [
           "./client/public/assets/snowman/snowman.png",
-          `./client/public/assets/snowman/${scarf}`,
+          `./client/public/assets/snowman/${body}`,
           `./client/public/assets/snowman/${arms}`,
-          `./client/public/assets/snowman/${hat}`,
+          `./client/public/assets/snowman/${head}`,
         ];
-        const outputName = `${scarf}_${arms}_${hat}`.replace(/\.png/g, "");
+        const outputName = `${body}_${arms}_${head}`.replace(/\.png/g, "");
         await createSnowman(imagesToMerge, outputName);
       }
     }

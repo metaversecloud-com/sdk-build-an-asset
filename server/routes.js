@@ -18,4 +18,6 @@ router.get("/visitor", getVisitor);
 
 router.get("/asset", validationMiddleware, get);
 
+router.post("/asset/spawn", validationMiddleware, spawn);
+
 export default router;

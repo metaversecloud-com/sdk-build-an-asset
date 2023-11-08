@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
+import { spawnAsset } from "../redux/actions/session";
 import "./Home.scss";
 
 const accessories = {
-  scarf: ["scarf_0.png", "scarf_1.png", "scarf_2.png"],
+  body: ["body_0.png", "body_1.png", "body_2.png"],
   arms: ["arms_0.png", "arms_1.png", "arms_2.png"],
-  hat: ["hat_0.png", "hat_1.png", "hat_2.png"],
+  head: ["head_0.png", "head_1.png", "head_2.png"],
 };
 
 function StartAssetView() {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState({ scarf: "", arms: "", hat: "" });
+  const [selected, setSelected] = useState({ body: "", arms: "", head: "" });
+  const [completeImageName, setCompleteImageName] = useState("");
   const [preview, setPreview] = useState("/assets/snowman/snowman.png");
 
   useEffect(() => {
@@ -21,6 +25,15 @@ function StartAssetView() {
   const updateSnowman = (type, image) => {
     const updatedSelected = { ...selected, [type]: image };
     setSelected(updatedSelected);
+
+    const imageNameParts = Object.keys(updatedSelected)
+      .map((key) => updatedSelected[key].split("/").pop().split(".")[0])
+      .filter(Boolean);
+
+    if (imageNameParts.length === Object.keys(accessories).length) {
+      setCompleteImageName(imageNameParts.join("_") + ".png");
+    }
+
     const imagesToMerge = [
       { src: "/assets/snowman/snowman.png", x: 0, y: 0 },
       ...Object.values(updatedSelected).map((item) => ({
@@ -32,6 +45,10 @@ function StartAssetView() {
 
     mergeImages(imagesToMerge).then(setPreview);
   };
+
+  function handleSpawnAsset() {
+    dispatch(spawnAsset(completeImageName));
+  }
 
   if (loading) {
     return (
@@ -60,6 +77,9 @@ function StartAssetView() {
           </div>
         </div>
       ))}
+      <div className="footer-fixed">
+        <button onClick={handleSpawnAsset}>Add Snowman</button>
+      </div>
     </div>
   );
 }

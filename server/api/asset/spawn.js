@@ -5,14 +5,6 @@ let BASE_URL;
 
 export const spawn = async (req, res) => {
   try {
-    const {
-      assetId,
-      interactivePublicKey,
-      interactiveNonce,
-      urlSlug,
-      visitorId,
-    } = req.query;
-
     const protocol = process.env.INSTANCE_PROTOCOL;
     const host = req.host;
     const port = req.port;
@@ -21,6 +13,22 @@ export const spawn = async (req, res) => {
       BASE_URL = `${protocol}://sdk-build-an-asset.topia-rtsdk.com`;
     } else {
       BASE_URL = `${protocol}://${host}`;
+    }
+
+    const {
+      assetId,
+      interactivePublicKey,
+      interactiveNonce,
+      urlSlug,
+      visitorId,
+    } = req.query;
+
+    const { completeImageName } = req.body;
+
+    if (!completeImageName) {
+      return res.status(400).json({
+        msg: "Input data missing. Please fill the the follow field: completeImageName",
+      });
     }
 
     const credentials = {
@@ -36,17 +44,15 @@ export const spawn = async (req, res) => {
 
     await visitor.fetchDataObject();
 
-    const asset = visitor?.dataObject?.asset;
-
     await removeAllUserAssets(urlSlug, visitor, credentials);
 
-    await dropImageAsset(urlSlug, credentials, visitor);
+    await dropImageAsset({ urlSlug, credentials, visitor, req });
 
     return res.json({ success: true });
   } catch (error) {
     logger.error({
       error,
-      message: "❌ 🐰 Error while spawning the asset",
+      message: "❌ Error while spawning the asset",
       functionName: "spawn",
       req,
     });
@@ -75,10 +81,10 @@ async function removeAllUserAssets(urlSlug, visitor, credentials) {
   }
 }
 
-async function dropImageAsset(urlSlug, credentials, visitor) {
+async function dropImageAsset({ urlSlug, credentials, visitor, req }) {
   const { visitorId, interactiveNonce, interactivePublicKey } = credentials;
 
-  const { assetImgUrlLayer0, assetImgUrlLayer1 } = getAssetImgUrl();
+  const { assetImgUrlLayer0, assetImgUrlLayer1 } = getAssetImgUrl(req);
 
   const { moveTo, username } = visitor;
   const { x, y } = moveTo;
@@ -122,8 +128,10 @@ async function dropImageAsset(urlSlug, credentials, visitor) {
   return assetSpawnedDroppedAsset;
 }
 
-function getAssetImgUrl() {
-  // assetImgUrlLayer0 = `${BASE_URL}/assets/dragon/world/D3_Layer0.png`;
-  // assetImgUrlLayer1 = `${BASE_URL}/assets/dragon/world/D3_Layer1.png`;
-  // return { assetImgUrlLayer0, assetImgUrlLayer1 };
+function getAssetImgUrl(req) {
+  const { completeImageName } = req.body;
+  const assetImgUrlLayer0 = `${BASE_URL}/assets/output/${completeImageName}`;
+  // assetImgUrlLayer1 = assetImgUrlLayer0;
+  const assetImgUrlLayer1 = null;
+  return { assetImgUrlLayer0, assetImgUrlLayer1 };
 }
