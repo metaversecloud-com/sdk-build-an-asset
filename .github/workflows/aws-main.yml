@@ -41,7 +41,3 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG  .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          
-      - name: Publish
-        run: |
-          aws ecs update-service --service sdk-snowman-dev-topia0-svc --force-new-deployment --cluster SDK-Example-CLS
