@@ -1,0 +1,41 @@
+.wrapper {
+  max-width: 352px;
+  margin: 0 auto;
+  padding-left: 16px;
+  padding-right: 16px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+h2 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  color: #555;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 10px;
+}
+
+img {
+  max-width: 80px;
+  margin: 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+
+  &:hover {
+    border: 2px solid #007bff;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+  }
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}

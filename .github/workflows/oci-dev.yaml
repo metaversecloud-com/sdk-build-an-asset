@@ -11,7 +11,7 @@ on:
         default: 'dev'
 env:
   REPOSITORY: 'sdk-apps'
-  IMAGE_TAG: ${{ github.event.repository.name }} 
+  IMAGE_TAG: ${GITHUB_REPOSITORY#*/} 
         
 permissions:
   id-token: write # This is required for requesting the JWT
