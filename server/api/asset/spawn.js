@@ -10,7 +10,7 @@ export const spawn = async (req, res) => {
     const port = req.port;
 
     if (host === "localhost") {
-      BASE_URL = `${protocol}://sdk-build-an-asset.topia-rtsdk.com`;
+      BASE_URL = `https://snowman-prod-k12.topia-rtsdk.com`;
     } else {
       BASE_URL = `${protocol}://${host}`;
     }
@@ -48,7 +48,7 @@ export const spawn = async (req, res) => {
 
     await dropImageAsset({ urlSlug, credentials, visitor, req });
 
-    return res.json({ success: true });
+    return res.json({ isSpawnedInWorld: true, success: true });
   } catch (error) {
     logger.error({
       error,

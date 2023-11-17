@@ -2,9 +2,30 @@ import sharp from "sharp";
 import path from "path";
 
 const accessories = {
-  body: ["body_0.png", "body_1.png", "body_2.png"],
-  arms: ["arms_0.png", "arms_1.png", "arms_2.png"],
-  head: ["head_0.png", "head_1.png", "head_2.png"],
+  body: [
+    "body_0.png",
+    "body_1.png",
+    "body_2.png",
+    "body_3.png",
+    "body_4.png",
+    "body_5.png",
+  ],
+  arms: [
+    "arms_0.png",
+    "arms_1.png",
+    "arms_2.png",
+    "arms_3.png",
+    "arms_4.png",
+    "arms_5.png",
+  ],
+  head: [
+    "head_0.png",
+    "head_1.png",
+    "head_2.png",
+    "head_3.png",
+    "head_4.png",
+    "head_5.png",
+  ],
 };
 
 const createSnowman = async (images, outputName) => {

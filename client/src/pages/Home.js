@@ -3,20 +3,70 @@ import { useDispatch, useSelector } from "react-redux";
 import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
 import { spawnAsset } from "../redux/actions/session";
+import { Collapse, Button } from "reactstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChevronDown,
+  faChevronUp,
+  faCheck,
+} from "@fortawesome/free-solid-svg-icons";
+
 import "./Home.scss";
 
 const accessories = {
-  body: ["body_0.png", "body_1.png", "body_2.png"],
-  arms: ["arms_0.png", "arms_1.png", "arms_2.png"],
-  head: ["head_0.png", "head_1.png", "head_2.png"],
+  body: [
+    "body_0.png",
+    "body_1.png",
+    "body_2.png",
+    "body_3.png",
+    "body_4.png",
+    "body_5.png",
+  ],
+  arms: [
+    "arms_0.png",
+    "arms_1.png",
+    "arms_2.png",
+    "arms_3.png",
+    "arms_4.png",
+    "arms_5.png",
+  ],
+  head: [
+    "head_0.png",
+    "head_1.png",
+    "head_2.png",
+    "head_3.png",
+    "head_4.png",
+    "head_5.png",
+  ],
 };
 
-function StartAssetView() {
+function Home() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState({ body: "", arms: "", head: "" });
   const [completeImageName, setCompleteImageName] = useState("");
   const [preview, setPreview] = useState("/assets/snowman/snowman.png");
+  const [openCategories, setOpenCategories] = useState({
+    body: false,
+    arms: false,
+    head: false,
+  });
+
+  const toggleCategory = (category) => {
+    setOpenCategories((prev) => {
+      const newCategories = { body: false, arms: false, head: false };
+      newCategories[category] = !prev[category];
+      return newCategories;
+    });
+  };
+
+  const isCategorySelected = (category) => {
+    return selected[category] !== "";
+  };
+
+  const isSelectedItem = (type, image) => {
+    return selected[type] === `/assets/snowman/${image}`;
+  };
 
   useEffect(() => {
     setLoading(false);
@@ -60,28 +110,57 @@ function StartAssetView() {
 
   return (
     <div className="wrapper">
-      <h1>Customize your Snowman!</h1>
+      <h2>Build Your Snowman!</h2>
       <img src={preview} alt="Snowman Preview" />
+
       {Object.keys(accessories).map((type) => (
         <div key={type}>
-          <h2>Select {type}</h2>
-          <div>
-            {accessories[type].map((image) => (
-              <img
-                key={image}
-                src={`/assets/snowman/${image}`}
-                alt={image}
-                onClick={() => updateSnowman(type, `/assets/snowman/${image}`)}
+          <Button
+            color=""
+            onClick={() => toggleCategory(type)}
+            style={{ marginBottom: "1rem", textAlign: "left" }}
+          >
+            {isCategorySelected(type) && (
+              <FontAwesomeIcon
+                icon={faCheck}
+                style={{ marginRight: "10px", color: "green" }}
               />
-            ))}
-          </div>
+            )}
+            Select {type}
+            <FontAwesomeIcon
+              icon={openCategories[type] ? faChevronUp : faChevronDown}
+              style={{ marginLeft: "10px" }}
+            />
+          </Button>
+          <Collapse isOpen={openCategories[type]}>
+            <div>
+              {accessories[type].map((image) => (
+                <img
+                  key={image}
+                  src={`/assets/snowman/${image}`}
+                  alt={image}
+                  style={{
+                    border: "1px solid #ccc",
+                    borderRadius: "10px",
+                    backgroundColor: isSelectedItem(type, image)
+                      ? "#f0f0f0"
+                      : "transparent",
+                  }}
+                  onClick={() =>
+                    updateSnowman(type, `/assets/snowman/${image}`)
+                  }
+                />
+              ))}
+            </div>
+          </Collapse>
         </div>
       ))}
-      <div className="footer-fixed">
+
+      <div className="footer-fixed" style={{ backgroundColor: "white" }}>
         <button onClick={handleSpawnAsset}>Add Snowman</button>
       </div>
     </div>
   );
 }
 
-export default StartAssetView;
+export default Home;
