@@ -10,7 +10,6 @@ const PageRoutes = () => {
   return (
     <Router history={history}>
       <Routes>
-        <Route path="/" element={<div>Build-An-Asset is running v1...</div>} />
         <Route path="/home" element={<Home />} />
       </Routes>
     </Router>
