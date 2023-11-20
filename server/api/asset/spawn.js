@@ -131,19 +131,6 @@ async function dropImageAsset({
     isOpenLinkInDrawer: true,
   });
 
-  // * await droppedAsset.updateClickType({
-  // *   "clickType": "portal",
-  // *   "clickableLink": "https://topia.io",
-  // *   "clickableLinkTitle": "My awesome link!",
-  // *   "clickableDisplayTextDescription": "Description",
-  // *   "clickableDisplayTextHeadline": "Title",
-  // *   "position": {
-  // *     "x": 0,
-  // *     "y": 0
-  // *   },
-  // *   "portalName": "community"
-  // * });
-
   await assetSpawnedDroppedAsset?.setInteractiveSettings({
     isInteractive: true,
     interactivePublicKey: process.env.INTERACTIVE_KEY,

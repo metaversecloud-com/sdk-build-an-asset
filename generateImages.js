@@ -2,14 +2,7 @@ import sharp from "sharp";
 import path from "path";
 
 const accessories = {
-  body: [
-    "body_0.png",
-    "body_1.png",
-    "body_2.png",
-    "body_3.png",
-    "body_4.png",
-    "body_5.png",
-  ],
+  body: ["body_0.png", "body_1.png"],
   arms: [
     "arms_0.png",
     "arms_1.png",
@@ -17,6 +10,7 @@ const accessories = {
     "arms_3.png",
     "arms_4.png",
     "arms_5.png",
+    "arms_6.png",
   ],
   head: [
     "head_0.png",
@@ -25,6 +19,16 @@ const accessories = {
     "head_3.png",
     "head_4.png",
     "head_5.png",
+    "head_6.png",
+  ],
+  neck: [
+    "neck_0.png",
+    "neck_1.png",
+    "neck_2.png",
+    "neck_3.png",
+    "neck_4.png",
+    "neck_5.png",
+    "neck_6.png",
   ],
 };
 
@@ -48,14 +52,20 @@ const main = async () => {
   for (let body of accessories.body) {
     for (let arms of accessories.arms) {
       for (let head of accessories.head) {
-        const imagesToMerge = [
-          "./client/public/assets/snowman/snowman.png",
-          `./client/public/assets/snowman/${body}`,
-          `./client/public/assets/snowman/${arms}`,
-          `./client/public/assets/snowman/${head}`,
-        ];
-        const outputName = `${body}_${arms}_${head}`.replace(/\.png/g, "");
-        await createSnowman(imagesToMerge, outputName);
+        for (let neck of accessories.neck) {
+          const imagesToMerge = [
+            "./client/public/assets/snowman/snowman.png",
+            `./client/public/assets/snowman/${body}`,
+            `./client/public/assets/snowman/${arms}`,
+            `./client/public/assets/snowman/${head}`,
+            `./client/public/assets/snowman/${neck}`,
+          ];
+          const outputName = `${body}_${arms}_${head}_${neck}`.replace(
+            /\.png/g,
+            ""
+          );
+          await createSnowman(imagesToMerge, outputName);
+        }
       }
     }
   }

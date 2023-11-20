@@ -14,14 +14,7 @@ import {
 import "./Home.scss";
 
 const accessories = {
-  body: [
-    "body_0.png",
-    "body_1.png",
-    "body_2.png",
-    "body_3.png",
-    "body_4.png",
-    "body_5.png",
-  ],
+  body: ["body_0.png", "body_1.png"],
   arms: [
     "arms_0.png",
     "arms_1.png",
@@ -29,6 +22,7 @@ const accessories = {
     "arms_3.png",
     "arms_4.png",
     "arms_5.png",
+    "arms_6.png",
   ],
   head: [
     "head_0.png",
@@ -37,24 +31,45 @@ const accessories = {
     "head_3.png",
     "head_4.png",
     "head_5.png",
+    "head_6.png",
+  ],
+  neck: [
+    "neck_0.png",
+    "neck_1.png",
+    "neck_2.png",
+    "neck_3.png",
+    "neck_4.png",
+    "neck_5.png",
+    "neck_6.png",
   ],
 };
 
 function Home() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState({ body: "", arms: "", head: "" });
+  const [selected, setSelected] = useState({
+    body: "",
+    arms: "",
+    head: "",
+    neck: "",
+  });
   const [completeImageName, setCompleteImageName] = useState("");
   const [preview, setPreview] = useState("/assets/snowman/snowman.png");
   const [openCategories, setOpenCategories] = useState({
     body: false,
     arms: false,
     head: false,
+    neck: false,
   });
 
   const toggleCategory = (category) => {
     setOpenCategories((prev) => {
-      const newCategories = { body: false, arms: false, head: false };
+      const newCategories = {
+        body: false,
+        arms: false,
+        head: false,
+        neck: false,
+      };
       newCategories[category] = !prev[category];
       return newCategories;
     });
