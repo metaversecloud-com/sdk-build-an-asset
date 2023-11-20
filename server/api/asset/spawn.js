@@ -46,7 +46,13 @@ export const spawn = async (req, res) => {
 
     await removeAllUserAssets(urlSlug, visitor, credentials);
 
-    await dropImageAsset({ urlSlug, credentials, visitor, req });
+    await dropImageAsset({
+      urlSlug,
+      credentials,
+      visitor,
+      req,
+      completeImageName,
+    });
 
     return res.json({ isSpawnedInWorld: true, success: true });
   } catch (error) {
@@ -81,7 +87,13 @@ async function removeAllUserAssets(urlSlug, visitor, credentials) {
   }
 }
 
-async function dropImageAsset({ urlSlug, credentials, visitor, req }) {
+async function dropImageAsset({
+  urlSlug,
+  credentials,
+  visitor,
+  req,
+  completeImageName,
+}) {
   const { visitorId, interactiveNonce, interactivePublicKey } = credentials;
 
   const { assetImgUrlLayer0, assetImgUrlLayer1 } = getAssetImgUrl(req);
@@ -106,9 +118,12 @@ async function dropImageAsset({ urlSlug, credentials, visitor, req }) {
     profileId: visitor?.profileId,
   });
 
+  const clickableLink = `${BASE_URL}/spawned/visitor-name/${username}/img-name/${completeImageName}`;
+
   await assetSpawnedDroppedAsset?.updateClickType({
     clickType: "link",
-    clickableLink: `${BASE_URL}/asset-type/spawned?visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetSpawnedDroppedAsset?.id}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}`,
+    // clickableLink: `${BASE_URL}/spawned?visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetSpawnedDroppedAsset?.id}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}`,
+    clickableLink: `${BASE_URL}/spawned/visitor-name/${username}/img-name/${completeImageName}`,
     clickableLinkTitle: "Generated Asset",
     clickableDisplayTextDescription: "Generated Asset",
     clickableDisplayTextHeadline: "Generated Asset",

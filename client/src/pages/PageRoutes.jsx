@@ -5,12 +5,14 @@ import { history } from "../redux/store";
 import { Route, Routes } from "react-router-dom";
 
 import Home from "./Home";
+import Spawned from "./Spawned/Spawned";
 
 const PageRoutes = () => {
   return (
     <Router history={history}>
       <Routes>
         <Route path="/home" element={<Home />} />
+        <Route path="/spawned/visitor-name/:visitorName/img-name/:imgName" element={<Spawned />} />
       </Routes>
     </Router>
   );
