@@ -12,7 +12,7 @@ const PageRoutes = () => {
     <Router history={history}>
       <Routes>
         <Route path="/home" element={<Home />} />
-        <Route path="/spawned/visitor-name/:visitorName/img-name/:imgName" element={<Spawned />} />
+        <Route path="/spawned/img-name/:imgName/visitor-name/:visitorName" element={<Spawned />} />
       </Routes>
     </Router>
   );

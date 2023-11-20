@@ -10,7 +10,7 @@ export const spawn = async (req, res) => {
     const port = req.port;
 
     if (host === "localhost") {
-      BASE_URL = `https://snowman-prod-k12.topia-rtsdk.com`;
+      BASE_URL = `https://snowman-dev-topia.topia-rtsdk.com`;
     } else {
       BASE_URL = `${protocol}://${host}`;
     }
@@ -118,7 +118,7 @@ async function dropImageAsset({
     profileId: visitor?.profileId,
   });
 
-  const clickableLink = `${BASE_URL}/spawned/visitor-name/${username}/img-name/${completeImageName}`;
+  const clickableLink = `${BASE_URL}/spawned/img-name/${username}/visitor-name/${completeImageName}`;
 
   await assetSpawnedDroppedAsset?.updateClickType({
     clickType: "link",
