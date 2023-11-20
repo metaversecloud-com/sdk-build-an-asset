@@ -118,17 +118,31 @@ async function dropImageAsset({
     profileId: visitor?.profileId,
   });
 
-  const clickableLink = `${BASE_URL}/spawned/img-name/${username}/visitor-name/${completeImageName}`;
+  const modifiedName = username.replace(/ /g, "%20");
+
+  const clickableLink = `${BASE_URL}/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
 
   await assetSpawnedDroppedAsset?.updateClickType({
     clickType: "link",
-    // clickableLink: `${BASE_URL}/spawned?visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetSpawnedDroppedAsset?.id}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}`,
-    clickableLink: `${BASE_URL}/spawned/visitor-name/${username}/img-name/${completeImageName}`,
-    clickableLinkTitle: "Generated Asset",
-    clickableDisplayTextDescription: "Generated Asset",
-    clickableDisplayTextHeadline: "Generated Asset",
+    clickableLink,
+    clickableLinkTitle: "Snowman",
+    clickableDisplayTextDescription: "Snowman",
+    clickableDisplayTextHeadline: "Snowman",
     isOpenLinkInDrawer: true,
   });
+
+  // * await droppedAsset.updateClickType({
+  // *   "clickType": "portal",
+  // *   "clickableLink": "https://topia.io",
+  // *   "clickableLinkTitle": "My awesome link!",
+  // *   "clickableDisplayTextDescription": "Description",
+  // *   "clickableDisplayTextHeadline": "Title",
+  // *   "position": {
+  // *     "x": 0,
+  // *     "y": 0
+  // *   },
+  // *   "portalName": "community"
+  // * });
 
   await assetSpawnedDroppedAsset?.setInteractiveSettings({
     isInteractive: true,
