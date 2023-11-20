@@ -13,7 +13,7 @@ import { fileURLToPath } from "url";
 checkEnvVariables();
 const PORT = process.env.PORT || 3000;
 const app = express();
-const version = "2.0";
+const version = "3.0";
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -23,7 +23,7 @@ app.use(requestID());
 app.use("/backend", router);
 
 app.get("/", (req, res) => {
-  return res.send(`Server is running... ${version} DD/MM/YYYY alfa1`);
+  return res.send(`Server is running... ${version} alfa2`);
 });
 
 if (process.env.NODE_ENV === "production") {
