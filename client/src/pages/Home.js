@@ -53,6 +53,8 @@ function Home() {
     head: "",
     neck: "",
   });
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
   const [completeImageName, setCompleteImageName] = useState("");
   const [preview, setPreview] = useState("/assets/snowman/snowman.png");
   const [openCategories, setOpenCategories] = useState({
@@ -61,6 +63,21 @@ function Home() {
     head: false,
     neck: false,
   });
+
+  const validateSelection = () => {
+    const errors = {};
+    Object.keys(accessories).forEach((category) => {
+      if (!selected[category]) {
+        errors[category] = true;
+      }
+    });
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const allCategoriesSelected = () => {
+    return Object.keys(accessories).every((category) => selected[category]);
+  };
 
   const toggleCategory = (category) => {
     setOpenCategories((prev) => {
@@ -111,9 +128,22 @@ function Home() {
     mergeImages(imagesToMerge).then(setPreview);
   };
 
-  function handleSpawnAsset() {
-    dispatch(spawnAsset(completeImageName));
-  }
+  const handleSpawnAsset = async () => {
+    const isValid = validateSelection();
+    if (!isValid) {
+      return;
+    }
+
+    setIsButtonDisabled(true);
+
+    try {
+      await dispatch(spawnAsset(completeImageName));
+    } catch (error) {
+      console.error("Error sending asset:", error);
+    } finally {
+      setIsButtonDisabled(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -125,21 +155,31 @@ function Home() {
 
   return (
     <div className="wrapper">
-      <h2>Build Your Snowman!</h2>
-      <img src={preview} alt="Snowman Preview" />
+      <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
+        Build Your Snowman!
+      </h2>
+      <img
+        src={preview}
+        alt="Snowman Preview"
+        style={{ marginTop: "-20px", marginBottom: "16px" }}
+        className="img-preview"
+      />
 
       {Object.keys(accessories).map((type) => (
         <div key={type}>
           <Button
             color=""
             onClick={() => toggleCategory(type)}
-            style={{ marginBottom: "1rem", textAlign: "left" }}
+            style={{ marginBottom: "0px", textAlign: "left" }}
           >
             {isCategorySelected(type) && (
               <FontAwesomeIcon
                 icon={faCheck}
                 style={{ marginRight: "10px", color: "green" }}
               />
+            )}
+            {!isCategorySelected(type) && validationErrors[type] && (
+              <span style={{ color: "red" }}> ❗</span>
             )}
             Select {type}
             <FontAwesomeIcon
@@ -148,12 +188,13 @@ function Home() {
             />
           </Button>
           <Collapse isOpen={openCategories[type]}>
-            <div>
+            <div style={{ marginBottom: "10px" }}>
               {accessories[type].map((image) => (
                 <img
                   key={image}
                   src={`/assets/snowman/${image}`}
                   alt={image}
+                  className="img-accessory"
                   style={{
                     border: "1px solid #ccc",
                     borderRadius: "10px",
@@ -171,8 +212,19 @@ function Home() {
         </div>
       ))}
 
+      {Object.keys(validationErrors).length > 0 && (
+        <p style={{ color: "red" }}>
+          Please select an item from each category to build the snowman.
+        </p>
+      )}
+
       <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-        <button onClick={handleSpawnAsset}>Add Snowman</button>
+        <button
+          onClick={handleSpawnAsset}
+          disabled={!allCategoriesSelected() || isButtonDisabled}
+        >
+          Add Snowman
+        </button>
       </div>
     </div>
   );

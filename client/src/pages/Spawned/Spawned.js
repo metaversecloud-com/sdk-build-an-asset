@@ -8,7 +8,7 @@ function Spawned() {
 
   return (
     <div className="spawned-wrapper">
-      <h2>
+      <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
         <b>Snowman</b>
       </h2>
       <img src={imgPath} alt={`Snowman of ${visitorName}`} />

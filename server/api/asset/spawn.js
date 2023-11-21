@@ -147,7 +147,6 @@ async function dropImageAsset({
 function getAssetImgUrl(req) {
   const { completeImageName } = req.body;
   const assetImgUrlLayer0 = `${BASE_URL}/assets/snowman/output/${completeImageName}`;
-  // assetImgUrlLayer1 = assetImgUrlLayer0;
   const assetImgUrlLayer1 = null;
   return { assetImgUrlLayer0, assetImgUrlLayer1 };
 }
