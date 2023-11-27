@@ -87,3 +87,18 @@ h2 {
 button, .btn {
   border-radius: 8px !important;
 }
+
+.icon-with-rounded-border {
+  border-radius: 50px;
+  border: 1px solid #EBEDEF;
+  display: flex;
+  width: 40px;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.mt-90 {
+  margin-top: 90px !important;
+}

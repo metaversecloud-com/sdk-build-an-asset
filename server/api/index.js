@@ -5,3 +5,4 @@ export * from "./asset/pickup.js";
 export * from "./asset/get.js";
 export * from "./asset/create.js";
 export * from "./asset/deleteAll.js";
+export * from "./asset/pickupAllAssets.js";

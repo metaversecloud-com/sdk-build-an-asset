@@ -5,6 +5,8 @@ import {
   pickup,
   get,
   create,
+  getDroppedAssetAndVisitor,
+  pickupAllAssets,
 } from "./api/index.js";
 import express from "express";
 import { validationMiddleware } from "./middleware/validation.js";
@@ -18,6 +20,14 @@ router.get("/visitor", getVisitor);
 
 router.get("/asset", validationMiddleware, get);
 
+router.get(
+  "/dropped-asset-and-visitor",
+  validationMiddleware,
+  getDroppedAssetAndVisitor
+);
+
 router.post("/asset/spawn", validationMiddleware, spawn);
+
+router.post("/asset/pickup-all-assets", validationMiddleware, pickupAllAssets);
 
 export default router;

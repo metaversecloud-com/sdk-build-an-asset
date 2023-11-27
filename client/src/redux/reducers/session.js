@@ -15,6 +15,10 @@ const reducers = {
   setDroppedAsset: (state, action) => {
     state.droppedAsset = action.payload;
   },
+  setDroppedAssetAndVisitor: (state, action) => {
+    state.droppedAsset = action.payload.droppedAsset;
+    state.visitor = action.payload.visitor;
+  },
   setInPrivateZone: (state, action) => {
     state.inPrivateZone = action.payload;
   },

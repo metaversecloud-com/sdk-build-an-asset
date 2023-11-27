@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
-import { spawnAsset } from "../redux/actions/session";
+import {
+  spawnAsset,
+  getDroppedAssetAndVisitor,
+} from "../redux/actions/session";
 import { Collapse, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,6 +13,8 @@ import {
   faChevronUp,
   faCheck,
 } from "@fortawesome/free-solid-svg-icons";
+import Gear from "./Admin/Gear";
+import AdminView from "./Admin/AdminView";
 
 import "./Home.scss";
 
@@ -46,7 +51,10 @@ const accessories = {
 
 function Home() {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
+
+  const visitor = useSelector((state) => state?.session?.visitor);
+
+  // const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState({
     body: "",
     arms: "",
@@ -54,6 +62,7 @@ function Home() {
     neck: "",
   });
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [completeImageName, setCompleteImageName] = useState("");
   const [preview, setPreview] = useState("/assets/snowman/snowman.png");
@@ -101,8 +110,13 @@ function Home() {
   };
 
   useEffect(() => {
-    setLoading(false);
-  }, []);
+    const fetchInitialState = async () => {
+      await dispatch(getDroppedAssetAndVisitor());
+      // setLoading(false);
+    };
+
+    fetchInitialState();
+  }, [dispatch]);
 
   const updateSnowman = (type, image) => {
     const updatedSelected = { ...selected, [type]: image };
@@ -145,16 +159,21 @@ function Home() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="loader">
-        <ClipLoader color={"#123abc"} loading={loading} size={150} />
-      </div>
-    );
+  // if (loading) {
+  //   return (
+  //     <div className="loader">
+  //       <ClipLoader color={"#123abc"} loading={loading} size={150} />
+  //     </div>
+  //   );
+  // }
+
+  if (showSettings) {
+    return <AdminView setShowSettings={setShowSettings} />;
   }
 
   return (
-    <div className="wrapper">
+    <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
+      {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
       <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
         Build Your Snowman!
       </h2>

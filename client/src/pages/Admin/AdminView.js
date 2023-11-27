@@ -2,16 +2,24 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // import penToSquareSvg from "../../assets/pen-to-square-regular.svg";
 import { pickUpAllAssets } from "../../redux/actions/session";
-import backArrow from "../../assets/backArrow.svg";
+import backArrow from "../../assets/icons/backArrow.svg";
 import "./AdminView.scss";
 
 function AdminView({ setShowSettings }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [pickupButtonClicked, setPickupButtonClicked] = useState(false);
+  const [resetButtonClicked, setResetButtonClicked] = useState(false);
 
-  function handlePickup() {
-    dispatch(pickUpAllAssets());
+  async function handlePickup() {
+    try {
+      setPickupButtonClicked(true);
+      await dispatch(pickUpAllAssets());
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setPickupButtonClicked(false);
+    }
   }
 
   function getBackArrow() {
@@ -31,24 +39,19 @@ function AdminView({ setShowSettings }) {
   return (
     <>
       {getBackArrow()}
-      <div className="admin-view-wrapper pt-46">
-        {showModal ? renderModal() : ""}
+      <div className="admin-view-wrapper pt-46" style={{ textAlign: "center" }}>
+        {/* {showModal ? renderModal() : ""} */}
         <h2>Settings</h2>
 
         <div className="footer-fixed" style={{ color: "#00A76F" }}>
-          {gameResetFlag ? (
-            <p style={{ color: "#00875A" }}>The quiz has reset.</p>
-          ) : (
-            <></>
-          )}
           <button
             onClick={() => {
               handlePickup();
             }}
             className="start-btn btn-danger"
-            disabled={resetButtonClicked}
+            disabled={pickupButtonClicked}
           >
-            {resetButtonClicked
+            {pickupButtonClicked
               ? "Picking up all assets..."
               : "Pick up all assets"}
           </button>

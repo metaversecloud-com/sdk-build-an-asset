@@ -11,6 +11,7 @@ export const {
   setDroppedAsset,
   setAsset,
   setAssetAssetOwner,
+  setDroppedAssetAndVisitor,
   setError,
 } = session.actions;
 
@@ -39,25 +40,6 @@ export const getVisitor = () => async (dispatch) => {
     if (error.response && error.response.data) {
     } else {
     }
-  }
-};
-
-export const executeAction = (action) => async (dispatch) => {
-  try {
-    const queryParams = getQueryParams();
-    const url = `/backend/asset/action?${queryParams}`;
-    const response = await axios.post(url, { action });
-
-    if (response.status === 200) {
-      dispatch(setAsset(response?.data?.asset));
-      return true;
-    }
-  } catch (error) {
-    dispatch(setError("There was an error while training the asset"));
-    if (error.response && error.response.data) {
-    } else {
-    }
-    return false;
   }
 };
 
@@ -99,6 +81,20 @@ export const pickupAsset = (isSpawnedDroppedAsset) => async (dispatch) => {
   }
 };
 
+export const pickUpAllAssets = () => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/asset/pickup-all-assets?${queryParams}`;
+    const response = await axios.post(url);
+  } catch (error) {
+    dispatch(setError("There was an error while picking up all assets"));
+    if (error.response && error.response.data) {
+    } else {
+    }
+    return false;
+  }
+};
+
 export const getDroppedAsset = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
@@ -108,6 +104,24 @@ export const getDroppedAsset = () => async (dispatch) => {
 
     if (response.status === 200) {
       dispatch(setDroppedAsset(response?.data?.droppedAsset));
+    }
+  } catch (error) {
+    console.error("error", error);
+    if (error.response && error.response.data) {
+    } else {
+    }
+  }
+};
+
+export const getDroppedAssetAndVisitor = () => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/dropped-asset-and-visitor?${queryParams}`;
+
+    const response = await axios.get(url);
+
+    if (response.status === 200) {
+      dispatch(setDroppedAssetAndVisitor(response?.data));
     }
   } catch (error) {
     console.error("error", error);
