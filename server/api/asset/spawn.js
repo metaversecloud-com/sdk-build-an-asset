@@ -104,7 +104,7 @@ async function dropImageAsset({
     x: x + 100,
     y: y,
   };
-  const uniqueName = `assetSystem-${username}`;
+  const uniqueName = `assetSystem-${visitor?.profileId}`;
 
   const asset = await Asset.create(process.env.IMG_ASSET_ID, { credentials });
 
@@ -116,6 +116,7 @@ async function dropImageAsset({
 
   await assetSpawnedDroppedAsset?.updateDataObject({
     profileId: visitor?.profileId,
+    completeImageName,
   });
 
   const modifiedName = username.replace(/ /g, "%20");

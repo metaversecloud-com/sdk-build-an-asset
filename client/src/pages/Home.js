@@ -6,6 +6,7 @@ import {
   spawnAsset,
   getDroppedAssetAndVisitor,
   getIsMyAssetSpawned,
+  moveToAsset,
 } from "../redux/actions/session";
 import { Collapse, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -57,9 +58,14 @@ function Home() {
   const dispatch = useDispatch();
 
   const visitor = useSelector((state) => state?.session?.visitor);
+  // const visitor = useSelector((state) => state?.session?.visitor);
   const isAssetSpawnedInWorld = useSelector(
     (state) => state?.session?.isAssetSpawnedInWorld
   );
+
+  const spawnedAsset = useSelector((state) => state?.session?.spawnedAsset);
+
+  console.log("spawnedAsset", spawnedAsset);
 
   // const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState({
@@ -68,7 +74,10 @@ function Home() {
     "Head Covering": "",
     Accessories: "",
   });
+  const [loading, setLoading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [isButtonMoveToSnowmanDisabled, setIsButtonMoveToSnowmanDisabled] =
+    useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [completeImageName, setCompleteImageName] = useState("");
@@ -119,8 +128,9 @@ function Home() {
 
   useEffect(() => {
     const fetchInitialState = async () => {
+      setLoading(true);
       await dispatch(getDroppedAssetAndVisitor());
-      // setLoading(false);
+      setLoading(false);
     };
 
     fetchInitialState();
@@ -167,13 +177,13 @@ function Home() {
     }
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="loader">
-  //       <ClipLoader color={"#123abc"} loading={loading} size={150} />
-  //     </div>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <div className="loader">
+        <ClipLoader color={"#123abc"} loading={loading} size={150} />
+      </div>
+    );
+  }
 
   if (showSettings) {
     return <AdminView setShowSettings={setShowSettings} />;
@@ -183,17 +193,47 @@ function Home() {
     setShowDefaultScreen(true);
   };
 
-  const handleMoveToSnowman = () => {};
+  const handleMoveToSnowman = async () => {
+    try {
+      setIsButtonMoveToSnowmanDisabled(true);
+      await dispatch(moveToAsset());
+    } catch (error) {
+      console.error("Error in handleMoveToSnowman:", error);
+    } finally {
+      setIsButtonMoveToSnowmanDisabled(false);
+    }
+  };
 
   if (isAssetSpawnedInWorld && !showDefaultScreen) {
     return (
       <>
-        <div className={`wrapper`}>
-          <button onClick={() => handleEditSnowman()}>Edit my Snowman</button>
-
-          <button onClick={() => handleMoveToSnowman()}>
-            Move to my Snowman
-          </button>
+        <div className="wrapper">
+          <div>
+            <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
+              This is Your Snowman!
+            </h2>
+          </div>
+          <div style={{ marginBottom: "20px" }}>
+            <img
+              src={`/assets/snowman/output/${spawnedAsset?.dataObject?.completeImageName}`}
+            />
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <button
+              onClick={() => handleEditSnowman()}
+              disabled={isButtonMoveToSnowmanDisabled}
+            >
+              Edit my Snowman
+            </button>
+          </div>
+          <div>
+            <button
+              onClick={() => handleMoveToSnowman()}
+              disabled={isButtonMoveToSnowmanDisabled}
+            >
+              Move to my Snowman
+            </button>
+          </div>
         </div>
       </>
     );

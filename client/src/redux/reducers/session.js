@@ -5,6 +5,7 @@ const initialState = {
   visitor: null,
   droppedAsset: null,
   isAssetSpawnedInWorld: null,
+  spawnedAsset: null,
   error: null,
 };
 
@@ -18,6 +19,8 @@ const reducers = {
   setDroppedAssetAndVisitor: (state, action) => {
     state.droppedAsset = action.payload.droppedAsset;
     state.visitor = action.payload.visitor;
+    state.isAssetSpawnedInWorld = action.payload.isAssetSpawnedInWorld;
+    state.spawnedAsset = action.payload.spawnedAsset;
   },
   setInPrivateZone: (state, action) => {
     state.inPrivateZone = action.payload;

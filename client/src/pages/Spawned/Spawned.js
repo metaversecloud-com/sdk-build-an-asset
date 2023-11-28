@@ -17,15 +17,19 @@ function Spawned() {
 
   const visitor = useSelector((state) => state?.session?.visitor);
   const droppedAsset = useSelector((state) => state?.session?.droppedAsset);
+  const isAssetSpawnedInWorld = useSelector(
+    (state) => state?.session?.isAssetSpawnedInWorld
+  );
 
   if (visitor?.profileId && droppedAsset?.dataObject?.profileId) {
     isAssetOwner = visitor?.profileId == droppedAsset?.dataObject?.profileId;
   }
 
+  console.log("isAssetSpawnedInWorld", isAssetSpawnedInWorld);
+
   useEffect(() => {
     const fetchInitialState = async () => {
       await dispatch(getDroppedAssetAndVisitor());
-      await dispatch(getIsMyAssetSpawned());
     };
 
     fetchInitialState();

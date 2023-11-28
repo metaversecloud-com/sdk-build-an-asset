@@ -65,10 +65,17 @@ export const get = async (req, res) => {
       credentials
     );
 
+    const isAssetSpawnedInWorld = await fetchIsSpawnedAssetInWorld(
+      urlSlug,
+      visitor,
+      credentials
+    );
+
     return res.json({
       asset: visitor?.dataObject?.asset,
       visitor,
       isAssetAssetOwner,
+      isAssetSpawnedInWorld,
       success: true,
     });
   } catch (error) {
@@ -83,3 +90,22 @@ export const get = async (req, res) => {
       .send({ requestId: req.id, error: error?.message, success: false });
   }
 };
+
+async function fetchIsSpawnedAssetInWorld(urlSlug, visitor, credentials) {
+  const world = await World.create(urlSlug, { credentials });
+
+  try {
+    const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
+      uniqueName: `assetSystem-${visitor?.username}`,
+    });
+
+    if (spawnedAssets && spawnedAssets.length) {
+      return true;
+    }
+  } catch (error) {
+    console.error(
+      "❌ Error in fetchIsSpawnedAssetInWorld.",
+      JSON.stringify(error)
+    );
+  }
+}

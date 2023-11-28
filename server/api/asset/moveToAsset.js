@@ -1,5 +1,4 @@
 import { DroppedAsset, Visitor, User, World } from "../topiaInit.js";
-import { isAssetInWorld } from "./utils.js";
 import { logger } from "../../logs/logger.js";
 
 export const moveToAsset = async (req, res) => {
@@ -20,44 +19,27 @@ export const moveToAsset = async (req, res) => {
     };
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
-    const assetSpawnedDroppedAsset = DroppedAsset.create(assetId, urlSlug, {
-      credentials,
+    const world = await World.create(urlSlug, { credentials });
+    await Promise.all([visitor.fetchVisitor(), visitor.fetchDataObject()]);
+
+    const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
+      uniqueName: `assetSystem-${visitor?.profileId}`,
     });
-    await Promise.all([
-      assetSpawnedDroppedAsset.fetchDroppedAssetById(),
-      assetSpawnedDroppedAsset.fetchDataObject(),
-      visitor.fetchVisitor(),
-      visitor.fetchDataObject(),
-    ]);
 
-    let isAssetAssetOwner = false;
-    if (
-      !assetSpawnedDroppedAsset?.dataObject?.profileId ||
-      assetSpawnedDroppedAsset?.dataObject?.profileId === visitor?.profileId
-    ) {
-      isAssetAssetOwner = true;
-    } else {
-      const user = User.create({
-        profileId: assetSpawnedDroppedAsset?.dataObject?.profileId,
-      });
-      await user.fetchDataObject();
+    let spawnedAsset;
 
-      return res.json({
-        asset: user?.dataObject?.asset,
-        visitor,
-        isAssetAssetOwner: false,
-        success: true,
-      });
+    if (!spawnedAssets && !spawnedAssets?.length) {
+      return res.status(404).json({ msg: "Asset not found" });
     }
 
-    if (isAssetAssetOwner) {
-      const { x, y } = assetSpawnedDroppedAsset?.position;
-      await visitor.moveVisitor({
-        shouldTeleportVisitor: false,
-        x,
-        y,
-      });
-    }
+    spawnedAsset = spawnedAssets?.[0];
+
+    const { x, y } = spawnedAsset?.position;
+    await visitor.moveVisitor({
+      shouldTeleportVisitor: false,
+      x,
+      y,
+    });
 
     return res.json({
       asset: visitor?.dataObject?.asset,

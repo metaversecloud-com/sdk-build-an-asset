@@ -1,4 +1,4 @@
-import { Visitor, DroppedAsset } from "../topiaInit.js";
+import { Visitor, DroppedAsset, World } from "../topiaInit.js";
 import { logger } from "../../logs/logger.js";
 
 export const getDroppedAssetAndVisitor = async (req, res) => {
@@ -19,6 +19,8 @@ export const getDroppedAssetAndVisitor = async (req, res) => {
     };
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
+    const world = await World.create(urlSlug, { credentials });
+
     const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
       credentials,
     });
@@ -29,7 +31,24 @@ export const getDroppedAssetAndVisitor = async (req, res) => {
       visitor.fetchDataObject(),
     ]);
 
-    return res.json({ droppedAsset, visitor, success: true });
+    let isAssetSpawnedInWorld = false;
+
+    let spawnedAsset = null;
+    const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
+      uniqueName: `assetSystem-${visitor?.profileId}`,
+    });
+
+    if (spawnedAssets && spawnedAssets.length) {
+      isAssetSpawnedInWorld = true;
+      spawnedAsset = spawnedAssets?.[0];
+    }
+
+    return res.json({
+      droppedAsset,
+      visitor,
+      isAssetSpawnedInWorld,
+      spawnedAsset,
+    });
   } catch (error) {
     logger.error({
       error,
