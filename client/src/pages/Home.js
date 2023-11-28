@@ -19,8 +19,8 @@ import AdminView from "./Admin/AdminView";
 import "./Home.scss";
 
 const accessories = {
-  body: ["body_0.png", "body_1.png"],
-  arms: [
+  Body: ["body_0.png", "body_1.png"],
+  Arms: [
     "arms_0.png",
     "arms_1.png",
     "arms_2.png",
@@ -29,7 +29,7 @@ const accessories = {
     "arms_5.png",
     "arms_6.png",
   ],
-  head: [
+  "Head Covering": [
     "head_0.png",
     "head_1.png",
     "head_2.png",
@@ -37,15 +37,15 @@ const accessories = {
     "head_4.png",
     "head_5.png",
     "head_6.png",
+    "head_7.png",
   ],
-  neck: [
+  Neck: [
     "neck_0.png",
     "neck_1.png",
     "neck_2.png",
     "neck_3.png",
     "neck_4.png",
     "neck_5.png",
-    "neck_6.png",
   ],
 };
 
@@ -56,10 +56,10 @@ function Home() {
 
   // const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState({
-    body: "",
-    arms: "",
-    head: "",
-    neck: "",
+    Body: "",
+    Arms: "",
+    "Head Covering": "",
+    Neck: "",
   });
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -67,10 +67,10 @@ function Home() {
   const [completeImageName, setCompleteImageName] = useState("");
   const [preview, setPreview] = useState("/assets/snowman/snowman.png");
   const [openCategories, setOpenCategories] = useState({
-    body: false,
-    arms: false,
-    head: false,
-    neck: false,
+    Body: false,
+    Arms: false,
+    "Head Covering": false,
+    Neck: false,
   });
 
   const validateSelection = () => {
@@ -91,10 +91,10 @@ function Home() {
   const toggleCategory = (category) => {
     setOpenCategories((prev) => {
       const newCategories = {
-        body: false,
-        arms: false,
-        head: false,
-        neck: false,
+        Body: false,
+        Arms: false,
+        "Head Covering": false,
+        Neck: false,
       };
       newCategories[category] = !prev[category];
       return newCategories;

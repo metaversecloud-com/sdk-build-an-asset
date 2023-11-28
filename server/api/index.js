@@ -6,3 +6,4 @@ export * from "./asset/get.js";
 export * from "./asset/create.js";
 export * from "./asset/deleteAll.js";
 export * from "./asset/pickupAllAssets.js";
+export * from "./asset/moveToAsset.js";

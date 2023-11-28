@@ -20,6 +20,7 @@ const accessories = {
     "head_4.png",
     "head_5.png",
     "head_6.png",
+    "head_7.png",
   ],
   neck: [
     "neck_0.png",
@@ -28,7 +29,6 @@ const accessories = {
     "neck_3.png",
     "neck_4.png",
     "neck_5.png",
-    "neck_6.png",
   ],
 };
 
@@ -40,7 +40,9 @@ const createSnowman = async (images, outputName) => {
 
     sharp(buffers[0])
       .composite(buffers.slice(1).map((buffer, i) => ({ input: buffer })))
-      .toFile(path.join("./client/public/assets/output", `${outputName}.png`));
+      .toFile(
+        path.join("./client/public/assets/snowman/output", `${outputName}.png`)
+      );
 
     console.log(`Created ${outputName}.png`);
   } catch (err) {

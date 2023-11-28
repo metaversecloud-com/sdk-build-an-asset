@@ -95,6 +95,20 @@ export const pickUpAllAssets = () => async (dispatch) => {
   }
 };
 
+export const moveToAsset = () => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/asset/move-to-asset?${queryParams}`;
+
+    const response = await axios.post(url);
+  } catch (error) {
+    console.error("error", error);
+    if (error.response && error.response.data) {
+    } else {
+    }
+  }
+};
+
 export const getDroppedAsset = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
