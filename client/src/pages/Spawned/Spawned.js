@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   moveToAsset,
   getDroppedAssetAndVisitor,
+  getIsMyAssetSpawned,
 } from "../../redux/actions/session";
 import "./Spawned.scss";
 
@@ -12,7 +13,6 @@ function Spawned() {
   const dispatch = useDispatch();
   const imgPath = `/assets/snowman/output/${imgName}`;
 
-  // const [isAssetOwner, setIsAssetOwner] = useState(false);
   let isAssetOwner = false;
 
   const visitor = useSelector((state) => state?.session?.visitor);
@@ -25,6 +25,7 @@ function Spawned() {
   useEffect(() => {
     const fetchInitialState = async () => {
       await dispatch(getDroppedAssetAndVisitor());
+      await dispatch(getIsMyAssetSpawned());
     };
 
     fetchInitialState();
@@ -45,7 +46,6 @@ function Spawned() {
           This snowman belongs to <b>{visitorName}</b>!
         </p>
       </div>
-      {console.log("isAssetOwner", isAssetOwner)}
       {isAssetOwner ? (
         <div className="footer-fixed" style={{ backgroundColor: "white" }}>
           <button onClick={handleMoveToAsset}>Move to my Snowman</button>

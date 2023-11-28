@@ -5,6 +5,7 @@ import { ClipLoader } from "react-spinners";
 import {
   spawnAsset,
   getDroppedAssetAndVisitor,
+  getIsMyAssetSpawned,
 } from "../redux/actions/session";
 import { Collapse, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,7 +20,7 @@ import AdminView from "./Admin/AdminView";
 import "./Home.scss";
 
 const accessories = {
-  Body: ["body_0.png", "body_1.png"],
+  Body: ["body_0.png", "body_1.png", "body_2.png"],
   Arms: [
     "arms_0.png",
     "arms_1.png",
@@ -28,6 +29,8 @@ const accessories = {
     "arms_4.png",
     "arms_5.png",
     "arms_6.png",
+    "arms_7.png",
+    "arms_8.png",
   ],
   "Head Covering": [
     "head_0.png",
@@ -38,14 +41,15 @@ const accessories = {
     "head_5.png",
     "head_6.png",
     "head_7.png",
+    "head_8.png",
   ],
-  Neck: [
-    "neck_0.png",
-    "neck_1.png",
-    "neck_2.png",
-    "neck_3.png",
-    "neck_4.png",
-    "neck_5.png",
+  Accessories: [
+    "accessories_0.png",
+    "accessories_1.png",
+    "accessories_2.png",
+    "accessories_3.png",
+    "accessories_4.png",
+    "accessories_5.png",
   ],
 };
 
@@ -53,24 +57,28 @@ function Home() {
   const dispatch = useDispatch();
 
   const visitor = useSelector((state) => state?.session?.visitor);
+  const isAssetSpawnedInWorld = useSelector(
+    (state) => state?.session?.isAssetSpawnedInWorld
+  );
 
   // const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState({
     Body: "",
     Arms: "",
     "Head Covering": "",
-    Neck: "",
+    Accessories: "",
   });
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [completeImageName, setCompleteImageName] = useState("");
+  const [showDefaultScreen, setShowDefaultScreen] = useState(false);
   const [preview, setPreview] = useState("/assets/snowman/snowman.png");
   const [openCategories, setOpenCategories] = useState({
     Body: false,
     Arms: false,
     "Head Covering": false,
-    Neck: false,
+    Accessories: false,
   });
 
   const validateSelection = () => {
@@ -94,7 +102,7 @@ function Home() {
         Body: false,
         Arms: false,
         "Head Covering": false,
-        Neck: false,
+        Accessories: false,
       };
       newCategories[category] = !prev[category];
       return newCategories;
@@ -169,6 +177,26 @@ function Home() {
 
   if (showSettings) {
     return <AdminView setShowSettings={setShowSettings} />;
+  }
+
+  const handleEditSnowman = () => {
+    setShowDefaultScreen(true);
+  };
+
+  const handleMoveToSnowman = () => {};
+
+  if (isAssetSpawnedInWorld && !showDefaultScreen) {
+    return (
+      <>
+        <div className={`wrapper`}>
+          <button onClick={() => handleEditSnowman()}>Edit my Snowman</button>
+
+          <button onClick={() => handleMoveToSnowman()}>
+            Move to my Snowman
+          </button>
+        </div>
+      </>
+    );
   }
 
   return (
