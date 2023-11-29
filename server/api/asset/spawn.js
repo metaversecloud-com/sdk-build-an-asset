@@ -71,7 +71,7 @@ async function removeAllUserAssets(urlSlug, visitor, credentials) {
 
   try {
     const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: `assetSystem-${visitor?.username}`,
+      uniqueName: `assetSystem-${visitor?.profileId}`,
     });
 
     if (spawnedAssets && spawnedAssets.length) {
