@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  moveToAsset,
+  pickupAsset,
   getDroppedAssetAndVisitor,
   getIsMyAssetSpawned,
 } from "../../redux/actions/session";
@@ -33,8 +33,8 @@ function Spawned() {
     fetchInitialState();
   }, [dispatch]);
 
-  const handleMoveToAsset = async () => {
-    await dispatch(moveToAsset());
+  const handlePickupAsset = async () => {
+    await dispatch(pickupAsset());
   };
 
   return (
@@ -50,7 +50,7 @@ function Spawned() {
       </div>
       {isAssetOwner ? (
         <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-          <button onClick={handleMoveToAsset}>Move to my Snowman</button>
+          <button onClick={handlePickupAsset}>Pick up my Snowman</button>
         </div>
       ) : (
         ""

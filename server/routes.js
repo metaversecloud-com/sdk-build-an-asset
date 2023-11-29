@@ -31,5 +31,6 @@ router.post("/asset/spawn", validationMiddleware, spawn);
 router.post("/asset/move-to-asset", validationMiddleware, moveToAsset);
 
 router.post("/asset/pickup-all-assets", validationMiddleware, pickupAllAssets);
+router.post("/asset/pickup", validationMiddleware, pickup);
 
 export default router;

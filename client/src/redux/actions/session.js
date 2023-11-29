@@ -83,7 +83,6 @@ export const getIsMyAssetSpawned = (completeImageName) => async (dispatch) => {
 
 export const pickupAsset = (isSpawnedDroppedAsset) => async (dispatch) => {
   try {
-    console.log("isSpawnedDroppedAsset pickupAsset", isSpawnedDroppedAsset);
     const queryParams = getQueryParams();
     const url = `/backend/asset/pickup?${queryParams}&isSpawnedDroppedAsset=${isSpawnedDroppedAsset}`;
     const response = await axios.post(url);
