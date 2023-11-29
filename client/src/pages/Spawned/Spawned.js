@@ -25,8 +25,6 @@ function Spawned() {
     isAssetOwner = visitor?.profileId == droppedAsset?.dataObject?.profileId;
   }
 
-  console.log("isAssetSpawnedInWorld", isAssetSpawnedInWorld);
-
   useEffect(() => {
     const fetchInitialState = async () => {
       await dispatch(getDroppedAssetAndVisitor());
