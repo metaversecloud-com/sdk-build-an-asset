@@ -6,6 +6,7 @@ const initialState = {
   droppedAsset: null,
   isAssetSpawnedInWorld: null,
   spawnedAsset: null,
+  spawnSuccess: true,
   error: null,
 };
 
@@ -27,6 +28,9 @@ const reducers = {
   },
   setIsAssetSpawnedInWorld: (state, action) => {
     state.isAssetSpawnedInWorld = action.payload;
+  },
+  setSpawnSuccess: (state, action) => {
+    state.spawnSuccess = action.payload;
   },
   setError: (state, action) => {
     state.error = action.payload;

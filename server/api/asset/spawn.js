@@ -38,11 +38,22 @@ export const spawn = async (req, res) => {
       visitorId,
     };
 
-    const visitor = await Visitor.get(visitorId, urlSlug, {
+    const visitor = Visitor.create(visitorId, urlSlug, { credentials });
+
+    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
       credentials,
     });
 
-    await visitor.fetchDataObject();
+    await Promise.all([
+      droppedAsset.fetchDroppedAssetById(),
+      droppedAsset.fetchDataObject(),
+      visitor.fetchVisitor(),
+      visitor.fetchDataObject(),
+    ]);
+
+    if (visitor?.privateZoneId != droppedAsset?.id) {
+      return res.json({ spawnSuccess: false, success: false });
+    }
 
     await removeAllUserAssets(urlSlug, visitor, credentials);
 
@@ -54,7 +65,7 @@ export const spawn = async (req, res) => {
       completeImageName,
     });
 
-    return res.json({ isSpawnedInWorld: true, success: true });
+    return res.json({ spawnSuccess: true, success: true });
   } catch (error) {
     logger.error({
       error,
@@ -62,7 +73,9 @@ export const spawn = async (req, res) => {
       functionName: "spawn",
       req,
     });
-    return res.status(500).send({ error: error?.message, success: false });
+    return res
+      .status(500)
+      .send({ error: error?.message, spawnSuccess: false, success: false });
   }
 };
 

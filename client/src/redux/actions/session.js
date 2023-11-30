@@ -13,6 +13,7 @@ export const {
   setAssetAssetOwner,
   setDroppedAssetAndVisitor,
   setIsAssetSpawnedInWorld,
+  setSpawnSuccess,
   setError,
 } = session.actions;
 
@@ -46,14 +47,13 @@ export const getVisitor = () => async (dispatch) => {
 
 export const spawnAsset = (completeImageName) => async (dispatch) => {
   try {
-    console.log("completeImageName", completeImageName);
     const queryParams = getQueryParams();
     const url = `/backend/asset/spawn?${queryParams}`;
     const response = await axios.post(url, { completeImageName });
 
-    // if (response.status === 200) {
-    //   // dispatch(getAsset());
-    // }
+    if (response.status === 200) {
+      dispatch(setSpawnSuccess(response?.data?.spawnSuccess));
+    }
   } catch (error) {
     dispatch(setError("There was an error while spawning the asset"));
     if (error.response && error.response.data) {

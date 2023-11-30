@@ -62,6 +62,7 @@ function Home() {
   const isAssetSpawnedInWorld = useSelector(
     (state) => state?.session?.isAssetSpawnedInWorld
   );
+  const spawnSuccess = useSelector((state) => state?.session?.spawnSuccess);
 
   const spawnedAsset = useSelector((state) => state?.session?.spawnedAsset);
 
@@ -306,6 +307,13 @@ function Home() {
       )}
 
       <div className="footer-fixed" style={{ backgroundColor: "white" }}>
+        {spawnSuccess ? (
+          <></>
+        ) : (
+          <p style={{ color: "red" }}>
+            You have to be inside the snow to call your snowman!
+          </p>
+        )}
         <button
           onClick={handleSpawnAsset}
           disabled={!allCategoriesSelected() || isButtonDisabled}
