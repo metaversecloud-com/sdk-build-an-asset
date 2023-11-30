@@ -131,6 +131,17 @@ function Home() {
       setLoading(false);
 
       if (spawnedAsset?.dataObject?.completeImageName) {
+        const imageName = spawnedAsset.dataObject.completeImageName;
+        const parts = imageName.replace(".png", "").split("_");
+
+        const initialSelection = {
+          Body: `/assets/snowman/body_${parts[1]}.png`,
+          Arms: `/assets/snowman/arms_${parts[3]}.png`,
+          "Head Covering": `/assets/snowman/head_${parts[5]}.png`,
+          Accessories: `/assets/snowman/accessories_${parts[7]}.png`,
+        };
+
+        setSelected(initialSelection);
         setPreview(
           `/assets/snowman/output/${spawnedAsset?.dataObject?.completeImageName}`
         );
@@ -141,27 +152,38 @@ function Home() {
   }, [dispatch, spawnedAsset?.dataObject?.completeImageName]);
 
   const updateSnowman = (type, image) => {
-    const updatedSelected = { ...selected, [type]: image };
-    setSelected(updatedSelected);
+    try {
+      console.log("test1");
+      const updatedSelected = { ...selected, [type]: image };
+      console.log("test2", updatedSelected);
+      setSelected(updatedSelected);
+      console.log("test3", updatedSelected);
+      const imageNameParts = Object.keys(updatedSelected)
+        .map((key) => updatedSelected[key].split("/").pop().split(".")[0])
+        .filter(Boolean);
 
-    const imageNameParts = Object.keys(updatedSelected)
-      .map((key) => updatedSelected[key].split("/").pop().split(".")[0])
-      .filter(Boolean);
+      console.log("test4", imageNameParts);
+      if (imageNameParts.length === Object.keys(accessories).length) {
+        setCompleteImageName(imageNameParts.join("_") + ".png");
+      }
 
-    if (imageNameParts.length === Object.keys(accessories).length) {
-      setCompleteImageName(imageNameParts.join("_") + ".png");
+      console.log("test5", imageNameParts);
+
+      const imagesToMerge = [
+        { src: "/assets/snowman/snowman.png", x: 0, y: 0 },
+        ...Object.values(updatedSelected).map((item) => ({
+          src: item,
+          x: 0,
+          y: 0,
+        })),
+      ].filter((img) => img.src);
+
+      console.log("test6", imagesToMerge);
+
+      mergeImages(imagesToMerge).then(setPreview);
+    } catch (error) {
+      console.error("error1", error);
     }
-
-    const imagesToMerge = [
-      { src: "/assets/snowman/snowman.png", x: 0, y: 0 },
-      ...Object.values(updatedSelected).map((item) => ({
-        src: item,
-        x: 0,
-        y: 0,
-      })),
-    ].filter((img) => img.src);
-
-    mergeImages(imagesToMerge).then(setPreview);
   };
 
   const handleSpawnAsset = async () => {
@@ -314,7 +336,7 @@ function Home() {
           <></>
         ) : (
           <p style={{ color: "red" }}>
-            You have to be inside the snow to call your snowman!
+            Move to the snow area to add your snowman!
           </p>
         )}
         <button
