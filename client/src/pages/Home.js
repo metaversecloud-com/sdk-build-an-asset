@@ -66,9 +66,6 @@ function Home() {
 
   const spawnedAsset = useSelector((state) => state?.session?.spawnedAsset);
 
-  console.log("spawnedAsset", spawnedAsset);
-
-  // const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState({
     Body: "",
     Arms: "",
@@ -132,10 +129,16 @@ function Home() {
       setLoading(true);
       await dispatch(getDroppedAssetAndVisitor());
       setLoading(false);
+
+      if (spawnedAsset?.dataObject?.completeImageName) {
+        setPreview(
+          `/assets/snowman/output/${spawnedAsset?.dataObject?.completeImageName}`
+        );
+      }
     };
 
     fetchInitialState();
-  }, [dispatch]);
+  }, [dispatch, spawnedAsset?.dataObject?.completeImageName]);
 
   const updateSnowman = (type, image) => {
     const updatedSelected = { ...selected, [type]: image };
