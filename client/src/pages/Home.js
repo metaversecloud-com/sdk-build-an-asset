@@ -192,6 +192,7 @@ function Home() {
       console.error("Error sending asset:", error);
     } finally {
       setIsButtonDisabled(false);
+      setShowDefaultScreen(false);
     }
   };
 

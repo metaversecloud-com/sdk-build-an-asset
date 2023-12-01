@@ -53,7 +53,7 @@ export const spawnAsset = (completeImageName) => async (dispatch) => {
     const response = await axios.post(url, { completeImageName });
 
     if (response.status === 200) {
-      dispatch(setSpawnSuccess(response?.data?.spawnSuccess));
+      dispatch(setSpawnSuccess(response?.data));
     }
   } catch (error) {
     dispatch(setError("There was an error while spawning the asset"));

@@ -86,7 +86,11 @@ export const spawn = async (req, res) => {
       spawnPosition,
     });
 
-    return res.json({ spawnSuccess: true, success: true });
+    return res.json({
+      spawnSuccess: true,
+      success: true,
+      isAssetSpawnedInWorld: true,
+    });
   } catch (error) {
     logger.error({
       error,
