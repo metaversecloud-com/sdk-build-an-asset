@@ -52,12 +52,27 @@ export const spawn = async (req, res) => {
       visitor.fetchDataObject(),
     ]);
 
-    if (
-      visitor?.privateZoneId != droppedAsset?.id &&
-      visitor?.privateZoneId != droppedAsset?.dataObject?.parentAssetId
-    ) {
-      return res.json({ spawnSuccess: false, success: false });
-    }
+    // if (
+    //   visitor?.privateZoneId != droppedAsset?.id &&
+    //   visitor?.privateZoneId != droppedAsset?.dataObject?.parentAssetId
+    // ) {
+    //   return res.json({ spawnSuccess: false, success: false });
+    // }
+
+    // snowman placa x:0 y:200
+    // superior direita: x 600   y -500
+    // superior esquerda x: -600
+    const world = await World.create(urlSlug, { credentials });
+    const background = (
+      await world.fetchDroppedAssetsWithUniqueName({
+        uniqueName: `snowman-background`,
+      })
+    )?.[0];
+
+    const spawnPosition = getRandomPosition({
+      x: background?.position?.x,
+      y: background?.position?.y,
+    });
 
     await removeAllUserAssets(urlSlug, visitor, credentials);
 
@@ -68,6 +83,7 @@ export const spawn = async (req, res) => {
       req,
       completeImageName,
       uniqueName,
+      spawnPosition,
     });
 
     return res.json({ spawnSuccess: true, success: true });
@@ -112,6 +128,7 @@ async function dropImageAsset({
   req,
   completeImageName,
   uniqueName: parentUniqueName,
+  spawnPosition,
 }) {
   const { visitorId, interactiveNonce, interactivePublicKey } = credentials;
 
@@ -119,16 +136,13 @@ async function dropImageAsset({
 
   const { moveTo, username } = visitor;
   const { x, y } = moveTo;
-  const position = {
-    x: x + 100,
-    y: y,
-  };
+
   const spawnedAssetUniqueName = `assetSystem-${visitor?.profileId}`;
 
   const asset = await Asset.create(process.env.IMG_ASSET_ID, { credentials });
 
   const assetSpawnedDroppedAsset = await DroppedAsset.drop(asset, {
-    position,
+    position: spawnPosition,
     uniqueName: spawnedAssetUniqueName,
     urlSlug,
   });
@@ -171,4 +185,15 @@ function getAssetImgUrl(req) {
   const assetImgUrlLayer0 = `${BASE_URL}/assets/snowman/output/${completeImageName}`;
   const assetImgUrlLayer1 = null;
   return { assetImgUrlLayer0, assetImgUrlLayer1 };
+}
+
+function getRandomPosition(position) {
+  const randomX = Math.floor(Math.random() * 1201) - 600;
+
+  const randomY = -(Math.floor(Math.random() * 601) + 100);
+
+  return {
+    x: position.x + randomX,
+    y: position.y + randomY,
+  };
 }

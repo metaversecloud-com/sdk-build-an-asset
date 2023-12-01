@@ -58,13 +58,13 @@ function Spawned() {
     }
   };
 
-  if (setShowCustomizeScreen) {
-    return (
-      <>
-        <EditSnowman />
-      </>
-    );
-  }
+  // if (setShowCustomizeScreen) {
+  //   return (
+  //     <>
+  //       <EditSnowman />
+  //     </>
+  //   );
+  // }
 
   return (
     <div className="spawned-wrapper">
@@ -84,14 +84,14 @@ function Spawned() {
       ) : (
         ""
       )}
-      <div style={{ marginBottom: "10px", width: "320px" }}>
+      {/* <div style={{ marginBottom: "10px", width: "320px" }}>
         <button
           onClick={() => handleEditSnowman()}
           disabled={isButtonMoveToSnowmanDisabled}
         >
           Edit my Snowman
         </button>
-      </div>
+      </div> */}
       <div style={{ width: "320px" }}>
         <button
           onClick={() => handleMoveToSnowman()}
