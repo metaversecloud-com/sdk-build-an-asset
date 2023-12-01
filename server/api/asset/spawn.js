@@ -76,7 +76,7 @@ export const spawn = async (req, res) => {
 
     await removeAllUserAssets(urlSlug, visitor, credentials);
 
-    await dropImageAsset({
+    const spawnedAsset = await dropImageAsset({
       urlSlug,
       credentials,
       visitor,
@@ -90,6 +90,8 @@ export const spawn = async (req, res) => {
       spawnSuccess: true,
       success: true,
       isAssetSpawnedInWorld: true,
+      completeImageName,
+      spawnedAsset,
     });
   } catch (error) {
     logger.error({

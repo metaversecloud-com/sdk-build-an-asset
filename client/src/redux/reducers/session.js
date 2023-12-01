@@ -32,6 +32,7 @@ const reducers = {
   setSpawnSuccess: (state, action) => {
     state.spawnSuccess = action.payload.spawnSuccess;
     state.isAssetSpawnedInWorld = action.payload.isAssetSpawnedInWorld;
+    state.spawnedAsset = action.payload.spawnedAsset;
   },
   setError: (state, action) => {
     state.error = action.payload;
