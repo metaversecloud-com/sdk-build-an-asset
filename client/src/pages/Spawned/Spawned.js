@@ -5,7 +5,9 @@ import {
   pickupAsset,
   getDroppedAssetAndVisitor,
   getIsMyAssetSpawned,
+  moveToAsset,
 } from "../../redux/actions/session";
+import EditSnowman from "../../components/EditSnowman/EditSnowman";
 import "./Spawned.scss";
 
 function Spawned() {
@@ -14,6 +16,10 @@ function Spawned() {
   const imgPath = `/assets/snowman/output/${imgName}`;
 
   let isAssetOwner = false;
+
+  const [isButtonMoveToSnowmanDisabled, setIsButtonMoveToSnowmanDisabled] =
+    useState(false);
+  const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
 
   const visitor = useSelector((state) => state?.session?.visitor);
   const droppedAsset = useSelector((state) => state?.session?.droppedAsset);
@@ -37,6 +43,29 @@ function Spawned() {
     await dispatch(pickupAsset());
   };
 
+  const handleEditSnowman = () => {
+    setShowCustomizeScreen(true);
+  };
+
+  const handleMoveToSnowman = async () => {
+    try {
+      setIsButtonMoveToSnowmanDisabled(true);
+      await dispatch(moveToAsset());
+    } catch (error) {
+      console.error("Error in handleMoveToSnowman:", error);
+    } finally {
+      setIsButtonMoveToSnowmanDisabled(false);
+    }
+  };
+
+  if (setShowCustomizeScreen) {
+    return (
+      <>
+        <EditSnowman />
+      </>
+    );
+  }
+
   return (
     <div className="spawned-wrapper">
       <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
@@ -55,6 +84,22 @@ function Spawned() {
       ) : (
         ""
       )}
+      <div style={{ marginBottom: "10px", width: "320px" }}>
+        <button
+          onClick={() => handleEditSnowman()}
+          disabled={isButtonMoveToSnowmanDisabled}
+        >
+          Edit my Snowman
+        </button>
+      </div>
+      <div style={{ width: "320px" }}>
+        <button
+          onClick={() => handleMoveToSnowman()}
+          disabled={isButtonMoveToSnowmanDisabled}
+        >
+          Move to my Snowman
+        </button>
+      </div>
     </div>
   );
 }

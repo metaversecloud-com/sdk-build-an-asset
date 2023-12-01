@@ -2,6 +2,7 @@ import {
   getVisitor,
   deleteAll,
   spawn,
+  spawnFromSpawnedAsset,
   pickup,
   get,
   create,
@@ -28,6 +29,11 @@ router.get(
 );
 
 router.post("/asset/spawn", validationMiddleware, spawn);
+router.post(
+  "/asset/spawn-from-spawned-asset",
+  validationMiddleware,
+  spawnFromSpawnedAsset
+);
 router.post("/asset/move-to-asset", validationMiddleware, moveToAsset);
 
 router.post("/asset/pickup-all-assets", validationMiddleware, pickupAllAssets);

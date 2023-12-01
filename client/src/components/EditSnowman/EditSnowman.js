@@ -6,8 +6,9 @@ import {
   spawnAsset,
   getDroppedAssetAndVisitor,
   getIsMyAssetSpawned,
+  spawnFromSpawnedAsset,
   moveToAsset,
-} from "../redux/actions/session";
+} from "../../redux/actions/session";
 import { Collapse, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,10 +16,10 @@ import {
   faChevronUp,
   faCheck,
 } from "@fortawesome/free-solid-svg-icons";
-import Gear from "./Admin/Gear";
-import AdminView from "./Admin/AdminView";
+import Gear from "../../pages/Admin/Gear";
+import AdminView from "../../pages/Admin/AdminView";
 
-import "./Home.scss";
+import "./EditSnowman.scss";
 
 const accessories = {
   Body: ["body_0.png", "body_1.png", "body_2.png"],
@@ -54,7 +55,7 @@ const accessories = {
   ],
 };
 
-function Home() {
+function EditSnowman() {
   const dispatch = useDispatch();
 
   const visitor = useSelector((state) => state?.session?.visitor);
@@ -187,7 +188,7 @@ function Home() {
     setIsButtonDisabled(true);
 
     try {
-      await dispatch(spawnAsset(completeImageName));
+      await dispatch(spawnFromSpawnedAsset(completeImageName));
     } catch (error) {
       console.error("Error sending asset:", error);
     } finally {
@@ -200,61 +201,6 @@ function Home() {
       <div className="loader">
         <ClipLoader color={"#123abc"} loading={loading} size={150} />
       </div>
-    );
-  }
-
-  if (showSettings) {
-    return <AdminView setShowSettings={setShowSettings} />;
-  }
-
-  const handleEditSnowman = () => {
-    setShowDefaultScreen(true);
-  };
-
-  const handleMoveToSnowman = async () => {
-    try {
-      setIsButtonMoveToSnowmanDisabled(true);
-      await dispatch(moveToAsset());
-    } catch (error) {
-      console.error("Error in handleMoveToSnowman:", error);
-    } finally {
-      setIsButtonMoveToSnowmanDisabled(false);
-    }
-  };
-
-  // Snowman already in world
-  if (isAssetSpawnedInWorld && !showDefaultScreen) {
-    return (
-      <>
-        <div className="wrapper">
-          <div>
-            <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-              This is Your Snowman!
-            </h2>
-          </div>
-          <div style={{ marginBottom: "20px" }}>
-            <img
-              src={`/assets/snowman/output/${spawnedAsset?.dataObject?.completeImageName}`}
-            />
-          </div>
-          <div style={{ marginBottom: "10px" }}>
-            <button
-              onClick={() => handleEditSnowman()}
-              disabled={isButtonMoveToSnowmanDisabled}
-            >
-              Edit my Snowman
-            </button>
-          </div>
-          <div>
-            <button
-              onClick={() => handleMoveToSnowman()}
-              disabled={isButtonMoveToSnowmanDisabled}
-            >
-              Move to my Snowman
-            </button>
-          </div>
-        </div>
-      </>
     );
   }
 
@@ -343,4 +289,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default EditSnowman;
