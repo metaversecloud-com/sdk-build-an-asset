@@ -92,14 +92,18 @@ function Spawned() {
           Edit my Snowman
         </button>
       </div> */}
-      <div style={{ width: "320px" }}>
-        <button
-          onClick={() => handleMoveToSnowman()}
-          disabled={isButtonMoveToSnowmanDisabled}
-        >
-          Move to my Snowman
-        </button>
-      </div>
+      {isAssetOwner ? (
+        <div style={{ width: "320px" }}>
+          <button
+            onClick={() => handleMoveToSnowman()}
+            disabled={isButtonMoveToSnowmanDisabled}
+          >
+            Move to my Snowman
+          </button>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }
