@@ -227,7 +227,8 @@ function Home() {
   if (isAssetSpawnedInWorld && !showDefaultScreen) {
     return (
       <>
-        <div className="wrapper">
+        <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
+          {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
           <div>
             <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
               This is Your Snowman!
