@@ -11,6 +11,9 @@ export const {
   setDroppedAsset,
   setAsset,
   setAssetAssetOwner,
+  setDroppedAssetAndVisitor,
+  setIsAssetSpawnedInWorld,
+  setSpawnSuccess,
   setError,
 } = session.actions;
 
@@ -21,8 +24,9 @@ const getQueryParams = () => {
   const assetId = queryParameters.get("assetId");
   const interactivePublicKey = queryParameters.get("interactivePublicKey");
   const urlSlug = queryParameters.get("urlSlug");
+  const uniqueName = queryParameters.get("uniqueName");
 
-  return `visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetId}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}`;
+  return `visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetId}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}&uniqueName=${uniqueName}`;
 };
 
 export const getVisitor = () => async (dispatch) => {
@@ -42,18 +46,17 @@ export const getVisitor = () => async (dispatch) => {
   }
 };
 
-export const executeAction = (action) => async (dispatch) => {
+export const spawnAsset = (completeImageName) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/asset/action?${queryParams}`;
-    const response = await axios.post(url, { action });
+    const url = `/backend/asset/spawn?${queryParams}`;
+    const response = await axios.post(url, { completeImageName });
 
     if (response.status === 200) {
-      dispatch(setAsset(response?.data?.asset));
-      return true;
+      dispatch(setSpawnSuccess(response?.data));
     }
   } catch (error) {
-    dispatch(setError("There was an error while training the asset"));
+    dispatch(setError("There was an error while spawning the asset"));
     if (error.response && error.response.data) {
     } else {
     }
@@ -61,16 +64,34 @@ export const executeAction = (action) => async (dispatch) => {
   }
 };
 
-export const spawnAsset = (completeImageName) => async (dispatch) => {
-  try {
-    console.log("completeImageName", completeImageName);
-    const queryParams = getQueryParams();
-    const url = `/backend/asset/spawn?${queryParams}`;
-    const response = await axios.post(url, { completeImageName });
+export const spawnFromSpawnedAsset =
+  (completeImageName) => async (dispatch) => {
+    try {
+      const queryParams = getQueryParams();
+      const url = `/backend/asset/spawn-from-spawned-asset?${queryParams}`;
+      const response = await axios.post(url, { completeImageName });
 
-    // if (response.status === 200) {
-    //   // dispatch(getAsset());
-    // }
+      if (response.status === 200) {
+        dispatch(setSpawnSuccess(response?.data?.spawnSuccess));
+      }
+    } catch (error) {
+      dispatch(setError("There was an error while spawning the asset"));
+      if (error.response && error.response.data) {
+      } else {
+      }
+      return false;
+    }
+  };
+
+export const getIsMyAssetSpawned = (completeImageName) => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/asset/is-my-asset-spawned?${queryParams}`;
+    const response = await axios.get(url, { completeImageName });
+
+    if (response.status === 200) {
+      dispatch(setIsAssetSpawnedInWorld());
+    }
   } catch (error) {
     dispatch(setError("There was an error while spawning the asset"));
     if (error.response && error.response.data) {
@@ -82,7 +103,6 @@ export const spawnAsset = (completeImageName) => async (dispatch) => {
 
 export const pickupAsset = (isSpawnedDroppedAsset) => async (dispatch) => {
   try {
-    console.log("isSpawnedDroppedAsset pickupAsset", isSpawnedDroppedAsset);
     const queryParams = getQueryParams();
     const url = `/backend/asset/pickup?${queryParams}&isSpawnedDroppedAsset=${isSpawnedDroppedAsset}`;
     const response = await axios.post(url);
@@ -99,6 +119,34 @@ export const pickupAsset = (isSpawnedDroppedAsset) => async (dispatch) => {
   }
 };
 
+export const pickUpAllAssets = () => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/asset/pickup-all-assets?${queryParams}`;
+    const response = await axios.post(url);
+  } catch (error) {
+    dispatch(setError("There was an error while picking up all assets"));
+    if (error.response && error.response.data) {
+    } else {
+    }
+    return false;
+  }
+};
+
+export const moveToAsset = () => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/asset/move-to-asset?${queryParams}`;
+
+    const response = await axios.post(url);
+  } catch (error) {
+    console.error("error", error);
+    if (error.response && error.response.data) {
+    } else {
+    }
+  }
+};
+
 export const getDroppedAsset = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
@@ -108,6 +156,24 @@ export const getDroppedAsset = () => async (dispatch) => {
 
     if (response.status === 200) {
       dispatch(setDroppedAsset(response?.data?.droppedAsset));
+    }
+  } catch (error) {
+    console.error("error", error);
+    if (error.response && error.response.data) {
+    } else {
+    }
+  }
+};
+
+export const getDroppedAssetAndVisitor = () => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/dropped-asset-and-visitor?${queryParams}`;
+
+    const response = await axios.get(url);
+
+    if (response.status === 200) {
+      dispatch(setDroppedAssetAndVisitor(response?.data));
     }
   } catch (error) {
     console.error("error", error);

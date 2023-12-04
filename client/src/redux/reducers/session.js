@@ -4,13 +4,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   visitor: null,
   droppedAsset: null,
-  startDroppedAsset: null,
-  questionAsset: null,
-  leaderboard: null,
-  allQuestionAssets: null,
-  questionsAnswered: null,
-  startTimestamp: null,
-  setGameResetFlag: null,
+  isAssetSpawnedInWorld: null,
+  spawnedAsset: null,
+  spawnSuccess: true,
   error: null,
 };
 
@@ -21,35 +17,22 @@ const reducers = {
   setDroppedAsset: (state, action) => {
     state.droppedAsset = action.payload;
   },
-  setLeaderboard: (state, action) => {
-    state.leaderboard = action.payload;
-  },
-  setQuestionsAnswered: (state, action) => {
-    state.questionsAnswered = action.payload;
-  },
-  setStartTimestamp: (state, action) => {
-    state.startTimestamp = action.payload;
-  },
-  setEndTimestamp: (state, action) => {
-    state.endTimestamp = action.payload;
-  },
-  setStartDroppedAsset: (state, action) => {
-    state.startDroppedAsset = action.payload;
-  },
-  setQuestionDroppedAsset: (state, action) => {
-    state.questionDroppedAsset = action.payload;
-  },
-  setAllQuestions: (state, action) => {
-    state.allQuestions = action.payload;
-  },
-  setQuestionAsset: (state, action) => {
-    state.questionAsset = action.payload;
-  },
-  setGameResetFlag: (state, action) => {
-    state.gameResetFlag = action.payload;
+  setDroppedAssetAndVisitor: (state, action) => {
+    state.droppedAsset = action.payload.droppedAsset;
+    state.visitor = action.payload.visitor;
+    state.isAssetSpawnedInWorld = action.payload.isAssetSpawnedInWorld;
+    state.spawnedAsset = action.payload.spawnedAsset;
   },
   setInPrivateZone: (state, action) => {
     state.inPrivateZone = action.payload;
+  },
+  setIsAssetSpawnedInWorld: (state, action) => {
+    state.isAssetSpawnedInWorld = action.payload;
+  },
+  setSpawnSuccess: (state, action) => {
+    state.spawnSuccess = action.payload.spawnSuccess;
+    state.isAssetSpawnedInWorld = action.payload.isAssetSpawnedInWorld;
+    state.spawnedAsset = action.payload.spawnedAsset;
   },
   setError: (state, action) => {
     state.error = action.payload;

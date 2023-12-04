@@ -13,6 +13,7 @@ import { fileURLToPath } from "url";
 checkEnvVariables();
 const PORT = process.env.PORT || 3000;
 const app = express();
+const version = "6.0";
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -20,6 +21,10 @@ app.use(cors());
 app.use(requestID());
 
 app.use("/backend", router);
+
+app.get("/", (req, res) => {
+  return res.send(`Server is running... ${version}`);
+});
 
 if (process.env.NODE_ENV === "production") {
   // Node serves the files for the React app
@@ -34,5 +39,5 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.listen(PORT, () => {
-  console.info(`Server listening on ${PORT}, version 1.0`);
+  console.info(`Server listening on ${PORT}, version ${version}`);
 });

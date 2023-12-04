@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { Toaster } from 'react-hot-toast';
 import { Auth0Provider } from "@auth0/auth0-react";
 import "./pages/App.scss";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import store from './redux/store';
 

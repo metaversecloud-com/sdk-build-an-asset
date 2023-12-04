@@ -10,7 +10,7 @@ export const spawn = async (req, res) => {
     const port = req.port;
 
     if (host === "localhost") {
-      BASE_URL = `${protocol}://sdk-build-an-asset.topia-rtsdk.com`;
+      BASE_URL = `https://snowman-dev-topia.topia-rtsdk.com`;
     } else {
       BASE_URL = `${protocol}://${host}`;
     }
@@ -21,6 +21,7 @@ export const spawn = async (req, res) => {
       interactiveNonce,
       urlSlug,
       visitorId,
+      uniqueName,
     } = req.query;
 
     const { completeImageName } = req.body;
@@ -38,17 +39,60 @@ export const spawn = async (req, res) => {
       visitorId,
     };
 
-    const visitor = await Visitor.get(visitorId, urlSlug, {
+    const visitor = Visitor.create(visitorId, urlSlug, { credentials });
+
+    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
       credentials,
     });
 
-    await visitor.fetchDataObject();
+    await Promise.all([
+      droppedAsset.fetchDroppedAssetById(),
+      droppedAsset.fetchDataObject(),
+      visitor.fetchVisitor(),
+      visitor.fetchDataObject(),
+    ]);
+
+    // if (
+    //   visitor?.privateZoneId != droppedAsset?.id &&
+    //   visitor?.privateZoneId != droppedAsset?.dataObject?.parentAssetId
+    // ) {
+    //   return res.json({ spawnSuccess: false, success: false });
+    // }
+
+    // snowman placa x:0 y:200
+    // superior direita: x 600   y -500
+    // superior esquerda x: -600
+    const world = await World.create(urlSlug, { credentials });
+    const background = (
+      await world.fetchDroppedAssetsWithUniqueName({
+        uniqueName: `snowman-background`,
+      })
+    )?.[0];
+
+    const spawnPosition = getRandomPosition({
+      x: background?.position?.x,
+      y: background?.position?.y,
+    });
 
     await removeAllUserAssets(urlSlug, visitor, credentials);
 
-    await dropImageAsset({ urlSlug, credentials, visitor, req });
+    const spawnedAsset = await dropImageAsset({
+      urlSlug,
+      credentials,
+      visitor,
+      req,
+      completeImageName,
+      uniqueName,
+      spawnPosition,
+    });
 
-    return res.json({ success: true });
+    return res.json({
+      spawnSuccess: true,
+      success: true,
+      isAssetSpawnedInWorld: true,
+      completeImageName,
+      spawnedAsset,
+    });
   } catch (error) {
     logger.error({
       error,
@@ -56,7 +100,9 @@ export const spawn = async (req, res) => {
       functionName: "spawn",
       req,
     });
-    return res.status(500).send({ error: error?.message, success: false });
+    return res
+      .status(500)
+      .send({ error: error?.message, spawnSuccess: false, success: false });
   }
 };
 
@@ -65,7 +111,7 @@ async function removeAllUserAssets(urlSlug, visitor, credentials) {
 
   try {
     const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: `assetSystem-${visitor?.username}`,
+      uniqueName: `assetSystem-${visitor?.profileId}`,
     });
 
     if (spawnedAssets && spawnedAssets.length) {
@@ -81,37 +127,49 @@ async function removeAllUserAssets(urlSlug, visitor, credentials) {
   }
 }
 
-async function dropImageAsset({ urlSlug, credentials, visitor, req }) {
+async function dropImageAsset({
+  urlSlug,
+  credentials,
+  visitor,
+  req,
+  completeImageName,
+  uniqueName: parentUniqueName,
+  spawnPosition,
+}) {
   const { visitorId, interactiveNonce, interactivePublicKey } = credentials;
 
   const { assetImgUrlLayer0, assetImgUrlLayer1 } = getAssetImgUrl(req);
 
   const { moveTo, username } = visitor;
   const { x, y } = moveTo;
-  const position = {
-    x: x + 100,
-    y: y,
-  };
-  const uniqueName = `assetSystem-${username}`;
+
+  const spawnedAssetUniqueName = `assetSystem-${visitor?.profileId}`;
 
   const asset = await Asset.create(process.env.IMG_ASSET_ID, { credentials });
 
   const assetSpawnedDroppedAsset = await DroppedAsset.drop(asset, {
-    position,
-    uniqueName,
+    position: spawnPosition,
+    uniqueName: spawnedAssetUniqueName,
     urlSlug,
   });
 
   await assetSpawnedDroppedAsset?.updateDataObject({
     profileId: visitor?.profileId,
+    completeImageName,
+    parentAssetId: credentials?.assetId,
+    parentUniqueName,
   });
+
+  const modifiedName = username.replace(/ /g, "%20");
+
+  const clickableLink = `${BASE_URL}/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
 
   await assetSpawnedDroppedAsset?.updateClickType({
     clickType: "link",
-    clickableLink: `${BASE_URL}/asset-type/spawned?visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetSpawnedDroppedAsset?.id}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}`,
-    clickableLinkTitle: "Generated Asset",
-    clickableDisplayTextDescription: "Generated Asset",
-    clickableDisplayTextHeadline: "Generated Asset",
+    clickableLink,
+    clickableLinkTitle: "Snowman",
+    clickableDisplayTextDescription: "Snowman",
+    clickableDisplayTextHeadline: "Snowman",
     isOpenLinkInDrawer: true,
   });
 
@@ -130,8 +188,18 @@ async function dropImageAsset({ urlSlug, credentials, visitor, req }) {
 
 function getAssetImgUrl(req) {
   const { completeImageName } = req.body;
-  const assetImgUrlLayer0 = `${BASE_URL}/assets/output/${completeImageName}`;
-  // assetImgUrlLayer1 = assetImgUrlLayer0;
+  const assetImgUrlLayer0 = `${BASE_URL}/assets/snowman/output/${completeImageName}`;
   const assetImgUrlLayer1 = null;
   return { assetImgUrlLayer0, assetImgUrlLayer1 };
+}
+
+function getRandomPosition(position) {
+  const randomX = Math.floor(Math.random() * 1201) - 600;
+
+  const randomY = -(Math.floor(Math.random() * 601) + 100);
+
+  return {
+    x: position.x + randomX,
+    y: position.y + randomY,
+  };
 }

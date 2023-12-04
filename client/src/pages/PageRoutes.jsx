@@ -5,13 +5,14 @@ import { history } from "../redux/store";
 import { Route, Routes } from "react-router-dom";
 
 import Home from "./Home";
+import Spawned from "./Spawned/Spawned";
 
 const PageRoutes = () => {
   return (
     <Router history={history}>
       <Routes>
-        <Route path="/" element={<div>Build-An-Asset is running...</div>} />
         <Route path="/home" element={<Home />} />
+        <Route path="/spawned/img-name/:imgName/visitor-name/:visitorName" element={<Spawned />} />
       </Routes>
     </Router>
   );
