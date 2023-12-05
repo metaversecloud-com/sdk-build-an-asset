@@ -138,7 +138,7 @@ async function dropImageAsset({
 }) {
   const { visitorId, interactiveNonce, interactivePublicKey } = credentials;
 
-  const { assetImgUrlLayer0, assetImgUrlLayer1 } = getAssetImgUrl(req);
+  const { bottomLayer, toplayer } = getAssetImgUrl(req);
 
   const { moveTo, username } = visitor;
   const { x, y } = moveTo;
@@ -178,25 +178,22 @@ async function dropImageAsset({
     interactivePublicKey: process.env.INTERACTIVE_KEY,
   });
 
-  await assetSpawnedDroppedAsset?.updateWebImageLayers(
-    assetImgUrlLayer0,
-    assetImgUrlLayer1
-  );
+  await assetSpawnedDroppedAsset?.updateWebImageLayers(bottomLayer, toplayer);
 
   return assetSpawnedDroppedAsset;
 }
 
 function getAssetImgUrl(req) {
   const { completeImageName } = req.body;
-  const assetImgUrlLayer0 = `${BASE_URL}/assets/snowman/output/${completeImageName}`;
-  const assetImgUrlLayer1 = null;
-  return { assetImgUrlLayer0, assetImgUrlLayer1 };
+  const bottomLayer = null;
+  const toplayer = `${BASE_URL}/assets/snowman/output/${completeImageName}`;
+  return { bottomLayer, toplayer };
 }
 
 function getRandomPosition(position) {
   const randomX = Math.floor(Math.random() * 1201) - 600;
 
-  const randomY = -(Math.floor(Math.random() * 601) + 100);
+  const randomY = -(Math.floor(Math.random() * 1301) - 750);
 
   return {
     x: position.x + randomX,
