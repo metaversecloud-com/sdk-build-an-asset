@@ -1,0 +1,20 @@
+.footer-fixed {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  width: 320px;
+  transform: translateX(-50%);
+}
+
+
+.vertically-centered-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 80vh;
+  max-width: 352px;
+  margin: 0 auto;
+  padding-left: 16px;
+  padding-right: 16px;
+  text-align: center;
+}
