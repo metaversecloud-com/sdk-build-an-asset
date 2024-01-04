@@ -71,6 +71,8 @@ export const get = async (req, res) => {
       credentials
     );
 
+    await visitor.setDataObject({ asset: null });
+
     return res.json({
       asset: visitor?.dataObject?.asset,
       visitor,

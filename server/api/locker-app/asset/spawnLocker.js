@@ -3,7 +3,7 @@ import { logger } from "../../../logs/logger.js";
 
 let BASE_URL;
 
-export const spawn = async (req, res) => {
+export const spawnLocker = async (req, res) => {
   try {
     const protocol = process.env.INSTANCE_PROTOCOL;
     const host = req.host;
@@ -143,7 +143,7 @@ async function dropImageAsset({
   const { moveTo, username } = visitor;
   const { x, y } = moveTo;
 
-  const spawnedAssetUniqueName = `assetSystem-${visitor?.profileId}`;
+  const spawnedAssetUniqueName = `lockerSystem-${visitor?.profileId}`;
 
   const asset = await Asset.create(process.env.IMG_ASSET_ID, { credentials });
 
@@ -167,9 +167,9 @@ async function dropImageAsset({
   await assetSpawnedDroppedAsset?.updateClickType({
     clickType: "link",
     clickableLink,
-    clickableLinkTitle: "Snowman",
-    clickableDisplayTextDescription: "Snowman",
-    clickableDisplayTextHeadline: "Snowman",
+    clickableLinkTitle: "Locker",
+    clickableDisplayTextDescription: "Locker",
+    clickableDisplayTextHeadline: "Locker",
     isOpenLinkInDrawer: true,
   });
 
@@ -186,7 +186,7 @@ async function dropImageAsset({
 function getAssetImgUrl(req) {
   const { completeImageName } = req.body;
   const bottomLayer = null;
-  const toplayer = `${BASE_URL}/assets/snowman/output/${completeImageName}`;
+  const toplayer = `${BASE_URL}/assets/locker/output/${completeImageName}`;
   return { bottomLayer, toplayer };
 }
 

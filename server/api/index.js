@@ -8,3 +8,6 @@ export * from "./snowman-app/asset/create.js";
 export * from "./snowman-app/asset/deleteAll.js";
 export * from "./snowman-app/asset/pickupAllAssets.js";
 export * from "./snowman-app/asset/moveToAsset.js";
+
+// Locker
+export * from "./locker-app/asset/spawnLocker.js";

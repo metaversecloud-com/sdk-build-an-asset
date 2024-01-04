@@ -43,6 +43,8 @@ export const getDroppedAssetAndVisitor = async (req, res) => {
       spawnedAsset = spawnedAssets?.[0];
     }
 
+    // await visitor.setDataObject({ asset: null });
+
     return res.json({
       droppedAsset,
       visitor,
