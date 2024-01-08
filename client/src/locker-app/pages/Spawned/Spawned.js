@@ -6,14 +6,16 @@ import {
   getDroppedAssetAndVisitor,
   getIsMyAssetSpawned,
   moveToAsset,
-} from "../../../redux/actions/session";
-import EditSnowman from "../../components/EditSnowman/EditSnowman";
+} from "../../../redux/actions/locker";
+import EditLocker from "../../components/EditLocker/EditLocker";
+import AdminView from "../Admin/AdminView";
+import Gear from "../../pages/Admin/Gear";
 import "./Spawned.scss";
 
 function Spawned() {
   const { visitorName, imgName } = useParams();
   const dispatch = useDispatch();
-  const imgPath = `/assets/snowman/output/${imgName}`;
+  const imgPath = `/assets/locker/output/${imgName}`;
 
   let isAssetOwner = false;
 
@@ -23,6 +25,7 @@ function Spawned() {
 
   const visitor = useSelector((state) => state?.session?.visitor);
   const droppedAsset = useSelector((state) => state?.session?.droppedAsset);
+  const [showSettings, setShowSettings] = useState(false);
   const isAssetSpawnedInWorld = useSelector(
     (state) => state?.session?.isAssetSpawnedInWorld
   );
@@ -43,62 +46,44 @@ function Spawned() {
     await dispatch(pickupAsset());
   };
 
-  const handleEditSnowman = () => {
+  const handleEditLocker = async () => {
     setShowCustomizeScreen(true);
   };
 
-  const handleMoveToSnowman = async () => {
-    try {
-      setIsButtonMoveToSnowmanDisabled(true);
-      await dispatch(moveToAsset());
-    } catch (error) {
-      console.error("Error in handleMoveToSnowman:", error);
-    } finally {
-      setIsButtonMoveToSnowmanDisabled(false);
-    }
-  };
+  if (showSettings) {
+    return <AdminView setShowSettings={setShowSettings} />;
+  }
 
-  // if (setShowCustomizeScreen) {
-  //   return (
-  //     <>
-  //       <EditSnowman />
-  //     </>
-  //   );
-  // }
+  if (showCustomizeScreen) {
+    return <EditLocker />;
+  }
 
   return (
     <div className="spawned-wrapper">
+      {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
       <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-        <b>Snowman</b>
+        <b>Locker</b>
       </h2>
-      <img src={imgPath} alt={`Snowman of ${visitorName}`} />
+      <img src={imgPath} alt={`Locker of ${visitorName}`} />
       <div style={{ marginTop: "20px" }}>
         <p>
-          This snowman belongs to <b>{visitorName}</b>!
+          This locker belongs to <b>{visitorName}</b>!
         </p>
       </div>
-      {isAssetOwner ? (
+      {/* {isAssetOwner ? (
         <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-          <button onClick={handlePickupAsset}>Pick up my Snowman</button>
+          <button onClick={handlePickupAsset}>Clear my Locker</button>
         </div>
       ) : (
         ""
-      )}
-      {/* <div style={{ marginBottom: "10px", width: "320px" }}>
-        <button
-          onClick={() => handleEditSnowman()}
-          disabled={isButtonMoveToSnowmanDisabled}
-        >
-          Edit my Snowman
-        </button>
-      </div> */}
+      )} */}
       {isAssetOwner ? (
         <div style={{ width: "320px" }}>
           <button
-            onClick={() => handleMoveToSnowman()}
+            onClick={() => handleEditLocker()}
             disabled={isButtonMoveToSnowmanDisabled}
           >
-            Move to my Snowman
+            Edit Locker
           </button>
         </div>
       ) : (

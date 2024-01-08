@@ -141,8 +141,10 @@ async function dropImageAsset({
   const { bottomLayer, toplayer } = getAssetImgUrl(req);
 
   const { moveTo, username } = visitor;
-  const { x, y } = moveTo;
-
+  // const { x, y } = moveTo;
+  const x = 0;
+  const y = 0;
+  spawnPosition = { x, y };
   const spawnedAssetUniqueName = `lockerSystem-${visitor?.profileId}`;
 
   const asset = await Asset.create(process.env.IMG_ASSET_ID, { credentials });
@@ -162,7 +164,7 @@ async function dropImageAsset({
 
   const modifiedName = username.replace(/ /g, "%20");
 
-  const clickableLink = `${BASE_URL}/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
+  const clickableLink = `${BASE_URL}/locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
 
   await assetSpawnedDroppedAsset?.updateClickType({
     clickType: "link",

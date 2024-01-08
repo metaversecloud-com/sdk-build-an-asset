@@ -6,9 +6,9 @@ import {
   spawnAsset,
   getDroppedAssetAndVisitor,
   getIsMyAssetSpawned,
-  spawnFromSpawnedAsset,
   moveToAsset,
-} from "../../../redux/actions/session";
+  editLocker,
+} from "../../../redux/actions/locker";
 import { Collapse, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,43 +19,16 @@ import {
 import Gear from "../../pages/Admin/Gear";
 import AdminView from "../../pages/Admin/AdminView";
 
-import "./EditSnowman.scss";
+import "./EditLocker.scss";
 
-const accessories = {
-  Body: ["body_0.png", "body_1.png", "body_2.png"],
-  Arms: [
-    "arms_0.png",
-    "arms_1.png",
-    "arms_2.png",
-    "arms_3.png",
-    "arms_4.png",
-    "arms_5.png",
-    "arms_6.png",
-    "arms_7.png",
-    "arms_8.png",
-  ],
-  "Head Covering": [
-    "head_0.png",
-    "head_1.png",
-    "head_2.png",
-    "head_3.png",
-    "head_4.png",
-    "head_5.png",
-    "head_6.png",
-    "head_7.png",
-    "head_8.png",
-  ],
-  Accessories: [
-    "accessories_0.png",
-    "accessories_1.png",
-    "accessories_2.png",
-    "accessories_3.png",
-    "accessories_4.png",
-    "accessories_5.png",
-  ],
+const categories = {
+  LockerBase: ["lockerBase_0.png", "lockerBase_1.png", "lockerBase_2.png"],
+  topRight: ["topRight_0.png", "topRight_1.png", "topRight_2.png"],
+  BottomRight: ["bottomRight_0.png", "bottomRight_1.png", "bottomRight_2.png"],
+  Left: ["left_0.png", "left_1.png", "left_2.png"],
 };
 
-function EditSnowman() {
+function EditLocker() {
   const dispatch = useDispatch();
 
   const visitor = useSelector((state) => state?.session?.visitor);
@@ -66,32 +39,35 @@ function EditSnowman() {
   const spawnSuccess = useSelector((state) => state?.session?.spawnSuccess);
 
   const spawnedAsset = useSelector((state) => state?.session?.spawnedAsset);
+  const droppedAsset = useSelector((state) => state?.session?.droppedAsset);
 
   const [selected, setSelected] = useState({
-    Body: "",
-    Arms: "",
-    "Head Covering": "",
-    Accessories: "",
+    LockerBase: "",
+    topRight: "",
+    BottomRight: "",
+    Left: "",
   });
   const [loading, setLoading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [isButtonMoveToSnowmanDisabled, setIsButtonMoveToSnowmanDisabled] =
+  const [isButtonMoveToLockerDisabled, setIsButtonMoveToLockerDisabled] =
     useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [completeImageName, setCompleteImageName] = useState("");
   const [showDefaultScreen, setShowDefaultScreen] = useState(false);
-  const [preview, setPreview] = useState("/assets/snowman/snowman.png");
+  const [isButtonSaveLockerDisabled, setIsButtonSaveLockerDisabled] =
+    useState(false);
+  const [preview, setPreview] = useState("/assets/locker/lockerBase_0.png");
   const [openCategories, setOpenCategories] = useState({
-    Body: false,
-    Arms: false,
-    "Head Covering": false,
-    Accessories: false,
+    LockerBase: false,
+    topRight: false,
+    BottomRight: false,
+    Left: false,
   });
 
   const validateSelection = () => {
     const errors = {};
-    Object.keys(accessories).forEach((category) => {
+    Object.keys(categories).forEach((category) => {
       if (!selected[category]) {
         errors[category] = true;
       }
@@ -101,16 +77,16 @@ function EditSnowman() {
   };
 
   const allCategoriesSelected = () => {
-    return Object.keys(accessories).every((category) => selected[category]);
+    return Object.keys(categories).every((category) => selected[category]);
   };
 
   const toggleCategory = (category) => {
     setOpenCategories((prev) => {
       const newCategories = {
-        Body: false,
-        Arms: false,
-        "Head Covering": false,
-        Accessories: false,
+        LockerBase: false,
+        topRight: false,
+        BottomRight: false,
+        Left: false,
       };
       newCategories[category] = !prev[category];
       return newCategories;
@@ -122,7 +98,7 @@ function EditSnowman() {
   };
 
   const isSelectedItem = (type, image) => {
-    return selected[type] === `/assets/snowman/${image}`;
+    return selected[type] === `/assets/locker/${image}`;
   };
 
   useEffect(() => {
@@ -136,15 +112,16 @@ function EditSnowman() {
         const parts = imageName.replace(".png", "").split("_");
 
         const initialSelection = {
-          Body: `/assets/snowman/body_${parts[1]}.png`,
-          Arms: `/assets/snowman/arms_${parts[3]}.png`,
-          "Head Covering": `/assets/snowman/head_${parts[5]}.png`,
-          Accessories: `/assets/snowman/accessories_${parts[7]}.png`,
+          LockerBase: `/assets/locker/lockerBase_${parts[1]}.png`,
+          topRight: `/assets/locker/topRight_${parts[3]}.png`,
+          BottomRight: `/assets/locker/bottomRight_${parts[5]}.png`,
+          Left: `/assets/locker/left_${parts[7]}.png`,
         };
 
         setSelected(initialSelection);
+
         setPreview(
-          `/assets/snowman/output/${spawnedAsset?.dataObject?.completeImageName}`
+          `/assets/locker/output/${spawnedAsset?.dataObject?.completeImageName}`
         );
       }
     };
@@ -152,7 +129,7 @@ function EditSnowman() {
     fetchInitialState();
   }, [dispatch, spawnedAsset?.dataObject?.completeImageName]);
 
-  const updateSnowman = (type, image) => {
+  const updateLocker = (type, image) => {
     try {
       const updatedSelected = { ...selected, [type]: image };
       setSelected(updatedSelected);
@@ -160,12 +137,12 @@ function EditSnowman() {
         .map((key) => updatedSelected[key].split("/").pop().split(".")[0])
         .filter(Boolean);
 
-      if (imageNameParts.length === Object.keys(accessories).length) {
+      if (imageNameParts.length === Object.keys(categories).length) {
         setCompleteImageName(imageNameParts.join("_") + ".png");
       }
 
       const imagesToMerge = [
-        { src: "/assets/snowman/snowman.png", x: 0, y: 0 },
+        { src: "/assets/locker/lockerBase_0.png", x: 0, y: 0 },
         ...Object.values(updatedSelected).map((item) => ({
           src: item,
           x: 0,
@@ -188,11 +165,12 @@ function EditSnowman() {
     setIsButtonDisabled(true);
 
     try {
-      await dispatch(spawnFromSpawnedAsset(completeImageName));
+      await dispatch(spawnAsset(completeImageName));
     } catch (error) {
       console.error("Error sending asset:", error);
     } finally {
       setIsButtonDisabled(false);
+      setShowDefaultScreen(false);
     }
   };
 
@@ -204,20 +182,85 @@ function EditSnowman() {
     );
   }
 
+  if (showSettings) {
+    return <AdminView setShowSettings={setShowSettings} />;
+  }
+
+  const handleEditLocker = async () => {
+    try {
+      setIsButtonSaveLockerDisabled(true);
+      await dispatch(editLocker(completeImageName));
+    } catch (error) {
+      console.error("Error editing locker:", error);
+    } finally {
+      setIsButtonSaveLockerDisabled(false);
+    }
+  };
+
+  const handleMoveToLocker = async () => {
+    try {
+      setIsButtonMoveToLockerDisabled(true);
+      await dispatch(moveToAsset());
+    } catch (error) {
+      console.error("Error in handleMoveToLocker:", error);
+    } finally {
+      setIsButtonMoveToLockerDisabled(false);
+    }
+  };
+
+  // Locker already in world
+  // if (isAssetSpawnedInWorld && !showDefaultScreen) {
+  //   return (
+  //     <>
+  //       <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
+  //         {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
+  //         <div>
+  //           <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
+  //             This is Your Locker!
+  //           </h2>
+  //         </div>
+  //         <div style={{ marginBottom: "20px" }}>
+  //           <img
+  //             src={`/assets/locker/output/${spawnedAsset?.dataObject?.completeImageName}`}
+  //           />
+  //         </div>
+  //         <div style={{ marginBottom: "10px" }}>
+  //           <button
+  //             onClick={() => handleEditLocker()}
+  //             disabled={isButtonMoveToLockerDisabled}
+  //           >
+  //             Edit my Locker
+  //           </button>
+  //         </div>
+  //         <div>
+  //           <button
+  //             onClick={() => handleMoveToLocker()}
+  //             disabled={isButtonMoveToLockerDisabled}
+  //           >
+  //             Move to my Locker
+  //           </button>
+  //         </div>
+  //       </div>
+  //     </>
+  //   );
+  // }
+
+  console.log("isButtonSaveLockerDisabled", isButtonSaveLockerDisabled);
+
   return (
     <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
       {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
       <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-        Build Your Snowman!
+        Build your Locker!
       </h2>
       <img
         src={preview}
-        alt="Snowman Preview"
-        style={{ marginTop: "-20px", marginBottom: "16px" }}
+        alt="Locker Preview"
+        style={{ marginTop: "30px", marginBottom: "30px" }}
         className="img-preview"
       />
 
-      {Object.keys(accessories).map((type) => (
+      {Object.keys(categories).map((type) => (
         <div key={type}>
           <Button
             color=""
@@ -241,10 +284,10 @@ function EditSnowman() {
           </Button>
           <Collapse isOpen={openCategories[type]}>
             <div style={{ marginBottom: "10px" }}>
-              {accessories[type].map((image) => (
+              {categories[type].map((image) => (
                 <img
                   key={image}
-                  src={`/assets/snowman/${image}`}
+                  src={`/assets/locker/${image}`}
                   alt={image}
                   className="img-accessory"
                   style={{
@@ -254,9 +297,7 @@ function EditSnowman() {
                       ? "#f0f0f0"
                       : "transparent",
                   }}
-                  onClick={() =>
-                    updateSnowman(type, `/assets/snowman/${image}`)
-                  }
+                  onClick={() => updateLocker(type, `/assets/locker/${image}`)}
                 />
               ))}
             </div>
@@ -266,7 +307,7 @@ function EditSnowman() {
 
       {Object.keys(validationErrors).length > 0 && (
         <p style={{ color: "red" }}>
-          Please select an item from each category to build the snowman.
+          Please select an item from each category to build the locker.
         </p>
       )}
 
@@ -275,18 +316,18 @@ function EditSnowman() {
           <></>
         ) : (
           <p style={{ color: "red" }}>
-            Move to the snow area to add your snowman!
+            Move to the snow area to add your locker!
           </p>
         )}
         <button
-          onClick={handleSpawnAsset}
-          disabled={!allCategoriesSelected() || isButtonDisabled}
+          onClick={handleEditLocker}
+          disabled={!allCategoriesSelected() || isButtonSaveLockerDisabled}
         >
-          Add Snowman
+          Save
         </button>
       </div>
     </div>
   );
 }
 
-export default EditSnowman;
+export default EditLocker;

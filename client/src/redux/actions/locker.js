@@ -64,6 +64,24 @@ export const spawnAsset = (completeImageName) => async (dispatch) => {
   }
 };
 
+export const editLocker = (completeImageName) => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/locker/asset/spawn?${queryParams}`;
+    const response = await axios.put(url, { completeImageName });
+
+    if (response.status === 200) {
+      dispatch(setSpawnSuccess(response?.data));
+    }
+  } catch (error) {
+    dispatch(setError("There was an error while spawning the asset"));
+    if (error.response && error.response.data) {
+    } else {
+    }
+    return false;
+  }
+};
+
 export const spawnFromSpawnedAsset =
   (completeImageName) => async (dispatch) => {
     try {
@@ -168,7 +186,7 @@ export const getDroppedAsset = () => async (dispatch) => {
 export const getDroppedAssetAndVisitor = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/dropped-asset-and-visitor?${queryParams}`;
+    const url = `/backend/locker/dropped-asset-and-visitor?${queryParams}`;
 
     const response = await axios.get(url);
 

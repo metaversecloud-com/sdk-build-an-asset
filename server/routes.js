@@ -10,6 +10,8 @@ import {
   pickupAllAssets,
   moveToAsset,
   spawnLocker,
+  editLocker,
+  getLockerDroppedAssetAndVisitor,
 } from "./api/index.js";
 import express from "express";
 import { validationMiddleware } from "./middleware/validation.js";
@@ -42,5 +44,12 @@ router.post("/asset/pickup", validationMiddleware, pickup);
 
 // Locker
 router.post("/locker/asset/spawn", validationMiddleware, spawnLocker);
+router.put("/locker/asset/spawn", validationMiddleware, editLocker);
+
+router.get(
+  "/locker/dropped-asset-and-visitor",
+  validationMiddleware,
+  getLockerDroppedAssetAndVisitor
+);
 
 export default router;

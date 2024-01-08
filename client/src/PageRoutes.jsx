@@ -8,6 +8,7 @@ import LockerHome from "./locker-app/pages/Home";
 import Home from "./snowman-app/pages/Home";
 import SnowmanHome from "./snowman-app/pages/Home";
 import Spawned from "./snowman-app/pages/Spawned/Spawned";
+import SpawnedLocker from "./locker-app/pages/Spawned/Spawned";
 
 const PageRoutes = () => {
   return (
@@ -15,6 +16,7 @@ const PageRoutes = () => {
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/spawned/img-name/:imgName/visitor-name/:visitorName" element={<Spawned />} />
+        <Route path="/locker/spawned/img-name/:imgName/visitor-name/:visitorName" element={<SpawnedLocker />} />
         <Route path="/snowman" element={<SnowmanHome />} />
         <Route path="/locker" element={<LockerHome />} />
       </Routes>
