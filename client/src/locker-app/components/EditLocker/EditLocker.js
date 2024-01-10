@@ -22,10 +22,14 @@ import AdminView from "../../pages/Admin/AdminView";
 import "./EditLocker.scss";
 
 const categories = {
-  LockerBase: ["lockerBase_0.png", "lockerBase_1.png", "lockerBase_2.png"],
-  topRight: ["topRight_0.png", "topRight_1.png", "topRight_2.png"],
-  BottomRight: ["bottomRight_0.png", "bottomRight_1.png", "bottomRight_2.png"],
-  Left: ["left_0.png", "left_1.png", "left_2.png"],
+  Wallpaper: ["lockerBase_0.png", "lockerBase_1.png", "lockerBase_2.png"],
+  "Top Shelf": ["topRight_0.png", "topRight_1.png", "topRight_2.png"],
+  "Bottom Shelf": [
+    "bottomRight_0.png",
+    "bottomRight_1.png",
+    "bottomRight_2.png",
+  ],
+  Door: ["left_0.png", "left_1.png", "left_2.png"],
 };
 
 function EditLocker() {
@@ -42,10 +46,10 @@ function EditLocker() {
   const droppedAsset = useSelector((state) => state?.session?.droppedAsset);
 
   const [selected, setSelected] = useState({
-    LockerBase: "",
-    topRight: "",
-    BottomRight: "",
-    Left: "",
+    Wallpaper: "",
+    "Top Shelf": "",
+    "Bottom Shelf": "",
+    Door: "",
   });
   const [loading, setLoading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -57,12 +61,12 @@ function EditLocker() {
   const [showDefaultScreen, setShowDefaultScreen] = useState(false);
   const [isButtonSaveLockerDisabled, setIsButtonSaveLockerDisabled] =
     useState(false);
-  const [preview, setPreview] = useState("/assets/locker/lockerBase_0.png");
+  const [preview, setPreview] = useState("/assets/locker/unclaimedLocker.png");
   const [openCategories, setOpenCategories] = useState({
-    LockerBase: false,
-    topRight: false,
-    BottomRight: false,
-    Left: false,
+    Wallpaper: false,
+    "Top Shelf": false,
+    "Bottom Shelf": false,
+    Door: false,
   });
 
   const validateSelection = () => {
@@ -83,10 +87,10 @@ function EditLocker() {
   const toggleCategory = (category) => {
     setOpenCategories((prev) => {
       const newCategories = {
-        LockerBase: false,
-        topRight: false,
-        BottomRight: false,
-        Left: false,
+        Wallpaper: false,
+        "Top Shelf": false,
+        "Bottom Shelf": false,
+        Door: false,
       };
       newCategories[category] = !prev[category];
       return newCategories;
@@ -112,10 +116,10 @@ function EditLocker() {
         const parts = imageName.replace(".png", "").split("_");
 
         const initialSelection = {
-          LockerBase: `/assets/locker/lockerBase_${parts[1]}.png`,
-          topRight: `/assets/locker/topRight_${parts[3]}.png`,
-          BottomRight: `/assets/locker/bottomRight_${parts[5]}.png`,
-          Left: `/assets/locker/left_${parts[7]}.png`,
+          Wallpaper: `/assets/locker/lockerBase_${parts[1]}.png`,
+          "Top Shelf": `/assets/locker/topRight_${parts[3]}.png`,
+          "Bottom Shelf": `/assets/locker/bottomRight_${parts[5]}.png`,
+          Door: `/assets/locker/left_${parts[7]}.png`,
         };
 
         setSelected(initialSelection);
@@ -279,7 +283,7 @@ function EditLocker() {
             Select {type}
             <FontAwesomeIcon
               icon={openCategories[type] ? faChevronUp : faChevronDown}
-              style={{ marginLeft: "10px" }}
+              style={{ marginDoor: "10px" }}
             />
           </Button>
           <Collapse isOpen={openCategories[type]}>

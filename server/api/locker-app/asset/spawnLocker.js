@@ -24,14 +24,6 @@ export const spawnLocker = async (req, res) => {
       uniqueName,
     } = req.query;
 
-    const { completeImageName } = req.body;
-
-    if (!completeImageName) {
-      return res.status(400).json({
-        msg: "Input data missing. Please fill the the follow field: completeImageName",
-      });
-    }
-
     const credentials = {
       assetId,
       interactiveNonce,
@@ -74,14 +66,11 @@ export const spawnLocker = async (req, res) => {
       y: background?.position?.y,
     });
 
-    await removeAllUserAssets(urlSlug, visitor, credentials);
-
     const spawnedAsset = await dropImageAsset({
       urlSlug,
       credentials,
       visitor,
       req,
-      completeImageName,
       uniqueName,
       spawnPosition,
     });
@@ -90,7 +79,6 @@ export const spawnLocker = async (req, res) => {
       spawnSuccess: true,
       success: true,
       isAssetSpawnedInWorld: true,
-      completeImageName,
       spawnedAsset,
     });
   } catch (error) {
@@ -186,9 +174,8 @@ async function dropImageAsset({
 }
 
 function getAssetImgUrl(req) {
-  const { completeImageName } = req.body;
   const bottomLayer = null;
-  const toplayer = `${BASE_URL}/assets/locker/output/${completeImageName}`;
+  const toplayer = `${BASE_URL}/assets/locker/output/unclaimedLocker.png`;
   return { bottomLayer, toplayer };
 }
 

@@ -12,6 +12,7 @@ import {
   spawnLocker,
   editLocker,
   getLockerDroppedAssetAndVisitor,
+  claimLocker,
 } from "./api/index.js";
 import express from "express";
 import { validationMiddleware } from "./middleware/validation.js";
@@ -45,6 +46,7 @@ router.post("/asset/pickup", validationMiddleware, pickup);
 // Locker
 router.post("/locker/asset/spawn", validationMiddleware, spawnLocker);
 router.put("/locker/asset/spawn", validationMiddleware, editLocker);
+router.post("/locker/claim", validationMiddleware, claimLocker);
 
 router.get(
   "/locker/dropped-asset-and-visitor",

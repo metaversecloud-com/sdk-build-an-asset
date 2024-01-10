@@ -82,6 +82,24 @@ export const editLocker = (completeImageName) => async (dispatch) => {
   }
 };
 
+export const claimLocker = (completeImageName) => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/locker/claim?${queryParams}`;
+    const response = await axios.post(url);
+
+    if (response.status === 200) {
+      dispatch(setSpawnSuccess(response?.data));
+    }
+  } catch (error) {
+    dispatch(setError("There was an error while spawning the asset"));
+    if (error.response && error.response.data) {
+    } else {
+    }
+    return false;
+  }
+};
+
 export const spawnFromSpawnedAsset =
   (completeImageName) => async (dispatch) => {
     try {
@@ -141,6 +159,20 @@ export const pickUpAllAssets = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
     const url = `/backend/asset/pickup-all-assets?${queryParams}`;
+    const response = await axios.post(url);
+  } catch (error) {
+    dispatch(setError("There was an error while picking up all assets"));
+    if (error.response && error.response.data) {
+    } else {
+    }
+    return false;
+  }
+};
+
+export const spawnLocker = () => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/locker/asset/spawn?${queryParams}`;
     const response = await axios.post(url);
   } catch (error) {
     dispatch(setError("There was an error while picking up all assets"));

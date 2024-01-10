@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
-import { getDroppedAssetAndVisitor } from "../../redux/actions/locker";
+import {
+  getDroppedAssetAndVisitor,
+  claimLocker,
+} from "../../redux/actions/locker";
 import Gear from "./Admin/Gear";
 import AdminView from "./Admin/AdminView";
 
@@ -60,6 +63,10 @@ function Home() {
     fetchInitialState();
   }, [dispatch, spawnedAsset?.dataObject?.completeImageName]);
 
+  const handleClaimLocker = () => {
+    dispatch(claimLocker());
+  };
+
   if (loading) {
     return (
       <div className="loader">
@@ -99,7 +106,9 @@ function Home() {
       )}
 
       <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-        <button disabled={isButtonDisabled}>Claim Locker</button>
+        <button disabled={isButtonDisabled} onClick={() => handleClaimLocker()}>
+          Claim Locker
+        </button>
       </div>
     </div>
   );

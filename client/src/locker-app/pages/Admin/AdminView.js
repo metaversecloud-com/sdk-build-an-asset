@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // import penToSquareSvg from "../../assets/pen-to-square-regular.svg";
-import { pickUpAllAssets } from "../../../redux/actions/session";
+import { pickUpAllAssets, spawnLocker } from "../../../redux/actions/locker";
 import backArrow from "../../../assets/icons/backArrow.svg";
 import "./AdminView.scss";
 
@@ -9,6 +9,7 @@ function AdminView({ setShowSettings }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [pickupButtonClicked, setPickupButtonClicked] = useState(false);
+  const [spawnButtonClicked, setSpawnButtonClicked] = useState(false);
   const [resetButtonClicked, setResetButtonClicked] = useState(false);
 
   async function handlePickup() {
@@ -19,6 +20,17 @@ function AdminView({ setShowSettings }) {
       console.error(error);
     } finally {
       setPickupButtonClicked(false);
+    }
+  }
+
+  async function handleSpawnLocker() {
+    try {
+      setSpawnButtonClicked(true);
+      await dispatch(spawnLocker());
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setSpawnButtonClicked(false);
     }
   }
 
@@ -44,6 +56,16 @@ function AdminView({ setShowSettings }) {
         <h2>Settings</h2>
 
         <div className="footer-fixed" style={{ color: "#00A76F" }}>
+          <button
+            onClick={() => {
+              handleSpawnLocker();
+            }}
+            className="start-btn btn-danger"
+            disabled={spawnButtonClicked}
+            style={{ marginBottom: "5px" }}
+          >
+            {spawnButtonClicked ? "Spawning locker..." : "Spawn Locker"}
+          </button>
           <button
             onClick={() => {
               handlePickup();
