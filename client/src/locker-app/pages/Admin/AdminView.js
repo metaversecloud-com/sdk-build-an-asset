@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // import penToSquareSvg from "../../assets/pen-to-square-regular.svg";
-import { pickUpAllAssets, spawnLocker } from "../../../redux/actions/locker";
+import {
+  pickUpAllAssets,
+  spawnLocker,
+  renameLocker,
+} from "../../../redux/actions/locker";
 import backArrow from "../../../assets/icons/backArrow.svg";
 import "./AdminView.scss";
 
@@ -11,6 +15,7 @@ function AdminView({ setShowSettings }) {
   const [pickupButtonClicked, setPickupButtonClicked] = useState(false);
   const [spawnButtonClicked, setSpawnButtonClicked] = useState(false);
   const [resetButtonClicked, setResetButtonClicked] = useState(false);
+  const [renameButtonClicked, setRenameButtonClicked] = useState(false);
 
   async function handlePickup() {
     try {
@@ -31,6 +36,17 @@ function AdminView({ setShowSettings }) {
       console.error(error);
     } finally {
       setSpawnButtonClicked(false);
+    }
+  }
+
+  async function handleRenameLocker() {
+    try {
+      setRenameButtonClicked(true);
+      await dispatch(renameLocker());
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setRenameButtonClicked(false);
     }
   }
 
@@ -56,6 +72,16 @@ function AdminView({ setShowSettings }) {
         <h2>Settings</h2>
 
         <div className="footer-fixed" style={{ color: "#00A76F" }}>
+          <button
+            onClick={() => {
+              handleRenameLocker();
+            }}
+            className="start-btn btn-danger"
+            disabled={renameButtonClicked}
+            style={{ marginBottom: "5px" }}
+          >
+            {spawnButtonClicked ? "Renaming locker..." : "Rename Locker"}
+          </button>
           <button
             onClick={() => {
               handleSpawnLocker();

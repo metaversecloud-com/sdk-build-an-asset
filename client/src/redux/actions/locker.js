@@ -183,6 +183,20 @@ export const spawnLocker = () => async (dispatch) => {
   }
 };
 
+export const renameLocker = () => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/locker/rename?${queryParams}`;
+    const response = await axios.post(url);
+  } catch (error) {
+    dispatch(setError("There was an error while picking up all assets"));
+    if (error.response && error.response.data) {
+    } else {
+    }
+    return false;
+  }
+};
+
 export const moveToAsset = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();

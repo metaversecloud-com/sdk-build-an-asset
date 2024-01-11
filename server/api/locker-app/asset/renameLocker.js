@@ -3,7 +3,7 @@ import { logger } from "../../../logs/logger.js";
 
 let BASE_URL;
 
-export const spawnLocker = async (req, res) => {
+export const renameLocker = async (req, res) => {
   try {
     const protocol = process.env.INSTANCE_PROTOCOL;
     const host = req.host;
@@ -45,6 +45,8 @@ export const spawnLocker = async (req, res) => {
       visitor.fetchDataObject(),
     ]);
 
+    const position = droppedAsset.position;
+
     // if (
     //   visitor?.privateZoneId != droppedAsset?.id &&
     //   visitor?.privateZoneId != droppedAsset?.dataObject?.parentAssetId
@@ -67,10 +69,10 @@ export const spawnLocker = async (req, res) => {
     //   y: background?.position?.y,
     // });
 
-    const spawnPosition = getRandomPosition({
-      x: 0,
-      y: 0,
-    });
+    const spawnPosition = {
+      x: position.x,
+      y: position.y - 20,
+    };
 
     const spawnedAsset = await dropImageAsset({
       urlSlug,
@@ -81,6 +83,8 @@ export const spawnLocker = async (req, res) => {
       uniqueName,
       spawnPosition,
     });
+
+    await droppedAsset.deleteDroppedAsset();
 
     return res.json({
       spawnSuccess: true,
@@ -110,15 +114,11 @@ async function dropImageAsset({
   uniqueName: parentUniqueName,
   spawnPosition,
 }) {
-  const { visitorId, interactiveNonce, interactivePublicKey } = credentials;
-
   const { bottomLayer, toplayer } = getAssetImgUrl(req);
 
   const { moveTo, username } = visitor;
   // const { x, y } = moveTo;
-  const x = 0;
-  const y = 0;
-  spawnPosition = { x, y };
+
   const spawnedAssetUniqueName = `lockerSystem-${visitor?.profileId}`;
 
   const asset = await Asset.create(process.env.IMG_ASSET_ID, { credentials });
@@ -129,16 +129,9 @@ async function dropImageAsset({
     urlSlug,
   });
 
-  await assetSpawnedDroppedAsset?.updateDataObject({
-    profileId: visitor?.profileId,
-    completeImageName,
-    parentAssetId: credentials?.assetId,
-    parentUniqueName,
-  });
-
   const modifiedName = username.replace(/ /g, "%20");
 
-  const clickableLink = `${BASE_URL}/locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
+  const clickableLink = `${BASE_URL}/locker`;
 
   await assetSpawnedDroppedAsset?.updateClickType({
     clickType: "link",
@@ -160,18 +153,7 @@ async function dropImageAsset({
 }
 
 function getAssetImgUrl(req) {
-  const bottomLayer = null;
-  const toplayer = `${BASE_URL}/assets/locker/output/unclaimedLocker.png`;
+  const bottomLayer = `https://snowman-dev-topia.topia-rtsdk.com/assets/locker/output/locker_bottom_layer.png`;
+  const toplayer = `https://snowman-dev-topia.topia-rtsdk.com/assets/locker/output/unclaimedLocker.png`;
   return { bottomLayer, toplayer };
-}
-
-function getRandomPosition(position) {
-  const randomX = Math.floor(Math.random() * 1201) - 600;
-
-  const randomY = -(Math.floor(Math.random() * 1301) - 750);
-
-  return {
-    x: position.x + randomX,
-    y: position.y + randomY,
-  };
 }
