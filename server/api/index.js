@@ -13,5 +13,6 @@ export * from "./snowman-app/asset/moveToAsset.js";
 export * from "./locker-app/asset/spawnLocker.js";
 export * from "./locker-app/asset/editLocker.js";
 export * from "./locker-app/asset/claimLocker.js";
+export * from "./locker-app/asset/clearLocker.js";
 export * from "./locker-app/asset/renameLocker.js";
 export * from "./locker-app/world/getLockerDroppedAssetAndVisitor.js";

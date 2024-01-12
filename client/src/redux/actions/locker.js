@@ -100,6 +100,24 @@ export const claimLocker = (completeImageName) => async (dispatch) => {
   }
 };
 
+export const clearLocker = () => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/locker/clear?${queryParams}`;
+    const response = await axios.put(url);
+
+    if (response.status === 200) {
+      dispatch(setSpawnSuccess(response?.data));
+    }
+  } catch (error) {
+    dispatch(setError("There was an error while spawning the asset"));
+    if (error.response && error.response.data) {
+    } else {
+    }
+    return false;
+  }
+};
+
 export const spawnFromSpawnedAsset =
   (completeImageName) => async (dispatch) => {
     try {

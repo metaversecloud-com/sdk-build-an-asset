@@ -45,27 +45,7 @@ export const spawnLocker = async (req, res) => {
       visitor.fetchDataObject(),
     ]);
 
-    // if (
-    //   visitor?.privateZoneId != droppedAsset?.id &&
-    //   visitor?.privateZoneId != droppedAsset?.dataObject?.parentAssetId
-    // ) {
-    //   return res.json({ spawnSuccess: false, success: false });
-    // }
-
-    // snowman placa x:0 y:200
-    // superior direita: x 600   y -500
-    // superior esquerda x: -600
     const world = await World.create(urlSlug, { credentials });
-    // const background = (
-    //   await world.fetchDroppedAssetsWithUniqueName({
-    //     uniqueName: `locker-background`,
-    //   })
-    // )?.[0];
-
-    // const spawnPosition = getRandomPosition({
-    //   x: background?.position?.x,
-    //   y: background?.position?.y,
-    // });
 
     const spawnPosition = getRandomPosition({
       x: 0,

@@ -69,10 +69,15 @@ export const renameLocker = async (req, res) => {
     //   y: background?.position?.y,
     // });
 
-    const spawnPosition = {
-      x: position.x,
-      y: position.y - 20,
-    };
+    // const spawnPosition = {
+    //   x: visitor.moveTo.x,
+    //   y: visitor.moveTo.y,
+    // };
+
+    // const spawnPosition = {
+    //   x: visitor.moveTo.x,
+    //   y: visitor.moveTo.y,
+    // };
 
     const spawnedAsset = await dropImageAsset({
       urlSlug,
@@ -81,7 +86,7 @@ export const renameLocker = async (req, res) => {
       req,
       completeImageName,
       uniqueName,
-      spawnPosition,
+      position,
     });
 
     await droppedAsset.deleteDroppedAsset();
@@ -112,20 +117,17 @@ async function dropImageAsset({
   req,
   completeImageName,
   uniqueName: parentUniqueName,
-  spawnPosition,
+  position,
 }) {
   const { bottomLayer, toplayer } = getAssetImgUrl(req);
 
   const { moveTo, username } = visitor;
   // const { x, y } = moveTo;
 
-  const spawnedAssetUniqueName = `lockerSystem-${visitor?.profileId}`;
-
   const asset = await Asset.create(process.env.IMG_ASSET_ID, { credentials });
 
   const assetSpawnedDroppedAsset = await DroppedAsset.drop(asset, {
-    position: spawnPosition,
-    uniqueName: spawnedAssetUniqueName,
+    position: position,
     urlSlug,
   });
 
@@ -147,7 +149,7 @@ async function dropImageAsset({
     interactivePublicKey: process.env.INTERACTIVE_KEY,
   });
 
-  await assetSpawnedDroppedAsset?.updateWebImageLayers(bottomLayer, toplayer);
+  await assetSpawnedDroppedAsset?.updateWebImageLayers("", toplayer);
 
   return assetSpawnedDroppedAsset;
 }
@@ -155,5 +157,6 @@ async function dropImageAsset({
 function getAssetImgUrl(req) {
   const bottomLayer = `https://snowman-dev-topia.topia-rtsdk.com/assets/locker/output/locker_bottom_layer.png`;
   const toplayer = `https://snowman-dev-topia.topia-rtsdk.com/assets/locker/output/unclaimedLocker.png`;
+  // const toplayer = `https://snowman-dev-topia.topia-rtsdk.com/assets/locker/output/locker_bottom_layer.png`;
   return { bottomLayer, toplayer };
 }
