@@ -10,14 +10,14 @@ export const clearLocker = async (req, res) => {
     const host = req.host;
     const port = req.port;
 
-    // if (host === "localhost") {
-    //   BASE_URL = `http://localhost:3001`;
-    // } else {
-    //   BASE_URL = `${protocol}://${host}`;
-    // }
+    if (host === "localhost") {
+      BASE_URL = `http://localhost:3001`;
+    } else {
+      BASE_URL = `${protocol}://${host}`;
+    }
 
     // const test = getBaseUrl(req);
-    const { BASE_URL, DEFAULT_URL_FOR_IMAGE_HOSTING } = getBaseUrl(req);
+    // const { BASE_URL, DEFAULT_URL_FOR_IMAGE_HOSTING } = getBaseUrl(req);
 
     const {
       assetId,

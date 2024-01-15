@@ -72,7 +72,9 @@ async function getAllLockerAssets(urlSlug, visitor, world) {
     (item) => item.uniqueName && item.uniqueName?.includes(`lockerSystem-`)
   );
 
-  const promises = spawnedAsset.map((asset) => fetchDataObject(asset));
+  const promises = spawnedAsset.map((asset) => {
+    return asset.fetchDataObject();
+  });
 
   const results = await Promise.all(promises);
 
