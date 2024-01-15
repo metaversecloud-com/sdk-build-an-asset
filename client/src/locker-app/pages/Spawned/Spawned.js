@@ -6,6 +6,7 @@ import {
   getDroppedAssetAndVisitor,
   getIsMyAssetSpawned,
   moveToAsset,
+  clearLocker,
 } from "../../../redux/actions/locker";
 import EditLocker from "../../components/EditLocker/EditLocker";
 import AdminView from "../Admin/AdminView";
@@ -21,6 +22,7 @@ function Spawned() {
 
   const [isButtonMoveToSnowmanDisabled, setIsButtonMoveToSnowmanDisabled] =
     useState(false);
+  const [isButtonClearDisabled, setIsButtonClearDisabled] = useState(false);
   const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
 
   const visitor = useSelector((state) => state?.session?.visitor);
@@ -48,6 +50,17 @@ function Spawned() {
 
   const handleEditLocker = async () => {
     setShowCustomizeScreen(true);
+  };
+
+  const handleClearLocker = async () => {
+    try {
+      setIsButtonClearDisabled(true);
+      await dispatch(clearLocker());
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsButtonClearDisabled(false);
+    }
   };
 
   if (showSettings) {
@@ -80,11 +93,13 @@ function Spawned() {
       {isAssetOwner ? (
         <div style={{ width: "320px" }}>
           <button
-            onClick={() => handleEditLocker()}
-            disabled={isButtonMoveToSnowmanDisabled}
+            onClick={() => handleClearLocker()}
+            disabled={isButtonClearDisabled}
+            style={{ marginBottom: "10px" }}
           >
-            Edit Locker
+            Clear Locker
           </button>
+          <button onClick={() => handleEditLocker()}>Edit Locker</button>
         </div>
       ) : (
         ""

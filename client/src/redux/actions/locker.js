@@ -87,9 +87,11 @@ export const claimLocker = (completeImageName) => async (dispatch) => {
     const queryParams = getQueryParams();
     const url = `/backend/locker/claim?${queryParams}`;
     const response = await axios.post(url);
-
+    const redirectPath = response?.data?.redirectPath;
+    console.log("redirectPath", redirectPath);
     if (response.status === 200) {
       dispatch(setSpawnSuccess(response?.data));
+      return dispatch(push(`/${redirectPath}?${queryParams}`));
     }
   } catch (error) {
     dispatch(setError("There was an error while spawning the asset"));
@@ -108,6 +110,26 @@ export const clearLocker = () => async (dispatch) => {
 
     if (response.status === 200) {
       dispatch(setSpawnSuccess(response?.data));
+      return dispatch(push(`/locker?${queryParams}`));
+    }
+  } catch (error) {
+    dispatch(setError("There was an error while spawning the asset"));
+    if (error.response && error.response.data) {
+    } else {
+    }
+    return false;
+  }
+};
+
+export const clearAllLockers = () => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/locker/clear-all?${queryParams}`;
+    const response = await axios.put(url);
+
+    if (response.status === 200) {
+      dispatch(setSpawnSuccess(response?.data));
+      return dispatch(push(`/locker?${queryParams}`));
     }
   } catch (error) {
     dispatch(setError("There was an error while spawning the asset"));

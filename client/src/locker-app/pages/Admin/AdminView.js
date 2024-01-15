@@ -6,6 +6,7 @@ import {
   spawnLocker,
   renameLocker,
   clearLocker,
+  clearAllLockers,
 } from "../../../redux/actions/locker";
 import backArrow from "../../../assets/icons/backArrow.svg";
 import "./AdminView.scss";
@@ -18,6 +19,7 @@ function AdminView({ setShowSettings }) {
   const [resetButtonClicked, setResetButtonClicked] = useState(false);
   const [renameButtonClicked, setRenameButtonClicked] = useState(false);
   const [clearButtonClicked, setClearButtonClicked] = useState(false);
+  const [clearAllButtonClicked, setClearAllButtonClicked] = useState(false);
 
   async function handlePickup() {
     try {
@@ -63,6 +65,17 @@ function AdminView({ setShowSettings }) {
     }
   }
 
+  async function handleClearAllLockers() {
+    try {
+      setClearAllButtonClicked(true);
+      await dispatch(clearAllLockers());
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setClearAllButtonClicked(false);
+    }
+  }
+
   function getBackArrow() {
     return (
       <div
@@ -85,6 +98,16 @@ function AdminView({ setShowSettings }) {
         <h2>Settings</h2>
 
         <div className="footer-fixed" style={{ color: "#00A76F" }}>
+          <button
+            onClick={() => {
+              handleClearAllLockers();
+            }}
+            className="start-btn btn-danger"
+            disabled={clearAllButtonClicked}
+            style={{ marginBottom: "5px" }}
+          >
+            {clearButtonClicked ? "Clear All lockers..." : "Clear All Lockers"}
+          </button>
           <button
             onClick={() => {
               handleClearLocker();

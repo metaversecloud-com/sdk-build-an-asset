@@ -2,6 +2,7 @@ import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 
 let BASE_URL;
+let DEFAULT_IMG_HOST_BASE_URL = "https://snowman-dev-topia.topia-rtsdk.com";
 
 export const claimLocker = async (req, res) => {
   try {
@@ -10,7 +11,7 @@ export const claimLocker = async (req, res) => {
     const port = req.port;
 
     if (host === "localhost") {
-      BASE_URL = `https://snowman-dev-topia.topia-rtsdk.com`;
+      BASE_URL = `http://localhost:3001`;
     } else {
       BASE_URL = `${protocol}://${host}`;
     }
@@ -54,7 +55,8 @@ export const claimLocker = async (req, res) => {
     const completeImageName = "unclaimedLocker.png";
     // To Do fix it..
     // const clickableLink = `${BASE_URL}/locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
-    const clickableLink = `http://localhost:3001/locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
+    const redirectPath = `locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
+    const clickableLink = `${BASE_URL}/${redirectPath}`;
 
     await droppedAsset?.updateClickType({
       clickType: "link",
@@ -77,6 +79,7 @@ export const claimLocker = async (req, res) => {
       isAssetSpawnedInWorld: true,
       completeImageName,
       spawnedAsset: droppedAsset,
+      redirectPath,
     });
   } catch (error) {
     logger.error({

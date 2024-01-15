@@ -32,7 +32,7 @@ export const clearAllLockers = async (req, res) => {
 
     const allAssetAssets = await getAllLockerAssets(urlSlug, visitor, world);
 
-    await clearAllLockers(urlSlug, allAssetAssets, credentials);
+    await clearAllLockersRequest(urlSlug, allAssetAssets, credentials);
 
     return res.json({ success: true });
   } catch (error) {
@@ -46,11 +46,15 @@ export const clearAllLockers = async (req, res) => {
   }
 };
 
-async function clearAllLockers(urlSlug, spawnedAssets, credentials) {
+async function clearAllLockersRequest(urlSlug, spawnedAssets, credentials) {
   await Promise.all(
-    spawnedAssets.map((spawnedAsset) =>
-      spawnedAsset.setDataObject({ locker: null })
-    )
+    spawnedAssets.map((spawnedAsset) => {
+      spawnedAsset.setDataObject({ locker: null });
+      spawnedAsset.setInteractiveSettings({
+        isInteractive: true,
+        interactivePublicKey: "qz37yqVSpMLyeYtz2o1a",
+      });
+    })
   );
 }
 

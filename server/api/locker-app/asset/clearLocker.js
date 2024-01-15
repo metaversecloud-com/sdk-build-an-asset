@@ -1,5 +1,6 @@
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
+import { getBaseUrl } from "../../utils.js";
 
 let BASE_URL;
 
@@ -9,11 +10,14 @@ export const clearLocker = async (req, res) => {
     const host = req.host;
     const port = req.port;
 
-    if (host === "localhost") {
-      BASE_URL = `http://localhost:3001`;
-    } else {
-      BASE_URL = `${protocol}://${host}`;
-    }
+    // if (host === "localhost") {
+    //   BASE_URL = `http://localhost:3001`;
+    // } else {
+    //   BASE_URL = `${protocol}://${host}`;
+    // }
+
+    // const test = getBaseUrl(req);
+    const { BASE_URL, DEFAULT_URL_FOR_IMAGE_HOSTING } = getBaseUrl(req);
 
     const {
       assetId,
@@ -44,7 +48,7 @@ export const clearLocker = async (req, res) => {
       visitor.fetchDataObject(),
     ]);
 
-    const toplayer = `https://snowman-dev-topia.topia-rtsdk.com/assets/locker/output/unclaimedLocker.png`;
+    const toplayer = `${DEFAULT_URL_FOR_IMAGE_HOSTING}/assets/locker/output/unclaimedLocker.png`;
     await droppedAsset?.updateWebImageLayers("", toplayer);
 
     const clickableLink = `${BASE_URL}/locker`;
@@ -65,7 +69,6 @@ export const clearLocker = async (req, res) => {
       spawnSuccess: true,
       success: true,
       isAssetSpawnedInWorld: true,
-      spawnedAsset,
     });
   } catch (error) {
     logger.error({

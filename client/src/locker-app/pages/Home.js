@@ -31,7 +31,7 @@ function Home() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [isButtonClaimDisabled, setIsButtonClaimDisabled] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [preview, setPreview] = useState("/assets/locker/lockerBase_0.png");
@@ -63,8 +63,15 @@ function Home() {
     fetchInitialState();
   }, [dispatch, spawnedAsset?.dataObject?.completeImageName]);
 
-  const handleClaimLocker = () => {
-    dispatch(claimLocker());
+  const handleClaimLocker = async () => {
+    try {
+      setIsButtonClaimDisabled(true);
+      await dispatch(claimLocker());
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsButtonClaimDisabled(false);
+    }
   };
 
   if (loading) {
@@ -106,7 +113,10 @@ function Home() {
       )}
 
       <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-        <button disabled={isButtonDisabled} onClick={() => handleClaimLocker()}>
+        <button
+          disabled={isButtonClaimDisabled}
+          onClick={() => handleClaimLocker()}
+        >
           Claim Locker
         </button>
       </div>
