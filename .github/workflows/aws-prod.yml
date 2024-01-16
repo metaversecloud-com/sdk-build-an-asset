@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.version_number }}
         
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -46,7 +48,8 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64 
-          tags: $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          tags: |
+            $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       # - name: Build and  tag
       #   run: |
