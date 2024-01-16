@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.1
         with:
           ref: ${{ github.event.inputs.version_number }}
         
@@ -31,6 +31,13 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        
+      - uses: actions/setup-node@v4.0.1
+        with:
+          node-version: 20.10
+          cache: 'npm'
+      - run: npm i
+      - run: CI=false npm run build
           
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4.0.1
