@@ -34,22 +34,27 @@ export const getLockerDroppedAssetAndVisitor = async (req, res) => {
     let isAssetSpawnedInWorld = false;
 
     let spawnedAsset = null;
-    const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: `lockerSystem-${visitor?.profileId}`,
+    let spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
+      uniqueName: `lockerSystem-0`,
     });
 
-    if (spawnedAssets && spawnedAssets.length) {
-      isAssetSpawnedInWorld = true;
-      spawnedAsset = spawnedAssets?.[0];
-    }
+    await Promise.all(
+      spawnedAssets.map((asset) => {
+        return asset.fetchDataObject();
+      })
+    );
 
-    // await visitor.setDataObject({ asset: null });
+    const userHasLocker = spawnedAssets.find((asset) => {
+      if (asset?.dataObject?.profileId == visitor?.profileId) {
+        return true;
+      }
+      return false;
+    });
 
     return res.json({
       droppedAsset,
       visitor,
-      isAssetSpawnedInWorld,
-      spawnedAsset,
+      userHasLocker,
     });
   } catch (error) {
     logger.error({

@@ -9,11 +9,14 @@ export const clearLocker = async (req, res) => {
     const protocol = process.env.INSTANCE_PROTOCOL;
     const host = req.host;
     const port = req.port;
+    const DEFAULT_URL_FOR_IMAGE_HOSTING =
+      "https://snowman0-dev-topia.topia-rtsdk.com";
 
     if (host === "localhost") {
       BASE_URL = `http://localhost:3001`;
     } else {
       BASE_URL = `${protocol}://${host}`;
+      DEFAULT_URL_FOR_IMAGE_HOSTING = BASE_URL;
     }
 
     // const test = getBaseUrl(req);

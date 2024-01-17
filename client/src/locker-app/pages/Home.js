@@ -12,10 +12,55 @@ import AdminView from "./Admin/AdminView";
 import "./Home.scss";
 
 const categories = {
-  LockerBase: ["lockerBase_0.png", "lockerBase_1.png", "lockerBase_2.png"],
-  topRight: ["topRight_0.png", "topRight_1.png", "topRight_2.png"],
-  BottomRight: ["bottomRight_0.png", "bottomRight_1.png", "bottomRight_2.png"],
-  Left: ["left_0.png", "left_1.png", "left_2.png"],
+  "Locker Base": [
+    "lockerBase_0.png",
+    "lockerBase_1.png",
+    "lockerBase_2.png",
+    "lockerBase_3.png",
+  ],
+  Wallpaper: [
+    "wallpaper_0.png",
+    "wallpaper_1.png",
+    "wallpaper_2.png",
+    "wallpaper_3.png",
+    "wallpaper_4.png",
+    "wallpaper_5.png",
+    "wallpaper_6.png",
+    "wallpaper_7.png",
+    "wallpaper_8.png",
+  ],
+  "Top Shelf": [
+    "topShelf_0.png",
+    "topShelf_1.png",
+    "topShelf_2.png",
+    "topShelf_4.png",
+    "topShelf_5.png",
+    "topShelf_6.png",
+    "topShelf_7.png",
+    "topShelf_8.png",
+  ],
+  "Bottom Shelf": [
+    "bottomShelf_0.png",
+    "bottomShelf_1.png",
+    "bottomShelf_2.png",
+    "bottomShelf_3.png",
+    "bottomShelf_4.png",
+    "bottomShelf_5.png",
+    "bottomShelf_6.png",
+    "bottomShelf_7.png",
+    "bottomShelf_8.png",
+  ],
+  Door: [
+    "door_0.png",
+    "door_1.png",
+    "door_2.png",
+    "door_3.png",
+    "door_4.png",
+    "door_5.png",
+    "door_6.png",
+    "door_7.png",
+    "door_8.png",
+  ],
 };
 
 function Home() {
@@ -24,10 +69,11 @@ function Home() {
   const visitor = useSelector((state) => state?.session?.visitor);
   const spawnedAsset = useSelector((state) => state?.session?.spawnedAsset);
   const [selected, setSelected] = useState({
-    LockerBase: "",
-    topRight: "",
-    BottomRight: "",
-    Left: "",
+    "Locker Base": "",
+    Wallpaper: "",
+    "Top Shelf": "",
+    "Bottom Shelf": "",
+    Door: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -47,10 +93,11 @@ function Home() {
         const parts = imageName.replace(".png", "").split("_");
 
         const initialSelection = {
-          LockerBase: `/assets/locker/lockerBase_${parts[1]}.png`,
-          topRight: `/assets/locker/topRight_${parts[3]}.png`,
-          BottomRight: `/assets/locker/bottomRight_${parts[5]}.png`,
-          Left: `/assets/locker/left_${parts[7]}.png`,
+          "Locker Base": `/assets/locker/lockerBase_${parts[1]}.png`,
+          Walkpaper: `/assets/locker/wallpaper${parts[3]}.png`,
+          "Top Shelf": `/assets/locker/topShelf_${parts[5]}.png`,
+          "Bottom Shelf": `/assets/locker/BottomShelf_${parts[7]}.png`,
+          Door: `/assets/locker/Door_${parts[9]}.png`,
         };
 
         setSelected(initialSelection);
