@@ -64,11 +64,11 @@ export const spawnAsset = (completeImageName) => async (dispatch) => {
   }
 };
 
-export const editLocker = (completeImageName) => async (dispatch) => {
+export const editLocker = (imageInfo) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
     const url = `/backend/locker/asset/spawn?${queryParams}`;
-    const response = await axios.put(url, { completeImageName });
+    const response = await axios.put(url, { imageInfo });
 
     if (response.status === 200) {
       dispatch(setSpawnSuccess(response?.data));

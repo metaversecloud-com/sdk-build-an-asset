@@ -77,7 +77,6 @@ function EditLocker() {
   const dispatch = useDispatch();
 
   const visitor = useSelector((state) => state?.session?.visitor);
-  // const visitor = useSelector((state) => state?.session?.visitor);
   const isAssetSpawnedInWorld = useSelector(
     (state) => state?.session?.isAssetSpawnedInWorld
   );
@@ -87,23 +86,23 @@ function EditLocker() {
   const droppedAsset = useSelector((state) => state?.session?.droppedAsset);
 
   const [selected, setSelected] = useState({
-    "Locker Base": "",
-    Wallpaper: "",
-    "Top Shelf": "",
-    "Bottom Shelf": "",
-    Door: "",
+    "Locker Base": [],
+    Wallpaper: [],
+    "Top Shelf": [],
+    "Bottom Shelf": [],
+    Door: [],
   });
+
   const [loading, setLoading] = useState(false);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [isButtonMoveToLockerDisabled, setIsButtonMoveToLockerDisabled] =
-    useState(false);
+  useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
-  const [completeImageName, setCompleteImageName] = useState("");
-  const [showDefaultScreen, setShowDefaultScreen] = useState(false);
   const [isButtonSaveLockerDisabled, setIsButtonSaveLockerDisabled] =
     useState(false);
+  const [isButtonMoveToLockerDisabled, setIsButtonMoveToLockerDisabled] =
+    useState(false);
   const [preview, setPreview] = useState("/assets/locker/unclaimedLocker.png");
+  const [imageInfo, setImageInfo] = useState({});
   const [openCategories, setOpenCategories] = useState({
     Wallpaper: false,
     "Top Shelf": false,
@@ -144,7 +143,7 @@ function EditLocker() {
   };
 
   const isSelectedItem = (type, image) => {
-    return selected[type] === `/assets/locker/${image}`;
+    return selected[type].includes(`/assets/locker/${image}`);
   };
 
   useEffect(() => {
@@ -153,71 +152,75 @@ function EditLocker() {
       await dispatch(getDroppedAssetAndVisitor());
       setLoading(false);
 
-      if (spawnedAsset?.dataObject?.completeImageName) {
-        const imageName = spawnedAsset.dataObject.completeImageName;
-        const parts = imageName.replace(".png", "").split("_");
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialSelection = Object.keys(categories).reduce(
+        (acc, category) => {
+          const categoryKey1 = `${category.replace(/\s/g, "")}1`;
+          const categoryKey2 = `${category.replace(/\s/g, "")}2`;
+          acc[category] = [
+            urlParams.get(categoryKey1) &&
+              `/assets/locker/${urlParams.get(categoryKey1)}.png`,
+            urlParams.get(categoryKey2) &&
+              `/assets/locker/${urlParams.get(categoryKey2)}.png`,
+          ].filter(Boolean);
+          return acc;
+        },
+        {}
+      );
 
-        const initialSelection = {
-          "Locker Base": `/assets/locker/lockerBase_${parts[1]}.png`,
-          Walkpaper: `/assets/locker/wallpaper${parts[3]}.png`,
-          "Top Shelf": `/assets/locker/topShelf_${parts[5]}.png`,
-          "Bottom Shelf": `/assets/locker/BottomShelf_${parts[7]}.png`,
-          Door: `/assets/locker/Door_${parts[9]}.png`,
-        };
+      setSelected(initialSelection);
 
-        setSelected(initialSelection);
-
-        setPreview(
-          `/assets/locker/output/${spawnedAsset?.dataObject?.completeImageName}`
-        );
-      }
-    };
-
-    fetchInitialState();
-  }, [dispatch, spawnedAsset?.dataObject?.completeImageName]);
-
-  const updateLocker = (type, image) => {
-    try {
-      const updatedSelected = { ...selected, [type]: image };
-      setSelected(updatedSelected);
-      const imageNameParts = Object.keys(updatedSelected)
-        .map((key) => updatedSelected[key].split("/").pop().split(".")[0])
-        .filter(Boolean);
-
-      if (imageNameParts.length === Object.keys(categories).length) {
-        setCompleteImageName(imageNameParts.join("_") + ".png");
-      }
-
-      const imagesToMerge = [
-        { src: "/assets/locker/lockerBase_0.png", x: 0, y: 0 },
-        ...Object.values(updatedSelected).map((item) => ({
+      const imagesToMerge = Object.values(initialSelection)
+        .flat()
+        .map((item) => ({
           src: item,
           x: 0,
           y: 0,
-        })),
+        }));
+
+      mergeImages(imagesToMerge)
+        .then(setPreview)
+        .catch((error) => console.error("Erro ao mesclar imagens:", error));
+    };
+
+    fetchInitialState();
+  }, [dispatch]);
+
+  const updateLocker = (type, image) => {
+    try {
+      const updatedSelected = {
+        ...selected,
+        [type]: selected[type].includes(image)
+          ? selected[type].filter((item) => item !== image)
+          : [...new Set([...selected[type], image])].slice(0, 2),
+      };
+      setSelected(updatedSelected);
+
+      const updatedImageInfo = Object.keys(updatedSelected).reduce(
+        (info, key) => {
+          info[key] = updatedSelected[key].map((item) => ({
+            imageName: item.split("/").pop().split(".")[0],
+          }));
+          return info;
+        },
+        {}
+      );
+      setImageInfo(updatedImageInfo);
+
+      const imagesToMerge = [
+        { src: "/assets/locker/lockerBase_0.png", x: 0, y: 0 },
+        ...Object.values(updatedSelected)
+          .flat()
+          .map((item) => ({
+            src: item,
+            x: 0,
+            y: 0,
+          })),
       ].filter((img) => img.src);
 
       mergeImages(imagesToMerge).then(setPreview);
     } catch (error) {
       console.error("error1", error);
-    }
-  };
-
-  const handleSpawnAsset = async () => {
-    const isValid = validateSelection();
-    if (!isValid) {
-      return;
-    }
-
-    setIsButtonDisabled(true);
-
-    try {
-      await dispatch(spawnAsset(completeImageName));
-    } catch (error) {
-      console.error("Error sending asset:", error);
-    } finally {
-      setIsButtonDisabled(false);
-      setShowDefaultScreen(false);
     }
   };
 
@@ -233,10 +236,10 @@ function EditLocker() {
     return <AdminView setShowSettings={setShowSettings} />;
   }
 
-  const handleEditLocker = async () => {
+  const handleSaveToBackend = async () => {
     try {
       setIsButtonSaveLockerDisabled(true);
-      await dispatch(editLocker(completeImageName));
+      await dispatch(editLocker(imageInfo));
     } catch (error) {
       console.error("Error editing locker:", error);
     } finally {
@@ -254,45 +257,6 @@ function EditLocker() {
       setIsButtonMoveToLockerDisabled(false);
     }
   };
-
-  // Locker already in world
-  // if (isAssetSpawnedInWorld && !showDefaultScreen) {
-  //   return (
-  //     <>
-  //       <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
-  //         {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
-  //         <div>
-  //           <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-  //             This is Your Locker!
-  //           </h2>
-  //         </div>
-  //         <div style={{ marginBottom: "20px" }}>
-  //           <img
-  //             src={`/assets/locker/output/${spawnedAsset?.dataObject?.completeImageName}`}
-  //           />
-  //         </div>
-  //         <div style={{ marginBottom: "10px" }}>
-  //           <button
-  //             onClick={() => handleEditLocker()}
-  //             disabled={isButtonMoveToLockerDisabled}
-  //           >
-  //             Edit my Locker
-  //           </button>
-  //         </div>
-  //         <div>
-  //           <button
-  //             onClick={() => handleMoveToLocker()}
-  //             disabled={isButtonMoveToLockerDisabled}
-  //           >
-  //             Move to my Locker
-  //           </button>
-  //         </div>
-  //       </div>
-  //     </>
-  //   );
-  // }
-
-  console.log("isButtonSaveLockerDisabled", isButtonSaveLockerDisabled);
 
   return (
     <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
@@ -367,7 +331,7 @@ function EditLocker() {
           </p>
         )}
         <button
-          onClick={handleEditLocker}
+          onClick={handleSaveToBackend}
           disabled={!allCategoriesSelected() || isButtonSaveLockerDisabled}
         >
           Save

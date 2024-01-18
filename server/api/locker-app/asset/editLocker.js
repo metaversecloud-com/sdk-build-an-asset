@@ -1,5 +1,22 @@
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import sharp from "sharp";
+import Jimp from "jimp";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
 let BASE_URL;
 
@@ -10,7 +27,7 @@ export const editLocker = async (req, res) => {
     const port = req.port;
 
     if (host === "localhost") {
-      BASE_URL = `https://snowman-dev-topia.topia-rtsdk.com`;
+      BASE_URL = `http://localhost:3001`;
     } else {
       BASE_URL = `${protocol}://${host}`;
     }
@@ -24,11 +41,11 @@ export const editLocker = async (req, res) => {
       uniqueName,
     } = req.query;
 
-    const { completeImageName } = req.body;
+    const { imageInfo } = req.body;
 
-    if (!completeImageName) {
+    if (!imageInfo) {
       return res.status(400).json({
-        msg: "Input data missing. Please fill the the follow field: completeImageName",
+        msg: "Input data missing. Please fill the the follow field: imageInfo",
       });
     }
 
@@ -54,14 +71,27 @@ export const editLocker = async (req, res) => {
 
     const { username } = visitor;
 
-    const { bottomLayer, toplayer } = getAssetImgUrl(req);
-    await droppedAsset?.updateWebImageLayers(bottomLayer, toplayer);
+    // S3 Integration
+    const baseDir = path.resolve(__dirname, "../locker-assets");
+    const mergedImageBuffer = await combineImages(imageInfo, baseDir);
+    const s3Url = await uploadToS3(
+      mergedImageBuffer,
+      `${visitor?.profileId}.png`
+    );
+
+    await droppedAsset.setDataObject({ s3Url });
+
+    // const { bottomLayer, toplayer } = getAssetImgUrl(req);
+    // await droppedAsset?.updateWebImageLayers("", s3Url);
+
+    const imageInfoString = JSON.stringify(imageInfo);
 
     const modifiedName = username.replace(/ /g, "%20");
 
-    // To Do fix it..
-    // const clickableLink = `${BASE_URL}/locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
-    const clickableLink = `http://localhost:3001/locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
+    const imageInfoParam = generateImageInfoParam(imageInfo);
+    const clickableLink = `${BASE_URL}/locker/spawned?${imageInfoParam}&visitor-name=${modifiedName}`;
+
+    // const clickableLink = `${BASE_URL}/locker/spawned/img-name/${encodedImageInfo}/visitor-name/${modifiedName}`;
 
     await droppedAsset?.updateClickType({
       clickType: "link",
@@ -74,7 +104,7 @@ export const editLocker = async (req, res) => {
 
     await droppedAsset?.updateDataObject({
       profileId: visitor?.profileId,
-      completeImageName,
+      imageInfo,
       parentAssetId: credentials?.assetId,
     });
 
@@ -82,7 +112,7 @@ export const editLocker = async (req, res) => {
       spawnSuccess: true,
       success: true,
       isAssetSpawnedInWorld: true,
-      completeImageName,
+      imageInfo,
       spawnedAsset: droppedAsset,
     });
   } catch (error) {
@@ -99,8 +129,82 @@ export const editLocker = async (req, res) => {
 };
 
 function getAssetImgUrl(req) {
-  const { completeImageName } = req.body;
+  const { imageInfo } = req.body;
   const bottomLayer = null;
-  const toplayer = `${BASE_URL}/assets/locker/output/${completeImageName}`;
+  const toplayer = `${BASE_URL}/assets/locker/output/${imageInfo}`;
   return { bottomLayer, toplayer };
+}
+
+async function combineImages(imageInfo, baseDir) {
+  let images = [];
+
+  for (const category in imageInfo) {
+    for (const item of imageInfo[category]) {
+      const imagePath = path.join(baseDir, item.imageName + ".png");
+      const image = await Jimp.read(imagePath);
+      images.push(image);
+    }
+  }
+
+  let maxWidth = 0;
+  let maxHeight = 0;
+
+  images.forEach((image) => {
+    if (image.bitmap.width > maxWidth) {
+      maxWidth = image.bitmap.width;
+    }
+    if (image.bitmap.height > maxHeight) {
+      maxHeight = image.bitmap.height;
+    }
+  });
+
+  // Criar uma nova imagem com as dimensões calculadas
+  let mergedImage = new Jimp(maxWidth, maxHeight, 0x00000000);
+
+  // Combinar todas as imagens
+  images.forEach((image) => {
+    mergedImage.composite(image, 0, 0, {
+      mode: Jimp.BLEND_SOURCE_OVER,
+      opacitySource: 1,
+      opacityDest: 1,
+    });
+  });
+
+  const buffer = await mergedImage.getBufferAsync(Jimp.MIME_PNG);
+
+  // the code below Save image locally (testing purposes)
+  // const localFilePath = path.join(__dirname, "./combinedImage.png");
+  // await mergedImage.writeAsync(localFilePath);
+
+  return buffer;
+}
+
+async function uploadToS3(buffer, fileName) {
+  const client = new S3Client({ region: "us-east-1" });
+
+  const putObjectCommand = new PutObjectCommand({
+    Bucket: "fabioalxk-sdk-locker",
+    Key: fileName,
+    Body: buffer,
+    ContentType: "image/png",
+  });
+
+  await client.send(putObjectCommand);
+
+  return `https://${"fabioalxk-sdk-locker"}.s3.amazonaws.com/${fileName}`;
+}
+
+function generateImageInfoParam(imageInfo) {
+  let params = [];
+  let counters = {};
+
+  for (const category in imageInfo) {
+    const categoryKey = category.replace(/ /g, "");
+
+    imageInfo[category].forEach((item) => {
+      counters[categoryKey] = (counters[categoryKey] || 0) + 1;
+      params.push(`${categoryKey}${counters[categoryKey]}=${item.imageName}`);
+    });
+  }
+  return params.join("&");
 }

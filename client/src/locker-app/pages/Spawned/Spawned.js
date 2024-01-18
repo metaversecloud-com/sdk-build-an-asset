@@ -14,14 +14,13 @@ import Gear from "../../pages/Admin/Gear";
 import "./Spawned.scss";
 
 function Spawned() {
-  const { visitorName, imgName } = useParams();
   const dispatch = useDispatch();
-  const imgPath = `/assets/locker/output/${imgName}`;
 
   let isAssetOwner = false;
 
   const [isButtonMoveToSnowmanDisabled, setIsButtonMoveToSnowmanDisabled] =
     useState(false);
+  const [lockerParams, setLockerParams] = useState({});
   const [isButtonClearDisabled, setIsButtonClearDisabled] = useState(false);
   const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
 
@@ -31,6 +30,10 @@ function Spawned() {
   const isAssetSpawnedInWorld = useSelector(
     (state) => state?.session?.isAssetSpawnedInWorld
   );
+  const s3Url = droppedAsset?.dataObject?.s3Url;
+  console.log("s3Url", s3Url);
+
+  const visitorName = lockerParams["visitor-name"]?.replace("%20", " ");
 
   if (visitor?.profileId && droppedAsset?.dataObject?.profileId) {
     isAssetOwner = visitor?.profileId == droppedAsset?.dataObject?.profileId;
@@ -40,6 +43,9 @@ function Spawned() {
     const fetchInitialState = async () => {
       await dispatch(getDroppedAssetAndVisitor());
     };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    setLockerParams(Object.fromEntries(urlParams.entries()));
 
     fetchInitialState();
   }, [dispatch]);
@@ -68,7 +74,7 @@ function Spawned() {
   }
 
   if (showCustomizeScreen) {
-    return <EditLocker />;
+    return <EditLocker lockerParams={lockerParams} />;
   }
 
   return (
@@ -77,19 +83,12 @@ function Spawned() {
       <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
         <b>Locker</b>
       </h2>
-      <img src={imgPath} alt={`Locker of ${visitorName}`} />
+      {s3Url ? <img src={s3Url} alt={`Locker of ${visitorName}`} /> : ""}
       <div style={{ marginTop: "20px" }}>
         <p>
           This locker belongs to <b>{visitorName}</b>!
         </p>
       </div>
-      {/* {isAssetOwner ? (
-        <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-          <button onClick={handlePickupAsset}>Clear my Locker</button>
-        </div>
-      ) : (
-        ""
-      )} */}
       {isAssetOwner ? (
         <div style={{ width: "320px" }}>
           <button

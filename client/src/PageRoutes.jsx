@@ -16,7 +16,7 @@ const PageRoutes = () => {
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/spawned/img-name/:imgName/visitor-name/:visitorName" element={<Spawned />} />
-        <Route path="/locker/spawned/img-name/:imgName/visitor-name/:visitorName" element={<SpawnedLocker />} />
+        <Route path="/locker/spawned" element={<SpawnedLocker />} />
         <Route path="/snowman" element={<SnowmanHome />} />
         <Route path="/locker" element={<LockerHome />} />
       </Routes>
