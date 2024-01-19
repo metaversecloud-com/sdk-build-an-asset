@@ -55,7 +55,7 @@ export const claimLocker = async (req, res) => {
     const completeImageName = "unclaimedLocker.png";
     // To Do fix it..
     // const clickableLink = `${BASE_URL}/locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
-    const redirectPath = `locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
+    const redirectPath = `locker/spawned?visitor-name=${modifiedName}`;
     const clickableLink = `${BASE_URL}/${redirectPath}`;
 
     await droppedAsset?.updateClickType({

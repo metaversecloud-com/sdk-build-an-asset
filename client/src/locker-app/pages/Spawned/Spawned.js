@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
 import {
   pickupAsset,
@@ -18,6 +19,7 @@ function Spawned() {
 
   let isAssetOwner = false;
 
+  const [loading, setLoading] = useState(false);
   const [isButtonMoveToSnowmanDisabled, setIsButtonMoveToSnowmanDisabled] =
     useState(false);
   const [lockerParams, setLockerParams] = useState({});
@@ -69,6 +71,14 @@ function Spawned() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="loader">
+        <ClipLoader color={"#123abc"} loading={loading} size={150} />
+      </div>
+    );
+  }
+
   if (showSettings) {
     return <AdminView setShowSettings={setShowSettings} />;
   }
@@ -83,7 +93,10 @@ function Spawned() {
       <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
         <b>Locker</b>
       </h2>
-      {s3Url ? <img src={s3Url} alt={`Locker of ${visitorName}`} /> : ""}
+      <img
+        src={s3Url || "/assets/locker/unclaimedLocker.png"}
+        alt={`Locker of ${visitorName}`}
+      />
       <div style={{ marginTop: "20px" }}>
         <p>
           This locker belongs to <b>{visitorName}</b>!

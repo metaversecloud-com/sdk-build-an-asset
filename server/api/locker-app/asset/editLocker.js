@@ -183,7 +183,7 @@ async function uploadToS3(buffer, fileName) {
   const client = new S3Client({ region: "us-east-1" });
 
   const putObjectCommand = new PutObjectCommand({
-    Bucket: "fabioalxk-sdk-locker",
+    Bucket: process.env.S3_BUCKET,
     Key: fileName,
     Body: buffer,
     ContentType: "image/png",
@@ -191,7 +191,7 @@ async function uploadToS3(buffer, fileName) {
 
   await client.send(putObjectCommand);
 
-  return `https://${"fabioalxk-sdk-locker"}.s3.amazonaws.com/${fileName}`;
+  return `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${fileName}`;
 }
 
 function generateImageInfoParam(imageInfo) {

@@ -139,7 +139,7 @@ function EditLocker() {
   };
 
   const isCategorySelected = (category) => {
-    return selected[category] !== "";
+    return selected[category].length > 0;
   };
 
   const isSelectedItem = (type, image) => {
@@ -157,6 +157,8 @@ function EditLocker() {
         (acc, category) => {
           const categoryKey1 = `${category.replace(/\s/g, "")}1`;
           const categoryKey2 = `${category.replace(/\s/g, "")}2`;
+          console.log("categoryKey1", categoryKey1);
+          console.log("categoryKey2", categoryKey2);
           acc[category] = [
             urlParams.get(categoryKey1) &&
               `/assets/locker/${urlParams.get(categoryKey1)}.png`,
@@ -265,7 +267,9 @@ function EditLocker() {
         Build your Locker!
       </h2>
       <img
-        src={preview}
+        src={
+          preview == "data:," ? "/assets/locker/unclaimedLocker.png" : preview
+        }
         alt="Locker Preview"
         style={{ marginTop: "30px", marginBottom: "30px" }}
         className="img-preview"
@@ -302,11 +306,15 @@ function EditLocker() {
                   alt={image}
                   className="img-accessory"
                   style={{
-                    border: "1px solid #ccc",
+                    // border: "1px solid #ccc",
                     borderRadius: "10px",
+                    padding: "5px",
                     backgroundColor: isSelectedItem(type, image)
-                      ? "#f0f0f0"
+                      ? "#edeffc"
                       : "transparent",
+                    border: isSelectedItem(type, image)
+                      ? "1px solid #4355e4"
+                      : "1px solid #ccc",
                   }}
                   onClick={() => updateLocker(type, `/assets/locker/${image}`)}
                 />
