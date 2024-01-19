@@ -104,6 +104,7 @@ function Spawned() {
       </div>
       {isAssetOwner ? (
         <div style={{ width: "320px" }}>
+          <button onClick={() => handleEditLocker()}>Edit Locker</button>
           <button
             onClick={() => handleClearLocker()}
             disabled={isButtonClearDisabled}
@@ -111,7 +112,6 @@ function Spawned() {
           >
             Clear Locker
           </button>
-          <button onClick={() => handleEditLocker()}>Edit Locker</button>
         </div>
       ) : (
         ""

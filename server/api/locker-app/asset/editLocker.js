@@ -82,7 +82,7 @@ export const editLocker = async (req, res) => {
     await droppedAsset.setDataObject({ s3Url });
 
     // const { bottomLayer, toplayer } = getAssetImgUrl(req);
-    // await droppedAsset?.updateWebImageLayers("", s3Url);
+    await droppedAsset?.updateWebImageLayers("", s3Url);
 
     const imageInfoString = JSON.stringify(imageInfo);
 
@@ -90,8 +90,6 @@ export const editLocker = async (req, res) => {
 
     const imageInfoParam = generateImageInfoParam(imageInfo);
     const clickableLink = `${BASE_URL}/locker/spawned?${imageInfoParam}&visitor-name=${modifiedName}`;
-
-    // const clickableLink = `${BASE_URL}/locker/spawned/img-name/${encodedImageInfo}/visitor-name/${modifiedName}`;
 
     await droppedAsset?.updateClickType({
       clickType: "link",
@@ -127,13 +125,6 @@ export const editLocker = async (req, res) => {
       .send({ error: error?.message, spawnSuccess: false, success: false });
   }
 };
-
-function getAssetImgUrl(req) {
-  const { imageInfo } = req.body;
-  const bottomLayer = null;
-  const toplayer = `${BASE_URL}/assets/locker/output/${imageInfo}`;
-  return { bottomLayer, toplayer };
-}
 
 async function combineImages(imageInfo, baseDir) {
   let images = [];
@@ -171,10 +162,6 @@ async function combineImages(imageInfo, baseDir) {
   });
 
   const buffer = await mergedImage.getBufferAsync(Jimp.MIME_PNG);
-
-  // the code below Save image locally (testing purposes)
-  // const localFilePath = path.join(__dirname, "./combinedImage.png");
-  // await mergedImage.writeAsync(localFilePath);
 
   return buffer;
 }
