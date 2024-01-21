@@ -88,10 +88,11 @@ export const claimLocker = (completeImageName) => async (dispatch) => {
     const url = `/backend/locker/claim?${queryParams}`;
     const response = await axios.post(url);
     const redirectPath = response?.data?.redirectPath;
-    console.log("redirectPath", redirectPath);
     if (response.status === 200) {
       dispatch(setSpawnSuccess(response?.data));
-      return dispatch(push(`/${redirectPath}?${queryParams}`));
+      const fullPath = `/${redirectPath}&${queryParams}`;
+      console.log("fullPath", fullPath);
+      return dispatch(push(fullPath));
     }
   } catch (error) {
     dispatch(setError("There was an error while spawning the asset"));

@@ -33,6 +33,7 @@ const categories = {
     "topShelf_0.png",
     "topShelf_1.png",
     "topShelf_2.png",
+    "topShelf_3.png",
     "topShelf_4.png",
     "topShelf_5.png",
     "topShelf_6.png",

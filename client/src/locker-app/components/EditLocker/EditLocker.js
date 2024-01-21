@@ -43,6 +43,7 @@ const categories = {
     "topShelf_0.png",
     "topShelf_1.png",
     "topShelf_2.png",
+    "topShelf_3.png",
     "topShelf_4.png",
     "topShelf_5.png",
     "topShelf_6.png",
@@ -190,17 +191,29 @@ function EditLocker() {
 
   const updateLocker = (type, image) => {
     try {
-      const updatedSelected = {
-        ...selected,
-        [type]: selected[type].includes(image)
-          ? selected[type].filter((item) => item !== image)
-          : [...new Set([...selected[type], image])].slice(0, 2),
-      };
-      setSelected(updatedSelected);
+      let updatedSelection = { ...selected };
 
-      const updatedImageInfo = Object.keys(updatedSelected).reduce(
+      if (type === "Locker Base") {
+        // Se for "Locker Base", permite apenas uma seleção
+        updatedSelection[type] = [image];
+      } else {
+        // Para outras categorias, permite até duas seleções
+        if (selected[type].includes(image)) {
+          updatedSelection[type] = selected[type].filter(
+            (item) => item !== image
+          );
+        } else {
+          if (selected[type].length < 2) {
+            updatedSelection[type] = [...selected[type], image];
+          }
+        }
+      }
+
+      setSelected(updatedSelection);
+
+      const updatedImageInfo = Object.keys(updatedSelection).reduce(
         (info, key) => {
-          info[key] = updatedSelected[key].map((item) => ({
+          info[key] = updatedSelection[key].map((item) => ({
             imageName: item.split("/").pop().split(".")[0],
           }));
           return info;
@@ -210,8 +223,7 @@ function EditLocker() {
       setImageInfo(updatedImageInfo);
 
       const imagesToMerge = [
-        { src: "/assets/locker/lockerBase_0.png", x: 0, y: 0 },
-        ...Object.values(updatedSelected)
+        ...Object.values(updatedSelection)
           .flat()
           .map((item) => ({
             src: item,
@@ -222,7 +234,7 @@ function EditLocker() {
 
       mergeImages(imagesToMerge).then(setPreview);
     } catch (error) {
-      console.error("error1", error);
+      console.error("Erro ao atualizar o locker:", error);
     }
   };
 
