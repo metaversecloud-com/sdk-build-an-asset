@@ -16,7 +16,6 @@
     "multer": "^1.4.5-lts.1",
     "openai": "^3.3.0",
     "regenerator-runtime": "^0.13.11",
-    "sharp": "^0.32.6",
     "yalc": "^1.0.0-pre.53"
   },
   "workspaces": [

@@ -1,7 +1,6 @@
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import sharp from "sharp";
 import Jimp from "jimp";
 import fs from "fs";
 import path from "path";
@@ -82,7 +81,7 @@ export const editLocker = async (req, res) => {
     await droppedAsset.setDataObject({ s3Url });
 
     // const { bottomLayer, toplayer } = getAssetImgUrl(req);
-    await droppedAsset?.updateWebImageLayers("", s3Url);
+    // await droppedAsset?.updateWebImageLayers("", s3Url);
 
     const imageInfoString = JSON.stringify(imageInfo);
 

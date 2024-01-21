@@ -43,7 +43,14 @@ function Spawned() {
 
   useEffect(() => {
     const fetchInitialState = async () => {
-      await dispatch(getDroppedAssetAndVisitor());
+      try {
+        setLoading(true);
+        await dispatch(getDroppedAssetAndVisitor());
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -103,16 +110,25 @@ function Spawned() {
         </p>
       </div>
       {isAssetOwner ? (
-        <div style={{ width: "320px" }}>
-          <button onClick={() => handleEditLocker()}>Edit Locker</button>
-          <button
-            onClick={() => handleClearLocker()}
-            disabled={isButtonClearDisabled}
-            style={{ marginBottom: "10px" }}
-          >
-            Clear Locker
-          </button>
-        </div>
+        <>
+          <div style={{ width: "320px" }}>
+            <button
+              onClick={() => handleEditLocker()}
+              style={{ marginBottom: "10px" }}
+            >
+              Edit my locker
+            </button>
+          </div>
+          <div className="footer-fixed" style={{ backgroundColor: "white" }}>
+            <button
+              className="btn-danger"
+              onClick={() => handleClearLocker()}
+              disabled={isButtonClearDisabled}
+            >
+              Delete my locker
+            </button>
+          </div>
+        </>
       ) : (
         ""
       )}

@@ -106,7 +106,7 @@ function AdminView({ setShowSettings }) {
             disabled={clearAllButtonClicked}
             style={{ marginBottom: "5px" }}
           >
-            {clearButtonClicked ? "Clear All lockers..." : "Clear All Lockers"}
+            {clearButtonClicked ? "Clear all lockers..." : "Clear all lockers"}
           </button>
           <button
             onClick={() => {
@@ -116,9 +116,9 @@ function AdminView({ setShowSettings }) {
             disabled={clearButtonClicked}
             style={{ marginBottom: "5px" }}
           >
-            {clearButtonClicked ? "Clear locker..." : "Clear Locker"}
+            {clearButtonClicked ? "Clear this locker..." : "Clear this locker"}
           </button>
-          <button
+          {/* <button
             onClick={() => {
               handleRenameLocker();
             }}
@@ -127,8 +127,8 @@ function AdminView({ setShowSettings }) {
             style={{ marginBottom: "5px" }}
           >
             {spawnButtonClicked ? "Renaming locker..." : "Rename Locker"}
-          </button>
-          <button
+          </button> */}
+          {/* <button
             onClick={() => {
               handleSpawnLocker();
             }}
@@ -137,8 +137,8 @@ function AdminView({ setShowSettings }) {
             style={{ marginBottom: "5px" }}
           >
             {spawnButtonClicked ? "Spawning locker..." : "Spawn Locker"}
-          </button>
-          <button
+          </button> */}
+          {/* <button
             onClick={() => {
               handlePickup();
             }}
@@ -148,7 +148,7 @@ function AdminView({ setShowSettings }) {
             {pickupButtonClicked
               ? "Picking up all assets..."
               : "Pick up all assets"}
-          </button>
+          </button> */}
         </div>
       </div>
     </>
