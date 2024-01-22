@@ -8,6 +8,7 @@ import {
 } from "../../redux/actions/locker";
 import Gear from "./Admin/Gear";
 import AdminView from "./Admin/AdminView";
+import SplashImage from "../../assets/locker/splashImage.png";
 
 import "./Home.scss";
 
@@ -141,7 +142,7 @@ function Home() {
         Build your Locker!
       </h2>
       <img
-        src={preview}
+        src={SplashImage}
         alt="Locker Preview"
         style={{ marginTop: "30px", marginBottom: "30px" }}
         className="img-preview"

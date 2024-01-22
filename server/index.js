@@ -13,7 +13,7 @@ import { fileURLToPath } from "url";
 checkEnvVariables();
 const PORT = process.env.PORT || 3000;
 const app = express();
-const version = "10.0";
+const version = "11.0";
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
