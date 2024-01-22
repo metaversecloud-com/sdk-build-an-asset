@@ -25,6 +25,17 @@ router.get("/", (req, res) => {
   res.json({ message: "Hello from server!" });
 });
 
+router.get("/env", (req, res) => {
+  return res.json({
+    NODE_ENV: process.env.NODE_ENV,
+    INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN,
+    INSTANCE_PROTOCOL: process.env.INSTANCE_PROTOCOL,
+    INTERACTIVE_KEY: process.env.INTERACTIVE_KEY,
+    IMG_ASSET_ID: process.env.IMG_ASSET_ID,
+    S3_BUCKET: process.env.S3_BUCKET,
+  });
+});
+
 router.get("/visitor", getVisitor);
 
 router.get("/asset", validationMiddleware, get);
