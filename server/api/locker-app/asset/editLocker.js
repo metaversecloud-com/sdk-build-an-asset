@@ -71,12 +71,10 @@ export const editLocker = async (req, res) => {
     const { username } = visitor;
 
     // S3 Integration
+    const imageFullName = `${visitor?.profileId}-${Date.now()}.png`;
     const baseDir = path.resolve(__dirname, "../locker-assets");
     const mergedImageBuffer = await combineImages(imageInfo, baseDir);
-    const s3Url = await uploadToS3(
-      mergedImageBuffer,
-      `${visitor?.profileId}.png`
-    );
+    const s3Url = await uploadToS3(mergedImageBuffer, imageFullName);
 
     await droppedAsset.setDataObject({ s3Url });
 
