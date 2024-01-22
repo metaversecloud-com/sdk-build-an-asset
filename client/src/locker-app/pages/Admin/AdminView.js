@@ -98,7 +98,7 @@ function AdminView({ setShowSettings }) {
         <h2>Settings</h2>
 
         <div className="footer-fixed" style={{ color: "#00A76F" }}>
-          <button
+          {/* <button
             onClick={() => {
               handleClearAllLockers();
             }}
@@ -107,7 +107,7 @@ function AdminView({ setShowSettings }) {
             style={{ marginBottom: "5px" }}
           >
             {clearButtonClicked ? "Clear all lockers..." : "Clear all lockers"}
-          </button>
+          </button> */}
           <button
             onClick={() => {
               handleClearLocker();
