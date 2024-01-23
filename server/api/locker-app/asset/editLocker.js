@@ -78,8 +78,7 @@ export const editLocker = async (req, res) => {
 
     await droppedAsset.setDataObject({ s3Url });
 
-    // const { bottomLayer, toplayer } = getAssetImgUrl(req);
-    // await droppedAsset?.updateWebImageLayers("", s3Url);
+    await droppedAsset.updateWebImageLayers("", s3Url);
 
     const imageInfoString = JSON.stringify(imageInfo);
 
@@ -146,10 +145,8 @@ async function combineImages(imageInfo, baseDir) {
     }
   });
 
-  // Criar uma nova imagem com as dimensões calculadas
   let mergedImage = new Jimp(maxWidth, maxHeight, 0x00000000);
 
-  // Combinar todas as imagens
   images.forEach((image) => {
     mergedImage.composite(image, 0, 0, {
       mode: Jimp.BLEND_SOURCE_OVER,

@@ -39,10 +39,16 @@ export const getLockerDroppedAssetAndVisitor = async (req, res) => {
     });
 
     await Promise.all(
-      spawnedAssets.map((asset) => {
-        return asset.fetchDataObject();
+      spawnedAssets.map(async (asset) => {
+        try {
+          await asset.fetchDataObject();
+        } catch (error) {
+          return null;
+        }
       })
     );
+
+    spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
 
     const userHasLocker = spawnedAssets.find((asset) => {
       if (asset?.dataObject?.profileId == visitor?.profileId) {
@@ -59,7 +65,7 @@ export const getLockerDroppedAssetAndVisitor = async (req, res) => {
   } catch (error) {
     logger.error({
       error,
-      message: "❌ 🐹 Error getting droppedAsset and Visitor",
+      message: "❌ Error getting droppedAsset and Visitor",
       functionName: "getDroppedAssetAndVisitor",
       req,
     });
