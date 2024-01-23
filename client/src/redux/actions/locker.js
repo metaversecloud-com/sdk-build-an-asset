@@ -241,7 +241,7 @@ export const renameLocker = () => async (dispatch) => {
 export const moveToAsset = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/asset/move-to-asset?${queryParams}`;
+    const url = `/backend/locker/move-to-asset?${queryParams}`;
 
     const response = await axios.post(url);
   } catch (error) {

@@ -1,14 +1,14 @@
 import { DroppedAsset, Visitor, User, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 
-export const moveToAsset = async (req, res) => {
+export const moveToLocker = async (req, res) => {
   try {
     const {
+      visitorId,
+      interactiveNonce,
       assetId,
       interactivePublicKey,
-      interactiveNonce,
       urlSlug,
-      visitorId,
     } = req.query;
 
     const credentials = {
@@ -20,21 +20,41 @@ export const moveToAsset = async (req, res) => {
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
     const world = await World.create(urlSlug, { credentials });
-    await Promise.all([visitor.fetchVisitor(), visitor.fetchDataObject()]);
 
-    const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: `lockerSystem-${visitor?.profileId}`,
+    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
+      credentials,
+    });
+    await Promise.all([
+      droppedAsset.fetchDroppedAssetById(),
+      droppedAsset.fetchDataObject(),
+      visitor.fetchVisitor(),
+      visitor.fetchDataObject(),
+    ]);
+
+    let spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
+      uniqueName: `lockerSystem-0`,
     });
 
-    let spawnedAsset;
+    await Promise.all(
+      spawnedAssets.map(async (asset) => {
+        try {
+          await asset.fetchDataObject();
+        } catch (error) {
+          return null;
+        }
+      })
+    );
 
-    if (!spawnedAssets && !spawnedAssets?.length) {
-      return res.status(404).json({ msg: "Asset not found" });
-    }
+    spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
 
-    spawnedAsset = spawnedAssets?.[0];
+    const userLocker = spawnedAssets.find((asset) => {
+      if (asset?.dataObject?.profileId == visitor?.profileId) {
+        return true;
+      }
+      return false;
+    });
 
-    const { x, y } = spawnedAsset?.position;
+    const { x, y } = userLocker?.position;
     await visitor.moveVisitor({
       shouldTeleportVisitor: false,
       x,

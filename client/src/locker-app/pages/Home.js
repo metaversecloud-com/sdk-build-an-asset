@@ -5,6 +5,7 @@ import { ClipLoader } from "react-spinners";
 import {
   getDroppedAssetAndVisitor,
   claimLocker,
+  moveToAsset,
 } from "../../redux/actions/locker";
 import Gear from "./Admin/Gear";
 import AdminView from "./Admin/AdminView";
@@ -70,6 +71,8 @@ function Home() {
 
   const visitor = useSelector((state) => state?.session?.visitor);
   const spawnedAsset = useSelector((state) => state?.session?.spawnedAsset);
+  const userLocker = useSelector((state) => state?.session?.userLocker);
+
   const [selected, setSelected] = useState({
     "Locker Base": "",
     Wallpaper: "",
@@ -80,6 +83,8 @@ function Home() {
 
   const [loading, setLoading] = useState(false);
   const [isButtonClaimDisabled, setIsButtonClaimDisabled] = useState(false);
+  const [isButtonMoveToMyLockerDisabled, setIsButtonMoveToMyLockerDisabled] =
+    useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [preview, setPreview] = useState("/assets/locker/lockerBase_0.png");
@@ -123,6 +128,17 @@ function Home() {
     }
   };
 
+  const handleMoveToMyLocker = async () => {
+    try {
+      setIsButtonMoveToMyLockerDisabled(true);
+      await dispatch(moveToAsset());
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsButtonMoveToMyLockerDisabled(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="loader">
@@ -133,6 +149,28 @@ function Home() {
 
   if (showSettings) {
     return <AdminView setShowSettings={setShowSettings} />;
+  }
+
+  if (userLocker) {
+    return (
+      <>
+        <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
+          {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
+          <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
+            You already have a locker!
+          </h2>
+
+          <div style={{ margin: "10px 0px" }}>
+            <button
+              disabled={isButtonMoveToMyLockerDisabled}
+              onClick={() => handleMoveToMyLocker()}
+            >
+              Move to my locker
+            </button>
+          </div>
+        </div>
+      </>
+    );
   }
 
   return (

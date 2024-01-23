@@ -16,6 +16,7 @@ import {
   renameLocker,
   clearLocker,
   clearAllLockers,
+  moveToLocker,
 } from "./api/index.js";
 import express from "express";
 import { validationMiddleware } from "./middleware/validation.js";
@@ -64,6 +65,7 @@ router.post("/locker/claim", validationMiddleware, claimLocker);
 router.put("/locker/clear", validationMiddleware, clearLocker);
 router.put("/locker/clear-all", validationMiddleware, clearAllLockers);
 router.post("/locker/rename", validationMiddleware, renameLocker);
+router.post("/locker/move-to-asset", validationMiddleware, moveToLocker);
 
 router.get(
   "/locker/dropped-asset-and-visitor",

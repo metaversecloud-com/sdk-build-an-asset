@@ -16,4 +16,5 @@ export * from "./locker-app/asset/claimLocker.js";
 export * from "./locker-app/asset/clearLocker.js";
 export * from "./locker-app/asset/clearAllLockers.js";
 export * from "./locker-app/asset/renameLocker.js";
+export * from "./locker-app/asset/moveToLocker.js";
 export * from "./locker-app/world/getLockerDroppedAssetAndVisitor.js";

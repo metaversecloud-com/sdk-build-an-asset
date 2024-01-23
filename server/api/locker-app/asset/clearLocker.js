@@ -3,13 +3,13 @@ import { logger } from "../../../logs/logger.js";
 import { getBaseUrl } from "../../utils.js";
 
 let BASE_URL;
+let DEFAULT_URL_FOR_IMAGE_HOSTING = null;
 
 export const clearLocker = async (req, res) => {
   try {
     const protocol = process.env.INSTANCE_PROTOCOL;
     const host = req.host;
     const port = req.port;
-    let DEFAULT_URL_FOR_IMAGE_HOSTING = null;
 
     if (host === "localhost") {
       BASE_URL = `http://localhost:3001`;

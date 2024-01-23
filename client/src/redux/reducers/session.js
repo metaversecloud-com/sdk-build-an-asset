@@ -22,6 +22,7 @@ const reducers = {
     state.visitor = action.payload.visitor;
     state.isAssetSpawnedInWorld = action.payload.isAssetSpawnedInWorld;
     state.spawnedAsset = action.payload.spawnedAsset;
+    state.userLocker = action.payload.userLocker;
   },
   setInPrivateZone: (state, action) => {
     state.inPrivateZone = action.payload;
