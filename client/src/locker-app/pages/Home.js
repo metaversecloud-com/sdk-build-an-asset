@@ -177,7 +177,7 @@ function Home() {
     <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
       {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
       <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-        Build your Locker!
+        Decorate Your Locker
       </h2>
       <img
         src={SplashImage}
@@ -187,10 +187,9 @@ function Home() {
       />
 
       <p style={{ textAlign: "left" }}>
-        Welcome to your new virtual locker! Here, you can decorate your own
-        locker any way you like. Make it bright, make it cool, make it fun! Show
-        off your style and let everyone see how creative you can be. Get ready
-        to make the coolest locker ever! 🔒✨
+        Click 'Claim Locker' to claim and decorate your locker. Add items to
+        show off your style and make it your own. You can come back to update it
+        anytime! 🔒✨
       </p>
 
       {Object.keys(validationErrors).length > 0 && (
