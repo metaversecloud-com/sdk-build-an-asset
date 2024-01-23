@@ -47,14 +47,9 @@ export const claimLocker = async (req, res) => {
 
     const { username } = visitor;
 
-    // const { bottomLayer, toplayer } = getAssetImgUrl(req);
-    // await droppedAsset?.updateWebImageLayers(bottomLayer, toplayer);
-
     const modifiedName = username.replace(/ /g, "%20");
 
     const completeImageName = "unclaimedLocker.png";
-    // To Do fix it..
-    // const clickableLink = `${BASE_URL}/locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
     const redirectPath = `locker/spawned?visitor-name=${modifiedName}`;
     const clickableLink = `${BASE_URL}/${redirectPath}`;
 

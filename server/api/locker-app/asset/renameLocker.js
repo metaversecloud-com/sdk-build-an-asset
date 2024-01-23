@@ -122,7 +122,6 @@ async function dropImageAsset({
   const { bottomLayer, toplayer } = getAssetImgUrl(req);
 
   const { moveTo, username } = visitor;
-  // const { x, y } = moveTo;
 
   const asset = await Asset.create(process.env.IMG_ASSET_ID, { credentials });
 
@@ -157,6 +156,5 @@ async function dropImageAsset({
 function getAssetImgUrl(req) {
   const bottomLayer = `https://snowman-dev-topia.topia-rtsdk.com/assets/locker/output/locker_bottom_layer.png`;
   const toplayer = `https://snowman-dev-topia.topia-rtsdk.com/assets/locker/output/unclaimedLocker.png`;
-  // const toplayer = `https://snowman-dev-topia.topia-rtsdk.com/assets/locker/output/locker_bottom_layer.png`;
   return { bottomLayer, toplayer };
 }

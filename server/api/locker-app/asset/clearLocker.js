@@ -19,9 +19,6 @@ export const clearLocker = async (req, res) => {
       DEFAULT_URL_FOR_IMAGE_HOSTING = BASE_URL;
     }
 
-    // const test = getBaseUrl(req);
-    // const { BASE_URL, DEFAULT_URL_FOR_IMAGE_HOSTING } = getBaseUrl(req);
-
     const {
       assetId,
       interactivePublicKey,
