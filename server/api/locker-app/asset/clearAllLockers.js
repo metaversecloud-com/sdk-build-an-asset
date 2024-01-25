@@ -56,6 +56,16 @@ export const clearAllLockers = async (req, res) => {
         try {
           await asset.fetchDataObject();
         } catch (error) {
+          console.error(`❓❌ ${error}`);
+        }
+      })
+    );
+    await Promise.all(
+      spawnedAssets.map(async (asset) => {
+        try {
+          await asset.fetchDataObject();
+        } catch (error) {
+          console.error(`Error with asset: ${asset}: ❌❌❌${error.message}`);
           return null;
         }
       })
@@ -66,32 +76,32 @@ export const clearAllLockers = async (req, res) => {
     const toplayer = `${DEFAULT_URL_FOR_IMAGE_HOSTING}/assets/locker/output/unclaimedLocker.png`;
 
     const promises = spawnedAssets.map(async (asset) => {
-      await asset.setDataObject(null);
-      await asset.setDataObject({});
+      try {
+        await asset.setDataObject(null);
+        await asset.setDataObject({});
 
-      await droppedAsset?.updateWebImageLayers("", toplayer);
+        await droppedAsset?.updateWebImageLayers("", toplayer);
 
-      const clickableLink = `${BASE_URL}/locker`;
+        const clickableLink = `${BASE_URL}/locker`;
 
-      await droppedAsset?.updateClickType({
-        clickType: "link",
-        clickableLink,
-        clickableLinkTitle: "Locker",
-        clickableDisplayTextDescription: "Locker",
-        clickableDisplayTextHeadline: "Locker",
-        isOpenLinkInDrawer: true,
-      });
+        await droppedAsset?.updateClickType({
+          clickType: "link",
+          clickableLink,
+          clickableLinkTitle: "Locker",
+          clickableDisplayTextDescription: "Locker",
+          clickableDisplayTextHeadline: "Locker",
+          isOpenLinkInDrawer: true,
+        });
 
-      return asset;
+        return asset;
+      } catch (error) {
+        console.error(
+          `❌❌ Error changing dataObjects and modifying links in clearAllLockers using the asset ${asset}`
+        );
+      }
     });
 
-    try {
-      await Promise.all(promises);
-    } catch (error) {
-      console.error("❌❌ Error in clearAllLockers");
-      console.error(JSON.stringify(promises));
-      console.error(`🧹${promises}`);
-    }
+    await Promise.all(promises);
 
     return res.json({
       droppedAsset,
