@@ -65,7 +65,7 @@ export const clearAllLockers = async (req, res) => {
 
     const toplayer = `${DEFAULT_URL_FOR_IMAGE_HOSTING}/assets/locker/output/unclaimedLocker.png`;
 
-    const test = spawnedAssets.map(async (asset) => {
+    const promises = spawnedAssets.map(async (asset) => {
       await asset.setDataObject(null);
       await asset.setDataObject({});
 
@@ -85,7 +85,12 @@ export const clearAllLockers = async (req, res) => {
       return asset;
     });
 
-    await Promise.all(test);
+    try {
+      await Promise.all(promises);
+    } catch (error) {
+      console.error(error);
+      console.error(JSON.stringify(error));
+    }
 
     return res.json({
       droppedAsset,
