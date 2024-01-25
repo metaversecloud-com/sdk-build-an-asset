@@ -65,7 +65,11 @@ export const clearAllLockers = async (req, res) => {
         try {
           await asset.fetchDataObject();
         } catch (error) {
-          console.error(`Error with asset: ${asset}: ❌❌❌${error.message}`);
+          console.error(
+            `❌❌ Error 1 with asset:${JSON.stringify(
+              asset
+            )} : ${JSON.stringify(error)}`
+          );
           return null;
         }
       })
@@ -96,7 +100,9 @@ export const clearAllLockers = async (req, res) => {
         return asset;
       } catch (error) {
         console.error(
-          `❌❌ Error changing dataObjects and modifying links in clearAllLockers using the asset ${asset}`
+          `❌❌ Error 2 changing dataObjects and modifying links in clearAllLockers using the asset ${JSON.stringify(
+            asset
+          )}`
         );
       }
     });
