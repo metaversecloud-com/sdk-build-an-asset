@@ -103,17 +103,19 @@ function AdminView({ setShowSettings }) {
               handleClearAllLockers();
             }}
             className="start-btn btn-danger"
-            disabled={clearAllButtonClicked}
+            disabled={clearAllButtonClicked || clearButtonClicked}
             style={{ marginBottom: "5px" }}
           >
-            {clearButtonClicked ? "Clear all lockers..." : "Clear all lockers"}
+            {clearAllButtonClicked
+              ? "Clear all lockers..."
+              : "Clear all lockers"}
           </button>
           <button
             onClick={() => {
               handleClearLocker();
             }}
             className="start-btn btn-danger"
-            disabled={clearButtonClicked}
+            disabled={clearAllButtonClicked || clearButtonClicked}
             style={{ marginBottom: "5px" }}
           >
             {clearButtonClicked ? "Clear this locker..." : "Clear this locker"}
