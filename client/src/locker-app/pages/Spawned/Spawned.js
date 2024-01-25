@@ -33,7 +33,6 @@ function Spawned() {
     (state) => state?.session?.isAssetSpawnedInWorld
   );
   const s3Url = droppedAsset?.dataObject?.s3Url;
-  console.log("s3Url", s3Url);
 
   const visitorName = lockerParams["visitor-name"]?.replace("%20", " ");
 
@@ -90,7 +89,8 @@ function Spawned() {
     return <AdminView setShowSettings={setShowSettings} />;
   }
 
-  if (showCustomizeScreen) {
+  // Show customize screen if Edit button is clicked, or if this screen was reached from Claim Locker button
+  if (showCustomizeScreen || lockerParams?.edit == "true") {
     return <EditLocker lockerParams={lockerParams} />;
   }
 

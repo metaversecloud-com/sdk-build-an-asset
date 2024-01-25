@@ -158,8 +158,6 @@ function EditLocker() {
         (acc, category) => {
           const categoryKey1 = `${category.replace(/\s/g, "")}1`;
           const categoryKey2 = `${category.replace(/\s/g, "")}2`;
-          console.log("categoryKey1", categoryKey1);
-          console.log("categoryKey2", categoryKey2);
           acc[category] = [
             urlParams.get(categoryKey1) &&
               `/assets/locker/${urlParams.get(categoryKey1)}.png`,

@@ -1,191 +1,128 @@
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import Jimp from "jimp";
-import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import {
+  getBaseUrl,
+  processRequestQuery,
+  validateImageInfo,
+  handleError,
+} from "./requestHandlers.js";
+import {
+  generateS3Url,
+  generateImageInfoParam,
+  uploadToS3,
+  combineImages,
+} from "./imageUtils.js";
+
+import { createAndFetchEntities } from "./utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
 
 let BASE_URL;
 
 export const editLocker = async (req, res) => {
   try {
-    const protocol = process.env.INSTANCE_PROTOCOL;
-    const host = req.host;
-    const port = req.port;
-
-    if (host === "localhost") {
-      BASE_URL = `http://localhost:3001`;
-    } else {
-      BASE_URL = `${protocol}://${host}`;
-    }
-
+    BASE_URL = getBaseUrl(req);
     const {
       assetId,
-      interactivePublicKey,
+      imageInfo,
       interactiveNonce,
+      interactivePublicKey,
+      uniqueName,
       urlSlug,
       visitorId,
-      uniqueName,
-    } = req.query;
+      credentials,
+    } = processRequestQuery(req);
 
-    const { imageInfo } = req.body;
+    if (!validateImageInfo(imageInfo, res)) return;
 
-    if (!imageInfo) {
-      return res.status(400).json({
-        msg: "Input data missing. Please fill the the follow field: imageInfo",
-      });
-    }
-
-    const credentials = {
+    const { visitor, droppedAsset } = await createAndFetchEntities({
       assetId,
-      interactiveNonce,
-      interactivePublicKey,
+      urlSlug,
       visitorId,
-    };
-
-    const visitor = Visitor.create(visitorId, urlSlug, { credentials });
-
-    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
       credentials,
     });
 
-    await Promise.all([
-      droppedAsset.fetchDroppedAssetById(),
-      droppedAsset.fetchDataObject(),
-      visitor.fetchVisitor(),
-      visitor.fetchDataObject(),
-    ]);
+    // Claim Locker if It's not claimed yet
+    if (!droppedAsset?.dataObject?.profileId) {
+      await claimLocker({ droppedAsset, visitor });
+    }
 
-    const { username } = visitor;
-
-    // S3 Integration
-    const imageFullName = `${visitor?.profileId}-${Date.now()}.png`;
-    const baseDir = path.resolve(__dirname, "../locker-assets");
-    const mergedImageBuffer = await combineImages(imageInfo, baseDir);
-    const s3Url = await uploadToS3(mergedImageBuffer, imageFullName);
-
-    await droppedAsset.setDataObject({ s3Url });
-
-    await droppedAsset.updateWebImageLayers("", s3Url);
-
-    const imageInfoString = JSON.stringify(imageInfo);
-
-    const modifiedName = username.replace(/ /g, "%20");
-
-    const imageInfoParam = generateImageInfoParam(imageInfo);
-    const clickableLink = `${BASE_URL}/locker/spawned?${imageInfoParam}&visitor-name=${modifiedName}`;
-
-    await droppedAsset?.updateClickType({
-      clickType: "link",
-      clickableLink,
-      clickableLinkTitle: "Locker",
-      clickableDisplayTextDescription: "Locker",
-      clickableDisplayTextHeadline: "Locker",
-      isOpenLinkInDrawer: true,
-    });
-
-    await droppedAsset?.updateDataObject({
-      profileId: visitor?.profileId,
+    const s3Url = await generateS3Url(imageInfo, visitor);
+    await updateDroppedAsset(
+      droppedAsset,
+      s3Url,
+      visitor,
       imageInfo,
-      parentAssetId: credentials?.assetId,
-    });
+      credentials
+    );
 
     return res.json({
       spawnSuccess: true,
       success: true,
       isAssetSpawnedInWorld: true,
-      imageInfo,
+      imageInfo: imageInfo,
       spawnedAsset: droppedAsset,
     });
   } catch (error) {
-    logger.error({
-      error,
-      message: "❌ Error while spawning the asset",
-      functionName: "spawn",
-      req,
-    });
-    return res
-      .status(500)
-      .send({ error: error?.message, spawnSuccess: false, success: false });
+    handleError(error, res);
   }
 };
 
-async function combineImages(imageInfo, baseDir) {
-  let images = [];
+async function updateDroppedAsset(
+  droppedAsset,
+  s3Url,
+  visitor,
+  imageInfo,
+  credentials
+) {
+  await droppedAsset.setDataObject({ s3Url });
+  await droppedAsset.updateWebImageLayers("", s3Url);
 
-  for (const category in imageInfo) {
-    for (const item of imageInfo[category]) {
-      const imagePath = path.join(baseDir, item.imageName + ".png");
-      const image = await Jimp.read(imagePath);
-      images.push(image);
-    }
-  }
+  const modifiedName = visitor.username.replace(/ /g, "%20");
+  const imageInfoParam = generateImageInfoParam(imageInfo);
+  const clickableLink = `${BASE_URL}/locker/spawned?${imageInfoParam}&visitor-name=${modifiedName}`;
 
-  let maxWidth = 0;
-  let maxHeight = 0;
-
-  images.forEach((image) => {
-    if (image.bitmap.width > maxWidth) {
-      maxWidth = image.bitmap.width;
-    }
-    if (image.bitmap.height > maxHeight) {
-      maxHeight = image.bitmap.height;
-    }
+  await droppedAsset.updateClickType({
+    clickType: "link",
+    clickableLink,
+    clickableLinkTitle: "Locker",
+    clickableDisplayTextDescription: "Locker",
+    clickableDisplayTextHeadline: "Locker",
+    isOpenLinkInDrawer: true,
   });
 
-  let mergedImage = new Jimp(maxWidth, maxHeight, 0x00000000);
-
-  images.forEach((image) => {
-    mergedImage.composite(image, 0, 0, {
-      mode: Jimp.BLEND_SOURCE_OVER,
-      opacitySource: 1,
-      opacityDest: 1,
-    });
+  await droppedAsset.updateDataObject({
+    profileId: visitor.profileId,
+    imageInfo,
+    parentAssetId: credentials.assetId,
   });
-
-  const buffer = await mergedImage.getBufferAsync(Jimp.MIME_PNG);
-
-  return buffer;
 }
 
-async function uploadToS3(buffer, fileName) {
-  const client = new S3Client({ region: "us-east-1" });
+async function claimLocker({ droppedAsset, visitor }) {
+  const { username } = visitor;
 
-  const putObjectCommand = new PutObjectCommand({
-    Bucket: process.env.S3_BUCKET,
-    Key: fileName,
-    Body: buffer,
-    ContentType: "image/png",
+  const modifiedName = username.replace(/ /g, "%20");
+
+  const completeImageName = "unclaimedLocker.png";
+  const redirectPath = `locker/spawned?visitor-name=${modifiedName}`;
+  const clickableLink = `${BASE_URL}/${redirectPath}`;
+
+  await droppedAsset?.updateClickType({
+    clickType: "link",
+    clickableLink,
+    clickableLinkTitle: "Locker",
+    clickableDisplayTextDescription: "Locker",
+    clickableDisplayTextHeadline: "Locker",
+    isOpenLinkInDrawer: true,
   });
 
-  await client.send(putObjectCommand);
-
-  return `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${fileName}`;
-}
-
-function generateImageInfoParam(imageInfo) {
-  let params = [];
-  let counters = {};
-
-  for (const category in imageInfo) {
-    const categoryKey = category.replace(/ /g, "");
-
-    imageInfo[category].forEach((item) => {
-      counters[categoryKey] = (counters[categoryKey] || 0) + 1;
-      params.push(`${categoryKey}${counters[categoryKey]}=${item.imageName}`);
-    });
-  }
-  return params.join("&");
+  await droppedAsset?.updateDataObject({
+    profileId: visitor?.profileId,
+    completeImageName,
+    parentAssetId: credentials?.assetId,
+  });
 }

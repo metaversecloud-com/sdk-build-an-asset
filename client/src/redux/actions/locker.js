@@ -90,11 +90,32 @@ export const claimLocker = (completeImageName) => async (dispatch) => {
     const redirectPath = response?.data?.redirectPath;
     if (response.status === 200) {
       dispatch(setSpawnSuccess(response?.data));
-      const fullPath = `/${redirectPath}&${queryParams}`;
-      console.log("fullPath", fullPath);
+      const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
       return dispatch(push(fullPath));
     }
   } catch (error) {
+    dispatch(setError("There was an error while spawning the asset"));
+    if (error.response && error.response.data) {
+    } else {
+    }
+    return false;
+  }
+};
+
+export const redirectToEdit = (visitor) => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+
+    const { username } = visitor;
+    const modifiedName = username.replace(/ /g, "%20");
+
+    const redirectPath = `locker/spawned?visitor-name=${modifiedName}`;
+
+    const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
+    console.log("redirectToEdit fullPath", fullPath);
+    return dispatch(push(fullPath));
+  } catch (error) {
+    console.error(error);
     dispatch(setError("There was an error while spawning the asset"));
     if (error.response && error.response.data) {
     } else {
@@ -273,6 +294,7 @@ export const getDroppedAsset = () => async (dispatch) => {
 export const getDroppedAssetAndVisitor = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
+    console.log("getDroppedAssetAndVisitor queryParams", queryParams);
     const url = `/backend/locker/dropped-asset-and-visitor?${queryParams}`;
 
     const response = await axios.get(url);

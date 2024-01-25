@@ -6,6 +6,7 @@ import {
   getDroppedAssetAndVisitor,
   claimLocker,
   moveToAsset,
+  redirectToEdit,
 } from "../../redux/actions/locker";
 import Gear from "./Admin/Gear";
 import AdminView from "./Admin/AdminView";
@@ -120,7 +121,8 @@ function Home() {
   const handleClaimLocker = async () => {
     try {
       setIsButtonClaimDisabled(true);
-      await dispatch(claimLocker());
+      // await dispatch(claimLocker());
+      await dispatch(redirectToEdit(visitor));
     } catch (error) {
       console.error(error);
     } finally {
