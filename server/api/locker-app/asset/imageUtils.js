@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export async function combineImages(imageInfo, baseDir) {
+async function combineImages(imageInfo, baseDir) {
   let images = [];
 
   for (const category in imageInfo) {

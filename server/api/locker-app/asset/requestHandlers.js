@@ -48,15 +48,3 @@ export function validateImageInfo(imageInfo, res) {
   }
   return true;
 }
-
-export function handleError(error, res) {
-  logger.error({
-    error,
-    message: "❌ Error while spawning the asset",
-    functionName: "spawn",
-    req,
-  });
-  res
-    .status(500)
-    .send({ error: error?.message, spawnSuccess: false, success: false });
-}

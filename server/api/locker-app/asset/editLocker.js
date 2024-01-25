@@ -1,20 +1,12 @@
-import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import path from "path";
 import { fileURLToPath } from "url";
 import {
   getBaseUrl,
   processRequestQuery,
   validateImageInfo,
-  handleError,
 } from "./requestHandlers.js";
-import {
-  generateS3Url,
-  generateImageInfoParam,
-  uploadToS3,
-  combineImages,
-} from "./imageUtils.js";
+import { generateS3Url, generateImageInfoParam } from "./imageUtils.js";
 
 import { createAndFetchEntities } from "./utils.js";
 
@@ -26,16 +18,8 @@ let BASE_URL;
 export const editLocker = async (req, res) => {
   try {
     BASE_URL = getBaseUrl(req);
-    const {
-      assetId,
-      imageInfo,
-      interactiveNonce,
-      interactivePublicKey,
-      uniqueName,
-      urlSlug,
-      visitorId,
-      credentials,
-    } = processRequestQuery(req);
+    const { assetId, imageInfo, urlSlug, visitorId, credentials } =
+      processRequestQuery(req);
 
     if (!validateImageInfo(imageInfo, res)) return;
 
@@ -48,7 +32,7 @@ export const editLocker = async (req, res) => {
 
     // Claim Locker if It's not claimed yet
     if (!droppedAsset?.dataObject?.profileId) {
-      await claimLocker({ droppedAsset, visitor });
+      await claimLocker({ droppedAsset, visitor, credentials });
     }
 
     const s3Url = await generateS3Url(imageInfo, visitor);
@@ -68,7 +52,13 @@ export const editLocker = async (req, res) => {
       spawnedAsset: droppedAsset,
     });
   } catch (error) {
-    handleError(error, res);
+    logger.error({
+      error,
+      message: "❌ Error while editing the locker",
+      functionName: "editLocker",
+      req,
+    });
+    return res.status(500).send({ error: error?.message, success: false });
   }
 };
 
@@ -102,7 +92,7 @@ async function updateDroppedAsset(
   });
 }
 
-async function claimLocker({ droppedAsset, visitor }) {
+async function claimLocker({ droppedAsset, visitor, credentials }) {
   const { username } = visitor;
 
   const modifiedName = username.replace(/ /g, "%20");
