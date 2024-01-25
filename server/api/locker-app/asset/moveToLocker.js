@@ -61,6 +61,8 @@ export const moveToLocker = async (req, res) => {
       y,
     });
 
+    await visitor.closeIframe(assetId);
+
     return res.json({
       asset: visitor?.dataObject?.asset,
       visitor,
