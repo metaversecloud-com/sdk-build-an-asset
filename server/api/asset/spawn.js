@@ -10,7 +10,7 @@ export const spawn = async (req, res) => {
     const port = req.port;
 
     if (host === "localhost") {
-      BASE_URL = `https://snowman-dev-topia.topia-rtsdk.com`;
+      BASE_URL = `https://snowman0-dev-Topia.topia-rtsdk.com`;
     } else {
       BASE_URL = `${protocol}://${host}`;
     }
@@ -151,13 +151,14 @@ async function dropImageAsset({
     position: spawnPosition,
     uniqueName: spawnedAssetUniqueName,
     urlSlug,
+    isInteractive: true,
+    interactivePublicKey,
   });
 
   await assetSpawnedDroppedAsset?.updateDataObject({
     profileId: visitor?.profileId,
     completeImageName,
     parentAssetId: credentials?.assetId,
-    parentUniqueName,
   });
 
   const modifiedName = username.replace(/ /g, "%20");
