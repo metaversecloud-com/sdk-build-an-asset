@@ -51,44 +51,19 @@ export const clearAllLockers = async (req, res) => {
       uniqueName: `lockerSystem-0`,
     });
 
-    await Promise.all(
-      spawnedAssets.map(async (asset) => {
-        try {
-          await asset.fetchDataObject();
-        } catch (error) {
-          console.error(`❓❌ ${error}`);
-        }
-      })
-    );
-    await Promise.all(
-      spawnedAssets.map(async (asset) => {
-        try {
-          await asset.fetchDataObject();
-        } catch (error) {
-          console.error(
-            `❌❌ Error 1 with asset:${JSON.stringify(
-              asset
-            )} : ${JSON.stringify(error)}`
-          );
-          return null;
-        }
-      })
-    );
-
     spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
-
-    const toplayer = `${DEFAULT_URL_FOR_IMAGE_HOSTING}/assets/locker/output/unclaimedLocker.png`;
 
     const promises = spawnedAssets.map(async (asset) => {
       try {
+        await asset.fetchDataObject();
         await asset.setDataObject(null);
         await asset.setDataObject({});
 
-        await droppedAsset?.updateWebImageLayers("", toplayer);
+        const toplayer = `${DEFAULT_URL_FOR_IMAGE_HOSTING}/assets/locker/output/unclaimedLocker.png`;
+        await asset.updateWebImageLayers("", toplayer);
 
         const clickableLink = `${BASE_URL}/locker`;
-
-        await droppedAsset?.updateClickType({
+        await asset.updateClickType({
           clickType: "link",
           clickableLink,
           clickableLinkTitle: "Locker",
@@ -99,11 +74,7 @@ export const clearAllLockers = async (req, res) => {
 
         return asset;
       } catch (error) {
-        console.error(
-          `❌❌ Error 2 changing dataObjects and modifying links in clearAllLockers using the asset ${JSON.stringify(
-            asset
-          )}`
-        );
+        console.error(`❌ Error modifying asset: ${error}`);
       }
     });
 
