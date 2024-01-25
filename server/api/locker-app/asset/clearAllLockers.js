@@ -88,7 +88,7 @@ export const clearAllLockers = async (req, res) => {
     try {
       await Promise.all(promises);
     } catch (error) {
-      console.error(error);
+      console.error("❌❌ Error in clearAllLockers");
       console.error(JSON.stringify(error));
     }
 
