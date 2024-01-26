@@ -123,7 +123,13 @@ function EditLocker() {
   };
 
   const allCategoriesSelected = () => {
-    return Object.keys(categories).every((category) => selected[category]);
+    const lockerBaseSelected = selected["Locker Base"].length > 0;
+
+    const otherCategoriesSelected = Object.keys(categories).every(
+      (category) => category === "Locker Base" || selected[category].length > 0
+    );
+
+    return lockerBaseSelected && otherCategoriesSelected;
   };
 
   const toggleCategory = (category) => {
