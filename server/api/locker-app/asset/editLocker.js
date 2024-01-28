@@ -56,11 +56,11 @@ export const editLocker = async (req, res) => {
     //   await claimLocker({ droppedAsset, visitor, credentials });
     // }
 
-    // let s3Url = await generateS3Url(imageInfo, visitor);
+    let s3Url = await generateS3Url(imageInfo, visitor);
 
     // Uncomment below to test locally, because we don't have an S3 bucket in localhost
-    let s3Url =
-      "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
+    // let s3Url =
+    //   "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
     await updateDroppedAsset({
       droppedAsset,
       s3Url,
