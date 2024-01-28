@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
 import {
   pickupAsset,
   getDroppedAssetAndVisitor,
-  getIsMyAssetSpawned,
-  moveToAsset,
   clearLocker,
 } from "../../../redux/actions/locker";
 import EditLocker from "../../components/EditLocker/EditLocker";
@@ -17,27 +14,28 @@ import "./Spawned.scss";
 function Spawned() {
   const dispatch = useDispatch();
 
+  const queryParameters = new URLSearchParams(window.location.search);
+  const assetId = queryParameters.get("assetId");
+  const profileId = queryParameters.get("profileId");
+
   let isAssetOwner = false;
 
   const [loading, setLoading] = useState(false);
-  const [isButtonMoveToSnowmanDisabled, setIsButtonMoveToSnowmanDisabled] =
-    useState(false);
   const [lockerParams, setLockerParams] = useState({});
   const [isButtonClearDisabled, setIsButtonClearDisabled] = useState(false);
   const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
 
   const visitor = useSelector((state) => state?.session?.visitor);
   const droppedAsset = useSelector((state) => state?.session?.droppedAsset);
+  const world = useSelector((state) => state?.session?.world);
   const [showSettings, setShowSettings] = useState(false);
-  const isAssetSpawnedInWorld = useSelector(
-    (state) => state?.session?.isAssetSpawnedInWorld
-  );
-  const s3Url = droppedAsset?.dataObject?.s3Url;
+  const s3Url = world?.dataObject?.lockers?.[profileId]?.s3Url;
 
   const visitorName = lockerParams["visitor-name"]?.replace("%20", " ");
 
-  if (visitor?.profileId && droppedAsset?.dataObject?.profileId) {
-    isAssetOwner = visitor?.profileId == droppedAsset?.dataObject?.profileId;
+  if (world?.dataObject?.lockers?.[profileId]) {
+    isAssetOwner =
+      world?.dataObject?.lockers?.[profileId]?.droppedAssetId == assetId;
   }
 
   useEffect(() => {

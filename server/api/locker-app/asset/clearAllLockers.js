@@ -59,6 +59,10 @@ export const clearAllLockers = async (req, res) => {
         await asset.setDataObject(null);
         await asset.setDataObject({});
 
+        await world.updateDataObject({
+          lockers: null,
+        });
+
         const toplayer = `${DEFAULT_URL_FOR_IMAGE_HOSTING}/assets/locker/output/unclaimedLocker.png`;
         await asset.updateWebImageLayers("", toplayer);
 

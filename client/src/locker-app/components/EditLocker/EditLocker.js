@@ -111,17 +111,6 @@ function EditLocker() {
     Door: false,
   });
 
-  const validateSelection = () => {
-    const errors = {};
-    Object.keys(categories).forEach((category) => {
-      if (!selected[category]) {
-        errors[category] = true;
-      }
-    });
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
   const allCategoriesSelected = () => {
     const lockerBaseSelected = selected["Locker Base"].length > 0;
 
@@ -198,10 +187,10 @@ function EditLocker() {
       let updatedSelection = { ...selected };
 
       if (type === "Locker Base") {
-        // Se for "Locker Base", permite apenas uma seleção
+        // Allow only one selection for Locker Base
         updatedSelection[type] = [image];
       } else {
-        // Para outras categorias, permite até duas seleções
+        // Allow multiple selections for the other categories
         if (selected[type].includes(image)) {
           updatedSelection[type] = selected[type].filter(
             (item) => item !== image
@@ -265,16 +254,16 @@ function EditLocker() {
     }
   };
 
-  const handleMoveToLocker = async () => {
-    try {
-      setIsButtonMoveToLockerDisabled(true);
-      await dispatch(moveToAsset());
-    } catch (error) {
-      console.error("Error in handleMoveToLocker:", error);
-    } finally {
-      setIsButtonMoveToLockerDisabled(false);
-    }
-  };
+  // const handleMoveToLocker = async () => {
+  //   try {
+  //     setIsButtonMoveToLockerDisabled(true);
+  //     await dispatch(moveToAsset());
+  //   } catch (error) {
+  //     console.error("Error in handleMoveToLocker:", error);
+  //   } finally {
+  //     setIsButtonMoveToLockerDisabled(false);
+  //   }
+  // };
 
   return (
     <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
@@ -322,7 +311,6 @@ function EditLocker() {
                   alt={image}
                   className="img-accessory"
                   style={{
-                    // border: "1px solid #ccc",
                     borderRadius: "10px",
                     padding: "5px",
                     backgroundColor: isSelectedItem(type, image)

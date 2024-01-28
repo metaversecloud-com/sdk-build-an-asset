@@ -9,6 +9,7 @@ export const getLockerDroppedAssetAndVisitor = async (req, res) => {
       assetId,
       interactivePublicKey,
       urlSlug,
+      profileId,
     } = req.query;
 
     const credentials = {
@@ -24,49 +25,35 @@ export const getLockerDroppedAssetAndVisitor = async (req, res) => {
     const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
       credentials,
     });
-    await Promise.all([
-      droppedAsset.fetchDroppedAssetById(),
-      droppedAsset.fetchDataObject(),
-      visitor.fetchVisitor(),
-      visitor.fetchDataObject(),
-    ]);
 
-    let spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: `lockerSystem-0`,
-    });
+    await world.fetchDataObject();
+    await visitor.fetchVisitor();
 
-    await Promise.all(
-      spawnedAssets.map(async (asset) => {
-        try {
-          await asset.fetchDataObject();
-        } catch (error) {
-          return null;
-        }
-      })
-    );
+    if (!world.dataObject.lockers) {
+      world.setDataObject({ lockers: [] });
+    }
 
-    spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
+    // await Promise.all([
+    //   droppedAsset.fetchDroppedAssetById(),
+    //   droppedAsset.fetchDataObject(),
+    //   visitor.fetchVisitor(),
+    //   visitor.fetchDataObject(),
+    // ]);
 
-    const userLocker = spawnedAssets.find((asset) => {
-      if (asset?.dataObject?.profileId == visitor?.profileId) {
-        return true;
-      }
-      return false;
-    });
+    // const userLocker = DroppedAsset.create(
+    //   visitor.dataObject.droppedAssetId,
+    //   urlSlug,
+    //   { credentials }
+    // );
 
-    // Clear all lockers
-    // const test = spawnedAssets.map(async (asset) => {
-    //   await asset.setDataObject(null);
-    //   await asset.setDataObject({});
-    //   return asset;
-    // });
-
-    // await Promise.all(test);
+    // await Promise.all([
+    //   userLocker.fetchDroppedAssetById(),
+    //   userLocker.fetchDataObject(),
+    // ]);
 
     return res.json({
-      droppedAsset,
+      world,
       visitor,
-      userLocker,
     });
   } catch (error) {
     logger.error({
@@ -78,3 +65,5 @@ export const getLockerDroppedAssetAndVisitor = async (req, res) => {
     return res.status(500).send({ error, success: false });
   }
 };
+
+// function hotfixMessedUpLockersThatHaveNoOwnersInVisitorDataObject() {}

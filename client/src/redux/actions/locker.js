@@ -25,8 +25,9 @@ const getQueryParams = () => {
   const interactivePublicKey = queryParameters.get("interactivePublicKey");
   const urlSlug = queryParameters.get("urlSlug");
   const uniqueName = queryParameters.get("uniqueName");
+  const profileId = queryParameters.get("profileId");
 
-  return `visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetId}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}&uniqueName=${uniqueName}`;
+  return `visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetId}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}&uniqueName=${uniqueName}&profileId=${profileId}`;
 };
 
 export const getVisitor = () => async (dispatch) => {
@@ -294,7 +295,6 @@ export const getDroppedAsset = () => async (dispatch) => {
 export const getDroppedAssetAndVisitor = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    console.log("getDroppedAssetAndVisitor queryParams", queryParams);
     const url = `/backend/locker/dropped-asset-and-visitor?${queryParams}`;
 
     const response = await axios.get(url);

@@ -7,6 +7,7 @@ import {
   validateImageInfo,
 } from "./requestHandlers.js";
 import { generateS3Url, generateImageInfoParam } from "./imageUtils.js";
+import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 
 import { createAndFetchEntities } from "./utils.js";
 
@@ -18,10 +19,30 @@ let BASE_URL;
 export const editLocker = async (req, res) => {
   try {
     BASE_URL = getBaseUrl(req);
-    const { assetId, imageInfo, urlSlug, visitorId, credentials } =
-      processRequestQuery(req);
+
+    const {
+      assetId,
+      interactivePublicKey,
+      interactiveNonce,
+      urlSlug,
+      visitorId,
+      uniqueName,
+      profileId,
+    } = req.query;
+
+    const { imageInfo } = req.body;
+
+    const credentials = {
+      assetId,
+      interactiveNonce,
+      interactivePublicKey,
+      visitorId,
+    };
 
     if (!validateImageInfo(imageInfo, res)) return;
+
+    const world = await World.create(urlSlug, { credentials });
+    await world.fetchDataObject();
 
     const { visitor, droppedAsset } = await createAndFetchEntities({
       assetId,
@@ -31,20 +52,25 @@ export const editLocker = async (req, res) => {
     });
 
     // Claim Locker if It's not claimed yet
-    if (!droppedAsset?.dataObject?.profileId) {
-      await claimLocker({ droppedAsset, visitor, credentials });
-    }
+    // if (!droppedAsset?.dataObject?.profileId) {
+    //   await claimLocker({ droppedAsset, visitor, credentials });
+    // }
 
-    let s3Url = await generateS3Url(imageInfo, visitor);
-    // s3Url =
-    //   "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
-    await updateDroppedAsset(
+    // let s3Url = await generateS3Url(imageInfo, visitor);
+
+    // Uncomment below to test locally, because we don't have an S3 bucket in localhost
+    let s3Url =
+      "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
+    await updateDroppedAsset({
       droppedAsset,
       s3Url,
       visitor,
       imageInfo,
-      credentials
-    );
+      credentials,
+      profileId,
+      assetId,
+      world,
+    });
 
     return res.json({
       spawnSuccess: true,
@@ -64,19 +90,28 @@ export const editLocker = async (req, res) => {
   }
 };
 
-async function updateDroppedAsset(
+async function updateDroppedAsset({
   droppedAsset,
   s3Url,
   visitor,
   imageInfo,
-  credentials
-) {
-  await droppedAsset.setDataObject({ s3Url });
+  credentials,
+  profileId,
+  assetId,
+  world,
+}) {
+  await world.updateDataObject({
+    lockers: {
+      ...world.dataObject.lockers,
+      [profileId]: { droppedAssetId: assetId, s3Url },
+    },
+  });
+
   await droppedAsset.updateWebImageLayers("", s3Url);
 
   const modifiedName = visitor.username.replace(/ /g, "%20");
   const imageInfoParam = generateImageInfoParam(imageInfo);
-  const clickableLink = `${BASE_URL}/locker/spawned?${imageInfoParam}&visitor-name=${modifiedName}`;
+  const clickableLink = `${BASE_URL}/locker/spawned?${imageInfoParam}&visitor-name=${modifiedName}&profileId=${profileId}`;
 
   await droppedAsset.updateClickType({
     clickType: "link",
@@ -91,30 +126,5 @@ async function updateDroppedAsset(
     profileId: visitor.profileId,
     imageInfo,
     parentAssetId: credentials.assetId,
-  });
-}
-
-async function claimLocker({ droppedAsset, visitor, credentials }) {
-  const { username } = visitor;
-
-  const modifiedName = username.replace(/ /g, "%20");
-
-  const completeImageName = "unclaimedLocker.png";
-  const redirectPath = `locker/spawned?visitor-name=${modifiedName}`;
-  const clickableLink = `${BASE_URL}/${redirectPath}`;
-
-  await droppedAsset?.updateClickType({
-    clickType: "link",
-    clickableLink,
-    clickableLinkTitle: "Locker",
-    clickableDisplayTextDescription: "Locker",
-    clickableDisplayTextHeadline: "Locker",
-    isOpenLinkInDrawer: true,
-  });
-
-  await droppedAsset?.updateDataObject({
-    profileId: visitor?.profileId,
-    completeImageName,
-    parentAssetId: credentials?.assetId,
   });
 }

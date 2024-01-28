@@ -70,9 +70,22 @@ const categories = {
 function Home() {
   const dispatch = useDispatch();
 
+  let isAssetOwner = false;
+
+  const queryParameters = new URLSearchParams(window.location.search);
+  const assetId = queryParameters.get("assetId");
+  const profileId = queryParameters.get("profileId");
+
   const visitor = useSelector((state) => state?.session?.visitor);
+  const world = useSelector((state) => state?.session?.world);
   const spawnedAsset = useSelector((state) => state?.session?.spawnedAsset);
-  const userLocker = useSelector((state) => state?.session?.userLocker);
+
+  isAssetOwner =
+    world?.dataObject?.lockers?.[profileId]?.droppedAssetId == assetId;
+
+  const userHasLocker = world?.dataObject?.lockers?.[profileId]?.droppedAssetId;
+
+  console.log("world?.dataObject?.lockers", world?.dataObject?.lockers);
 
   const [selected, setSelected] = useState({
     "Locker Base": "",
@@ -153,7 +166,8 @@ function Home() {
     return <AdminView setShowSettings={setShowSettings} />;
   }
 
-  if (userLocker) {
+  // If user already have a locker
+  if (userHasLocker) {
     return (
       <>
         <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>

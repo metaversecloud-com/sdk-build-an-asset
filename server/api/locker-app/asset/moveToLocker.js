@@ -9,6 +9,7 @@ export const moveToLocker = async (req, res) => {
       assetId,
       interactivePublicKey,
       urlSlug,
+      profileId,
     } = req.query;
 
     const credentials = {
@@ -19,40 +20,18 @@ export const moveToLocker = async (req, res) => {
     };
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
+
     const world = await World.create(urlSlug, { credentials });
+    await world.fetchDataObject();
 
-    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
-      credentials,
-    });
-    await Promise.all([
-      droppedAsset.fetchDroppedAssetById(),
-      droppedAsset.fetchDataObject(),
-      visitor.fetchVisitor(),
-      visitor.fetchDataObject(),
-    ]);
-
-    let spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: `lockerSystem-0`,
-    });
-
-    await Promise.all(
-      spawnedAssets.map(async (asset) => {
-        try {
-          await asset.fetchDataObject();
-        } catch (error) {
-          return null;
-        }
-      })
-    );
-
-    spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
-
-    const userLocker = spawnedAssets.find((asset) => {
-      if (asset?.dataObject?.profileId == visitor?.profileId) {
-        return true;
+    const userLocker = DroppedAsset.create(
+      world?.dataObject?.lockers?.[profileId]?.droppedAssetId,
+      urlSlug,
+      {
+        credentials,
       }
-      return false;
-    });
+    );
+    await userLocker.fetchDroppedAssetById();
 
     const { x, y } = userLocker?.position;
     await visitor.moveVisitor({

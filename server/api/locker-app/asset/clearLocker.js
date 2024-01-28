@@ -27,6 +27,7 @@ export const clearLocker = async (req, res) => {
       urlSlug,
       visitorId,
       uniqueName,
+      profileId,
     } = req.query;
 
     const credentials = {
@@ -41,6 +42,9 @@ export const clearLocker = async (req, res) => {
     const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
       credentials,
     });
+
+    const world = await World.create(urlSlug, { credentials });
+    await world.fetchDataObject();
 
     await Promise.all([
       droppedAsset.fetchDroppedAssetById(),
@@ -63,8 +67,12 @@ export const clearLocker = async (req, res) => {
       isOpenLinkInDrawer: true,
     });
 
-    await droppedAsset?.setDataObject(null);
-    await droppedAsset?.setDataObject({});
+    await world.updateDataObject({
+      lockers: {
+        ...world.dataObject.lockers,
+        [profileId]: null,
+      },
+    });
 
     return res.json({
       spawnSuccess: true,
