@@ -10,8 +10,7 @@ export const clearLocker = async (req, res) => {
       interactiveNonce,
       urlSlug,
       visitorId,
-      uniqueName,
-      profileId,
+      ownerProfileId,
     } = req.query;
 
     const credentials = {
@@ -46,11 +45,8 @@ export const clearLocker = async (req, res) => {
         isOpenLinkInDrawer: true,
       }),
       world.updateDataObject({
-        lockers: {
-          ...world.dataObject.lockers,
-          [profileId]: null,
-        },
-      }),
+        [`lockers.${ownerProfileId}`]: null,
+      })
     ]);
 
     return res.json({

@@ -13,7 +13,6 @@ export const editLocker = async (req, res) => {
       interactiveNonce,
       urlSlug,
       visitorId,
-      uniqueName,
       profileId,
       username,
     } = req.query;
@@ -36,29 +35,20 @@ export const editLocker = async (req, res) => {
 
     await world.fetchDataObject();
 
-    const lockersEntries = Object.entries(world.dataObject.lockers);
-    const notTheLockerOwner = lockersEntries.reduce(
-      (found, [ownerProfileId, locker]) => {
-        return (
-          locker.droppedAssetId === assetId && ownerProfileId !== profileId
-        );
-        // if (locker.droppedAssetId === assetId) {
-        //   return { profileId, ...locker };
-        // }
-        // return found;
-      },
-      null
-    );
-
-    // const is = world.dataObject.lockers.find((locker) => {
-    //   return (locker.droppedAssetId = assetId);
-    // });
-
-    if (notTheLockerOwner) {
-      return res.json({
-        msg: "This locker is already taken",
-        isLockerAlreadyTaken: true,
-      });
+    if(world.dataObject.lockers) {
+      const claimedLocker = Object.entries(world.dataObject.lockers).reduce((claimedLocker, [ownerProfileId, locker]) => {
+        if (locker && locker.droppedAssetId === assetId && ownerProfileId !== profileId) {
+          return locker.droppedAssetId
+        }
+        return claimedLocker;
+      }, {})
+      
+      if (claimedLocker) {
+        return res.json({
+          msg: "This locker is already taken",
+          isLockerAlreadyTaken: true,
+        });
+      }
     }
 
     let s3Url;
@@ -118,10 +108,7 @@ async function updateDroppedAsset({
 
   await world.updateDataObject(
     {
-      lockers: {
-        ...world.dataObject.lockers,
-        [profileId]: { droppedAssetId: assetId, s3Url },
-      },
+      [`lockers.${profileId}`]: { droppedAssetId: assetId, s3Url },
     },
     {
       lock: {

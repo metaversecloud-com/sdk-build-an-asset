@@ -19,6 +19,8 @@ export const logger = {
           error: JSON.stringify(error),
         })
       );
+
+    console.log("🚀 ~ file: logger.js:28 ~ export  logger.error:", error)
     } catch (error) {
       console.error("❌ Error printing the logs");
       console.error(error);

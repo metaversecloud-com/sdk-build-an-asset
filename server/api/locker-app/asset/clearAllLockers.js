@@ -29,25 +29,19 @@ export const clearAllLockers = async (req, res) => {
     spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
 
     // TODO: remove need for update clickType
-    const promises = spawnedAssets.map(async (asset) => {
-      try {
-        const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
-        await asset.updateWebImageLayers("", toplayer);
-
-        const clickableLink = `${baseUrl}/locker`;
-        await asset.updateClickType({
+    const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
+    const clickableLink = `${baseUrl}/locker`;
+    const promises = []
+    spawnedAssets.map(async (asset) => {
+      promises.push(asset.updateWebImageLayers("", toplayer))
+      promises.push(asset.updateClickType({
           clickType: "link",
           clickableLink,
           clickableLinkTitle: "Locker",
           clickableDisplayTextDescription: "Locker",
           clickableDisplayTextHeadline: "Locker",
           isOpenLinkInDrawer: true,
-        });
-
-        return asset;
-      } catch (error) {
-        console.error(`❌ Error modifying asset: ${error}`);
-      }
+        }))
     });
 
     promises.push(
