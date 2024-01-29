@@ -91,6 +91,9 @@ function EditLocker() {
     useState(false);
   const [preview, setPreview] = useState("/assets/locker/unclaimedLocker.png");
   const [imageInfo, setImageInfo] = useState({});
+  const isLockerAlreadyTaken = useSelector(
+    (state) => state?.session?.isLockerAlreadyTaken
+  );
   const [openCategories, setOpenCategories] = useState({
     Wallpaper: false,
     "Top Shelf": false,
@@ -247,6 +250,17 @@ function EditLocker() {
       setIsButtonMoveToLockerDisabled(false);
     }
   };
+
+  if (isLockerAlreadyTaken) {
+    return (
+      <>
+        <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
+          <h1>This locker is already taken</h1>
+          <p>Please select another locker!</p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>

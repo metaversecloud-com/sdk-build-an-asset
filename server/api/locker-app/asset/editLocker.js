@@ -36,6 +36,31 @@ export const editLocker = async (req, res) => {
 
     await world.fetchDataObject();
 
+    const lockersEntries = Object.entries(world.dataObject.lockers);
+    const notTheLockerOwner = lockersEntries.reduce(
+      (found, [ownerProfileId, locker]) => {
+        return (
+          locker.droppedAssetId === assetId && ownerProfileId !== profileId
+        );
+        // if (locker.droppedAssetId === assetId) {
+        //   return { profileId, ...locker };
+        // }
+        // return found;
+      },
+      null
+    );
+
+    // const is = world.dataObject.lockers.find((locker) => {
+    //   return (locker.droppedAssetId = assetId);
+    // });
+
+    if (notTheLockerOwner) {
+      return res.json({
+        msg: "This locker is already taken",
+        isLockerAlreadyTaken: true,
+      });
+    }
+
     let s3Url;
 
     const host = req.host;
@@ -91,14 +116,25 @@ async function updateDroppedAsset({
   const imageInfoParam = generateImageInfoParam(imageInfo);
   const clickableLink = `${baseUrl}/locker/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
 
-  // TODO: remove need for update clickType
-  return await Promise.all([
-    world.updateDataObject({
+  await world.updateDataObject(
+    {
       lockers: {
         ...world.dataObject.lockers,
         [profileId]: { droppedAssetId: assetId, s3Url },
       },
-    }),
+    },
+    {
+      lock: {
+        lockId: `${assetId}-${new Date(
+          Math.round(new Date().getTime() / 10000) * 10000
+        )}`,
+        releaseLock: true,
+      },
+    }
+  );
+
+  // TODO: remove need for update clickType
+  return await Promise.all([
     droppedAsset.updateWebImageLayers("", s3Url),
     droppedAsset.updateClickType({
       clickType: "link",
