@@ -26,8 +26,9 @@ const getQueryParams = () => {
   const urlSlug = queryParameters.get("urlSlug");
   const uniqueName = queryParameters.get("uniqueName");
   const profileId = queryParameters.get("profileId");
+  const username = queryParameters.get("username");
 
-  return `visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetId}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}&uniqueName=${uniqueName}&profileId=${profileId}`;
+  return `visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetId}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}&uniqueName=${uniqueName}&profileId=${profileId}&username=${username}`;
 };
 
 export const getVisitor = () => async (dispatch) => {
@@ -41,27 +42,6 @@ export const getVisitor = () => async (dispatch) => {
     }
   } catch (error) {
     dispatch(setError("There was an error when getting the user content."));
-    if (error.response && error.response.data) {
-    } else {
-    }
-  }
-};
-
-export const spawnAsset = (completeImageName) => async (dispatch) => {
-  try {
-    const queryParams = getQueryParams();
-    const url = `/backend/locker/asset/spawn?${queryParams}`;
-    const response = await axios.post(url, { completeImageName });
-
-    if (response.status === 200) {
-      dispatch(setSpawnSuccess(response?.data));
-    }
-  } catch (error) {
-    dispatch(setError("There was an error while spawning the asset"));
-    if (error.response && error.response.data) {
-    } else {
-    }
-    return false;
   }
 };
 
@@ -76,51 +56,24 @@ export const editLocker = (imageInfo) => async (dispatch) => {
     }
   } catch (error) {
     dispatch(setError("There was an error while spawning the asset"));
-    if (error.response && error.response.data) {
-    } else {
-    }
-    return false;
-  }
-};
-
-export const claimLocker = (completeImageName) => async (dispatch) => {
-  try {
-    const queryParams = getQueryParams();
-    const url = `/backend/locker/claim?${queryParams}`;
-    const response = await axios.post(url);
-    const redirectPath = response?.data?.redirectPath;
-    if (response.status === 200) {
-      dispatch(setSpawnSuccess(response?.data));
-      const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
-      return dispatch(push(fullPath));
-    }
-  } catch (error) {
-    dispatch(setError("There was an error while spawning the asset"));
-    if (error.response && error.response.data) {
-    } else {
-    }
     return false;
   }
 };
 
 export const redirectToEdit = (visitor) => async (dispatch) => {
   try {
+    console.log("hello");
     const queryParams = getQueryParams();
 
     const { username } = visitor;
     const modifiedName = username.replace(/ /g, "%20");
 
-    const redirectPath = `locker/spawned?visitor-name=${modifiedName}`;
+    const redirectPath = `locker/claimed?visitor-name=${modifiedName}`;
 
     const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
-    console.log("redirectToEdit fullPath", fullPath);
     return dispatch(push(fullPath));
   } catch (error) {
     console.error(error);
-    dispatch(setError("There was an error while spawning the asset"));
-    if (error.response && error.response.data) {
-    } else {
-    }
     return false;
   }
 };
@@ -137,9 +90,6 @@ export const clearLocker = () => async (dispatch) => {
     }
   } catch (error) {
     dispatch(setError("There was an error while spawning the asset"));
-    if (error.response && error.response.data) {
-    } else {
-    }
     return false;
   }
 };
@@ -156,9 +106,6 @@ export const clearAllLockers = () => async (dispatch) => {
     }
   } catch (error) {
     dispatch(setError("There was an error while spawning the asset"));
-    if (error.response && error.response.data) {
-    } else {
-    }
     return false;
   }
 };
@@ -175,9 +122,6 @@ export const spawnFromSpawnedAsset =
       }
     } catch (error) {
       dispatch(setError("There was an error while spawning the asset"));
-      if (error.response && error.response.data) {
-      } else {
-      }
       return false;
     }
   };
@@ -193,9 +137,6 @@ export const getIsMyAssetSpawned = (completeImageName) => async (dispatch) => {
     }
   } catch (error) {
     dispatch(setError("There was an error while spawning the asset"));
-    if (error.response && error.response.data) {
-    } else {
-    }
     return false;
   }
 };
@@ -211,9 +152,6 @@ export const pickupAsset = (isSpawnedDroppedAsset) => async (dispatch) => {
     }
   } catch (error) {
     dispatch(setError("There was an error while spawning the asset"));
-    if (error.response && error.response.data) {
-    } else {
-    }
     return false;
   }
 };
@@ -225,23 +163,6 @@ export const pickUpAllAssets = () => async (dispatch) => {
     const response = await axios.post(url);
   } catch (error) {
     dispatch(setError("There was an error while picking up all assets"));
-    if (error.response && error.response.data) {
-    } else {
-    }
-    return false;
-  }
-};
-
-export const spawnLocker = () => async (dispatch) => {
-  try {
-    const queryParams = getQueryParams();
-    const url = `/backend/locker/asset/spawn?${queryParams}`;
-    const response = await axios.post(url);
-  } catch (error) {
-    dispatch(setError("There was an error while picking up all assets"));
-    if (error.response && error.response.data) {
-    } else {
-    }
     return false;
   }
 };
@@ -253,9 +174,6 @@ export const renameLocker = () => async (dispatch) => {
     const response = await axios.post(url);
   } catch (error) {
     dispatch(setError("There was an error while picking up all assets"));
-    if (error.response && error.response.data) {
-    } else {
-    }
     return false;
   }
 };
@@ -268,27 +186,19 @@ export const moveToAsset = () => async (dispatch) => {
     const response = await axios.post(url);
   } catch (error) {
     console.error("error", error);
-    if (error.response && error.response.data) {
-    } else {
-    }
   }
 };
 
-export const getDroppedAsset = () => async (dispatch) => {
+export const getDroppedAsset = async () => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/dropped-asset?${queryParams}`;
+    const url = `/backend/locker/dropped-asset?${queryParams}`;
 
     const response = await axios.get(url);
 
-    if (response.status === 200) {
-      dispatch(setDroppedAsset(response?.data?.droppedAsset));
-    }
+    return response?.data?.droppedAsset;
   } catch (error) {
     console.error("error", error);
-    if (error.response && error.response.data) {
-    } else {
-    }
   }
 };
 
@@ -304,9 +214,6 @@ export const getWorld = () => async (dispatch) => {
     }
   } catch (error) {
     console.error("error", error);
-    if (error.response && error.response.data) {
-    } else {
-    }
   }
 };
 
@@ -329,9 +236,6 @@ export const getAsset = () => async (dispatch) => {
     }
   } catch (error) {
     console.error("error", error);
-    if (error.response && error.response.data) {
-    } else {
-    }
   }
 };
 
@@ -351,9 +255,6 @@ export const createAsset = (assetType, name) => async (dispatch) => {
     }
   } catch (error) {
     console.error("error", error);
-    if (error.response && error.response.data) {
-    } else {
-    }
   }
 };
 
@@ -373,9 +274,6 @@ export const nameAsset = (name) => async (dispatch) => {
     }
   } catch (error) {
     console.error("Error Naming the asset", JSON.stringify(error));
-    if (error.response && error.response.data) {
-    } else {
-    }
   }
 };
 
@@ -391,8 +289,5 @@ export const deleteAll = () => async (dispatch) => {
     return false;
   } catch (error) {
     console.error("error", error);
-    if (error.response && error.response.data) {
-    } else {
-    }
   }
 };

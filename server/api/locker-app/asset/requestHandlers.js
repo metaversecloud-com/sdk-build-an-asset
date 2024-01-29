@@ -17,34 +17,6 @@ export function getBaseUrl(req) {
   return { baseUrl, defaultUrlForImageHosting };
 }
 
-export function processRequestQuery(req) {
-  const assetId = req.query.assetId;
-  const interactivePublicKey = req.query.interactivePublicKey;
-  const interactiveNonce = req.query.interactiveNonce;
-  const urlSlug = req.query.urlSlug;
-  const visitorId = req.query.visitorId;
-  const uniqueName = req.query.uniqueName;
-  const imageInfo = req.body.imageInfo;
-
-  const credentials = {
-    assetId,
-    interactiveNonce,
-    interactivePublicKey,
-    visitorId,
-  };
-
-  return {
-    assetId,
-    interactivePublicKey,
-    interactiveNonce,
-    urlSlug,
-    visitorId,
-    uniqueName,
-    imageInfo,
-    credentials,
-  };
-}
-
 export function validateImageInfo(imageInfo, res) {
   if (!imageInfo) {
     res.status(400).json({

@@ -19,11 +19,10 @@ export const getWorld = async (req, res) => {
       visitorId,
     };
 
-    const visitor = Visitor.create(visitorId, urlSlug, { credentials });
+    const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
     const world = await World.create(urlSlug, { credentials });
 
     await world.fetchDataObject();
-    await visitor.fetchVisitor();
 
     if (!world.dataObject.lockers) {
       world.setDataObject({ lockers: [] });
@@ -43,5 +42,3 @@ export const getWorld = async (req, res) => {
     return res.status(500).send({ error, success: false });
   }
 };
-
-// function hotfixMessedUpLockersThatHaveNoOwnersInVisitorDataObject() {}

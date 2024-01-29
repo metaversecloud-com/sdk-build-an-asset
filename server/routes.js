@@ -7,12 +7,12 @@ import {
   getDroppedAssetAndVisitor,
   pickupAllAssets,
   moveToAsset,
-  spawnLocker,
   editLocker,
   getWorld,
   clearLocker,
   clearAllLockers,
   moveToLocker,
+  getDroppedAsset,
 } from "./api/index.js";
 import express from "express";
 import { validationMiddleware } from "./middleware/validation.js";
@@ -55,12 +55,12 @@ router.post("/asset/pickup-all-assets", validationMiddleware, pickupAllAssets);
 router.post("/asset/pickup", validationMiddleware, pickup);
 
 // Locker
-router.post("/locker/asset/spawn", validationMiddleware, spawnLocker);
 router.put("/locker/asset/spawn", validationMiddleware, editLocker);
 router.put("/locker/clear", validationMiddleware, clearLocker);
 router.put("/locker/clear-all", validationMiddleware, clearAllLockers);
 router.post("/locker/move-to-asset", validationMiddleware, moveToLocker);
 
 router.get("/locker/world", validationMiddleware, getWorld);
+router.get("/locker/dropped-asset", validationMiddleware, getDroppedAsset);
 
 export default router;

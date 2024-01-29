@@ -24,14 +24,13 @@ export const moveToLocker = async (req, res) => {
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
 
-    const userLocker = DroppedAsset.create(
+    const userLocker = await DroppedAsset.get(
       world?.dataObject?.lockers?.[profileId]?.droppedAssetId,
       urlSlug,
       {
         credentials,
       }
     );
-    await userLocker.fetchDroppedAssetById();
 
     const { x, y } = userLocker?.position;
     await visitor.moveVisitor({
@@ -43,9 +42,6 @@ export const moveToLocker = async (req, res) => {
     await visitor.closeIframe(assetId);
 
     return res.json({
-      asset: visitor?.dataObject?.asset,
-      visitor,
-      isAssetAssetOwner,
       success: true,
     });
   } catch (error) {

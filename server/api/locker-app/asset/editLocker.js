@@ -15,6 +15,7 @@ export const editLocker = async (req, res) => {
       visitorId,
       uniqueName,
       profileId,
+      username,
     } = req.query;
 
     const { imageInfo } = req.body;
@@ -29,18 +30,11 @@ export const editLocker = async (req, res) => {
     if (!validateImageInfo(imageInfo, res)) return;
 
     const world = await World.create(urlSlug, { credentials });
-    await world.fetchDataObject();
-
-    const visitor = Visitor.create(visitorId, urlSlug, { credentials });
     const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
       credentials,
     });
 
-    await Promise.all([
-      droppedAsset.fetchDroppedAssetById(),
-      droppedAsset.fetchDataObject(),
-      visitor.fetchVisitor(),
-    ]);
+    await world.fetchDataObject();
 
     let s3Url;
 
@@ -50,19 +44,19 @@ export const editLocker = async (req, res) => {
       s3Url =
         "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
     } else {
-      s3Url = await generateS3Url(imageInfo, visitor);
+      s3Url = await generateS3Url(imageInfo, profileId);
     }
 
     await updateDroppedAsset({
       droppedAsset,
       s3Url,
-      visitor,
       imageInfo,
-      credentials,
       profileId,
       assetId,
       world,
       baseUrl,
+      profileId,
+      username,
     });
 
     return res.json({
@@ -86,38 +80,33 @@ export const editLocker = async (req, res) => {
 async function updateDroppedAsset({
   droppedAsset,
   s3Url,
-  visitor,
   imageInfo,
-  credentials,
   profileId,
   assetId,
   world,
   baseUrl,
+  username,
 }) {
-  await world.updateDataObject({
-    lockers: {
-      ...world.dataObject.lockers,
-      [profileId]: { droppedAssetId: assetId, s3Url },
-    },
-  });
-
-  await droppedAsset.updateWebImageLayers("", s3Url);
-
-  const modifiedName = visitor.username.replace(/ /g, "%20");
+  const modifiedName = username.replace(/ /g, "%20");
   const imageInfoParam = generateImageInfoParam(imageInfo);
-  const clickableLink = `${baseUrl}/locker/spawned?${imageInfoParam}&visitor-name=${modifiedName}&profileId=${profileId}`;
+  const clickableLink = `${baseUrl}/locker/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
 
-  await droppedAsset.updateClickType({
-    clickType: "link",
-    clickableLink,
-    clickableLinkTitle: "Locker",
-    clickableDisplayTextDescription: "Locker",
-    clickableDisplayTextHeadline: "Locker",
-    isOpenLinkInDrawer: true,
-  });
-
-  await droppedAsset.updateDataObject({
-    profileId: visitor.profileId,
-    imageInfo,
-  });
+  // TODO: remove need for update clickType
+  return await Promise.all([
+    world.updateDataObject({
+      lockers: {
+        ...world.dataObject.lockers,
+        [profileId]: { droppedAssetId: assetId, s3Url },
+      },
+    }),
+    droppedAsset.updateWebImageLayers("", s3Url),
+    droppedAsset.updateClickType({
+      clickType: "link",
+      clickableLink,
+      clickableLinkTitle: "Locker",
+      clickableDisplayTextDescription: "Locker",
+      clickableDisplayTextHeadline: "Locker",
+      isOpenLinkInDrawer: true,
+    }),
+  ]);
 }

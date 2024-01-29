@@ -1,5 +1,5 @@
-import { Visitor } from "../../topiaInit.js";
-export const getVisitor = async (req, res) => {
+import { DroppedAsset } from "../../topiaInit.js";
+export const getDroppedAsset = async (req, res) => {
   try {
     const {
       visitorId,
@@ -8,7 +8,8 @@ export const getVisitor = async (req, res) => {
       interactivePublicKey,
       urlSlug,
     } = req.query;
-    const visitor = await Visitor.get(visitorId, urlSlug, {
+
+    const droppedAsset = await DroppedAsset.get(assetId, urlSlug, {
       credentials: {
         assetId,
         interactiveNonce,
@@ -16,9 +17,9 @@ export const getVisitor = async (req, res) => {
         visitorId,
       },
     });
-    return res.json({ visitor, success: true });
+    return res.json({ droppedAsset, success: true });
   } catch (error) {
-    console.error("❌ Error getting the visitor", JSON.stringify(error));
+    console.error("❌ Error getting the droppedAsset", JSON.stringify(error));
     return res.status(500).send({ error, success: false });
   }
 };

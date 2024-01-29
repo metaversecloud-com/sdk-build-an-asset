@@ -23,8 +23,6 @@ export const clearLocker = async (req, res) => {
 
     const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
 
-    const visitor = Visitor.create(visitorId, urlSlug, { credentials });
-
     const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
       credentials,
     });
@@ -32,38 +30,31 @@ export const clearLocker = async (req, res) => {
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
 
-    await Promise.all([
-      droppedAsset.fetchDroppedAssetById(),
-      droppedAsset.fetchDataObject(),
-      visitor.fetchVisitor(),
-      visitor.fetchDataObject(),
-    ]);
-
     const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
-    await droppedAsset?.updateWebImageLayers("", toplayer);
 
     const clickableLink = `${baseUrl}/locker`;
 
-    await droppedAsset?.updateClickType({
-      clickType: "link",
-      clickableLink,
-      clickableLinkTitle: "Locker",
-      clickableDisplayTextDescription: "Locker",
-      clickableDisplayTextHeadline: "Locker",
-      isOpenLinkInDrawer: true,
-    });
-
-    await world.updateDataObject({
-      lockers: {
-        ...world.dataObject.lockers,
-        [profileId]: null,
-      },
-    });
+    // TODO: remove need for update clickType
+    await Promise.all([
+      droppedAsset?.updateWebImageLayers("", toplayer),
+      droppedAsset?.updateClickType({
+        clickType: "link",
+        clickableLink,
+        clickableLinkTitle: "Locker",
+        clickableDisplayTextDescription: "Locker",
+        clickableDisplayTextHeadline: "Locker",
+        isOpenLinkInDrawer: true,
+      }),
+      world.updateDataObject({
+        lockers: {
+          ...world.dataObject.lockers,
+          [profileId]: null,
+        },
+      }),
+    ]);
 
     return res.json({
-      spawnSuccess: true,
       success: true,
-      isAssetSpawnedInWorld: true,
     });
   } catch (error) {
     logger.error({

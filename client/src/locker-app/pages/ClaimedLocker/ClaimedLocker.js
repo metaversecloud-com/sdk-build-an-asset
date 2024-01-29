@@ -5,20 +5,22 @@ import {
   pickupAsset,
   getWorld,
   clearLocker,
+  getDroppedAsset,
 } from "../../../redux/actions/locker";
 import EditLocker from "../../components/EditLocker/EditLocker";
 import AdminView from "../Admin/AdminView";
-import Gear from "../../pages/Admin/Gear";
-import "./Spawned.scss";
+import Gear from "../Admin/Gear";
+import "./ClaimedLocker.scss";
 
-function Spawned() {
+function ClaimedLocker() {
   const dispatch = useDispatch();
 
   const queryParameters = new URLSearchParams(window.location.search);
   const assetId = queryParameters.get("assetId");
   const profileId = queryParameters.get("profileId");
+  const ownerProfileId = queryParameters.get("ownerProfileId");
 
-  let isAssetOwner = false;
+  const isAssetOwner = profileId === ownerProfileId;
 
   const [loading, setLoading] = useState(false);
   const [lockerParams, setLockerParams] = useState({});
@@ -26,17 +28,19 @@ function Spawned() {
   const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
 
   const visitor = useSelector((state) => state?.session?.visitor);
-  const droppedAsset = useSelector((state) => state?.session?.droppedAsset);
   const world = useSelector((state) => state?.session?.world);
   const [showSettings, setShowSettings] = useState(false);
-  const s3Url = world?.dataObject?.lockers?.[profileId]?.s3Url;
+
+  const s3Url = world?.dataObject?.lockers?.[ownerProfileId]?.s3Url;
+
+  console.log("s3Url ***", s3Url);
 
   const visitorName = lockerParams["visitor-name"]?.replace("%20", " ");
 
-  if (world?.dataObject?.lockers?.[profileId]) {
-    isAssetOwner =
-      world?.dataObject?.lockers?.[profileId]?.droppedAssetId == assetId;
-  }
+  // if (world?.dataObject?.lockers?.[profileId]) {
+  //   isAssetOwner =
+  //     world?.dataObject?.lockers?.[profileId]?.droppedAssetId == assetId;
+  // }
 
   useEffect(() => {
     const fetchInitialState = async () => {
@@ -55,10 +59,6 @@ function Spawned() {
 
     fetchInitialState();
   }, [dispatch]);
-
-  const handlePickupAsset = async () => {
-    await dispatch(pickupAsset());
-  };
 
   const handleEditLocker = async () => {
     setShowCustomizeScreen(true);
@@ -134,4 +134,4 @@ function Spawned() {
   );
 }
 
-export default Spawned;
+export default ClaimedLocker;

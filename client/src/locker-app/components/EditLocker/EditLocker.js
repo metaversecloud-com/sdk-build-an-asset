@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
-import {
-  spawnAsset,
-  getWorld,
-  getIsMyAssetSpawned,
-  moveToAsset,
-  editLocker,
-} from "../../../redux/actions/locker";
+import { editLocker, moveToAsset } from "../../../redux/actions/locker";
 import { Collapse, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -78,13 +72,6 @@ function EditLocker() {
   const dispatch = useDispatch();
 
   const visitor = useSelector((state) => state?.session?.visitor);
-  const isAssetSpawnedInWorld = useSelector(
-    (state) => state?.session?.isAssetSpawnedInWorld
-  );
-  const spawnSuccess = useSelector((state) => state?.session?.spawnSuccess);
-
-  const spawnedAsset = useSelector((state) => state?.session?.spawnedAsset);
-  const droppedAsset = useSelector((state) => state?.session?.droppedAsset);
 
   const [selected, setSelected] = useState({
     "Locker Base": [],
@@ -144,10 +131,6 @@ function EditLocker() {
 
   useEffect(() => {
     const fetchInitialState = async () => {
-      setLoading(true);
-      await dispatch(getWorld());
-      setLoading(false);
-
       const urlParams = new URLSearchParams(window.location.search);
       const initialSelection = Object.keys(categories).reduce(
         (acc, category) => {
@@ -254,16 +237,16 @@ function EditLocker() {
     }
   };
 
-  // const handleMoveToLocker = async () => {
-  //   try {
-  //     setIsButtonMoveToLockerDisabled(true);
-  //     await dispatch(moveToAsset());
-  //   } catch (error) {
-  //     console.error("Error in handleMoveToLocker:", error);
-  //   } finally {
-  //     setIsButtonMoveToLockerDisabled(false);
-  //   }
-  // };
+  const handleMoveToLocker = async () => {
+    try {
+      setIsButtonMoveToLockerDisabled(true);
+      await dispatch(moveToAsset());
+    } catch (error) {
+      console.error("Error in handleMoveToLocker:", error);
+    } finally {
+      setIsButtonMoveToLockerDisabled(false);
+    }
+  };
 
   return (
     <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
@@ -335,16 +318,25 @@ function EditLocker() {
       )}
 
       <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-        {spawnSuccess ? (
-          <></>
-        ) : (
-          <p style={{ color: "red" }}>
-            Move to the snow area to add your locker!
-          </p>
-        )}
+        {/* <div style={{ marginBottom: "5px" }}>
+          <button
+            onClick={handleMoveToLocker}
+            disabled={
+              !allCategoriesSelected() ||
+              isButtonSaveLockerDisabled ||
+              isButtonMoveToLockerDisabled
+            }
+          >
+            Move to my locker
+          </button>
+        </div> */}
         <button
           onClick={handleSaveToBackend}
-          disabled={!allCategoriesSelected() || isButtonSaveLockerDisabled}
+          disabled={
+            !allCategoriesSelected() ||
+            isButtonSaveLockerDisabled ||
+            isButtonMoveToLockerDisabled
+          }
         >
           Save
         </button>

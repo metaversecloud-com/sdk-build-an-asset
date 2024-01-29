@@ -20,19 +20,7 @@ export const clearAllLockers = async (req, res) => {
     };
 
     const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
-
-    const visitor = Visitor.create(visitorId, urlSlug, { credentials });
     const world = await World.create(urlSlug, { credentials });
-
-    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
-      credentials,
-    });
-    await Promise.all([
-      droppedAsset.fetchDroppedAssetById(),
-      droppedAsset.fetchDataObject(),
-      visitor.fetchVisitor(),
-      visitor.fetchDataObject(),
-    ]);
 
     let spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
       uniqueName: `lockerSystem-0`,
@@ -40,16 +28,9 @@ export const clearAllLockers = async (req, res) => {
 
     spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
 
+    // TODO: remove need for update clickType
     const promises = spawnedAssets.map(async (asset) => {
       try {
-        await asset.fetchDataObject();
-        await asset.setDataObject(null);
-        await asset.setDataObject({});
-
-        await world.updateDataObject({
-          lockers: null,
-        });
-
         const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
         await asset.updateWebImageLayers("", toplayer);
 
@@ -69,11 +50,16 @@ export const clearAllLockers = async (req, res) => {
       }
     });
 
+    promises.push(
+      world.updateDataObject({
+        lockers: null,
+      })
+    );
+
     await Promise.all(promises);
 
     return res.json({
-      droppedAsset,
-      visitor,
+      success: true,
     });
   } catch (error) {
     logger.error({

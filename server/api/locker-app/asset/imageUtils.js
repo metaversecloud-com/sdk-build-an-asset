@@ -74,9 +74,9 @@ export function generateImageInfoParam(imageInfo) {
   return params.join("&");
 }
 
-export async function generateS3Url(imageInfo, visitor) {
+export async function generateS3Url(imageInfo, profileId) {
   const baseDir = path.resolve(__dirname, "../locker-assets");
   const mergedImageBuffer = await combineImages(imageInfo, baseDir);
-  const imageFullName = `${visitor.profileId}-${Date.now()}.png`;
+  const imageFullName = `${profileId}-${Date.now()}.png`;
   return uploadToS3(mergedImageBuffer, imageFullName);
 }
