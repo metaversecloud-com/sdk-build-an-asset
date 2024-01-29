@@ -1,2 +1,2 @@
 export { getVisitor } from "./getVisitor.js";
-export { getDroppedAssetAndVisitor } from "./getLockerDroppedAssetAndVisitor.js";
+export { getWorld } from "./getWorld.js";

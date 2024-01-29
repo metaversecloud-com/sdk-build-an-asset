@@ -1,6 +1,5 @@
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
-import { getBaseUrl } from "../../utils.js";
 
 let BASE_URL;
 let DEFAULT_URL_FOR_IMAGE_HOSTING = null;

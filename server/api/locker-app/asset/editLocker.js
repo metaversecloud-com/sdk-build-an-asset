@@ -1,18 +1,7 @@
 import { logger } from "../../../logs/logger.js";
-import path from "path";
-import { fileURLToPath } from "url";
-import {
-  getBaseUrl,
-  processRequestQuery,
-  validateImageInfo,
-} from "./requestHandlers.js";
+import { getBaseUrl, validateImageInfo } from "./requestHandlers.js";
 import { generateS3Url, generateImageInfoParam } from "./imageUtils.js";
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
-
-import { createAndFetchEntities } from "./utils.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 let BASE_URL;
 
@@ -44,17 +33,16 @@ export const editLocker = async (req, res) => {
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
 
-    const { visitor, droppedAsset } = await createAndFetchEntities({
-      assetId,
-      urlSlug,
-      visitorId,
+    const visitor = Visitor.create(visitorId, urlSlug, { credentials });
+    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
       credentials,
     });
 
-    // Claim Locker if It's not claimed yet
-    // if (!droppedAsset?.dataObject?.profileId) {
-    //   await claimLocker({ droppedAsset, visitor, credentials });
-    // }
+    await Promise.all([
+      droppedAsset.fetchDroppedAssetById(),
+      droppedAsset.fetchDataObject(),
+      visitor.fetchVisitor(),
+    ]);
 
     let s3Url = await generateS3Url(imageInfo, visitor);
 
@@ -125,6 +113,5 @@ async function updateDroppedAsset({
   await droppedAsset.updateDataObject({
     profileId: visitor.profileId,
     imageInfo,
-    parentAssetId: credentials.assetId,
   });
 }

@@ -11,9 +11,8 @@ import {
   moveToAsset,
   spawnLocker,
   editLocker,
-  getLockerDroppedAssetAndVisitor,
+  getWorld,
   claimLocker,
-  renameLocker,
   clearLocker,
   clearAllLockers,
   moveToLocker,
@@ -64,13 +63,8 @@ router.put("/locker/asset/spawn", validationMiddleware, editLocker);
 router.post("/locker/claim", validationMiddleware, claimLocker);
 router.put("/locker/clear", validationMiddleware, clearLocker);
 router.put("/locker/clear-all", validationMiddleware, clearAllLockers);
-router.post("/locker/rename", validationMiddleware, renameLocker);
 router.post("/locker/move-to-asset", validationMiddleware, moveToLocker);
 
-router.get(
-  "/locker/dropped-asset-and-visitor",
-  validationMiddleware,
-  getLockerDroppedAssetAndVisitor
-);
+router.get("/locker/world", validationMiddleware, getWorld);
 
 export default router;

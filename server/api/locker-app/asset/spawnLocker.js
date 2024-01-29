@@ -3,6 +3,9 @@ import { logger } from "../../../logs/logger.js";
 
 let BASE_URL;
 
+/* This route is NOT BEING USED. It's only used as a temp helper to spawn a brand new webImageAsset with a closed Locker Image
+ * in order to create a proper scene containing web image assets as locker assets
+ */
 export const spawnLocker = async (req, res) => {
   try {
     const protocol = process.env.INSTANCE_PROTOCOL;

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
 import {
-  getDroppedAssetAndVisitor,
+  getWorld,
   claimLocker,
   moveToAsset,
   redirectToEdit,
@@ -106,7 +106,7 @@ function Home() {
   useEffect(() => {
     const fetchInitialState = async () => {
       setLoading(true);
-      await dispatch(getDroppedAssetAndVisitor());
+      await dispatch(getWorld());
       setLoading(false);
 
       if (spawnedAsset?.dataObject?.owner) {

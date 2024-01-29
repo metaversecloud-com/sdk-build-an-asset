@@ -3,7 +3,7 @@ import { ClipLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
 import {
   pickupAsset,
-  getDroppedAssetAndVisitor,
+  getWorld,
   clearLocker,
 } from "../../../redux/actions/locker";
 import EditLocker from "../../components/EditLocker/EditLocker";
@@ -42,7 +42,7 @@ function Spawned() {
     const fetchInitialState = async () => {
       try {
         setLoading(true);
-        await dispatch(getDroppedAssetAndVisitor());
+        await dispatch(getWorld());
       } catch (error) {
         console.error(error);
       } finally {

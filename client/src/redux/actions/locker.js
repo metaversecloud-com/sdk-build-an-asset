@@ -292,10 +292,10 @@ export const getDroppedAsset = () => async (dispatch) => {
   }
 };
 
-export const getDroppedAssetAndVisitor = () => async (dispatch) => {
+export const getWorld = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/locker/dropped-asset-and-visitor?${queryParams}`;
+    const url = `/backend/locker/world?${queryParams}`;
 
     const response = await axios.get(url);
 

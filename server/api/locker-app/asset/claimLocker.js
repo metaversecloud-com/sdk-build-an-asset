@@ -2,7 +2,6 @@ import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 
 let BASE_URL;
-let DEFAULT_IMG_HOST_BASE_URL = "https://snowman-dev-topia.topia-rtsdk.com";
 
 export const claimLocker = async (req, res) => {
   try {

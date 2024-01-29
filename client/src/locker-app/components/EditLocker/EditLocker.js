@@ -4,7 +4,7 @@ import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
 import {
   spawnAsset,
-  getDroppedAssetAndVisitor,
+  getWorld,
   getIsMyAssetSpawned,
   moveToAsset,
   editLocker,
@@ -145,7 +145,7 @@ function EditLocker() {
   useEffect(() => {
     const fetchInitialState = async () => {
       setLoading(true);
-      await dispatch(getDroppedAssetAndVisitor());
+      await dispatch(getWorld());
       setLoading(false);
 
       const urlParams = new URLSearchParams(window.location.search);
