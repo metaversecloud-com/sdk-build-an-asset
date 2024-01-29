@@ -1,24 +1,9 @@
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
-
-let BASE_URL;
-let DEFAULT_URL_FOR_IMAGE_HOSTING = null;
+import { getBaseUrl } from "./requestHandlers.js";
 
 export const clearLocker = async (req, res) => {
   try {
-    const protocol = process.env.INSTANCE_PROTOCOL;
-    const host = req.host;
-    const port = req.port;
-
-    if (host === "localhost") {
-      BASE_URL = `http://localhost:3001`;
-      DEFAULT_URL_FOR_IMAGE_HOSTING =
-        "https://locker0-dev-topia.topia-rtsdk.com";
-    } else {
-      BASE_URL = `${protocol}://${host}`;
-      DEFAULT_URL_FOR_IMAGE_HOSTING = BASE_URL;
-    }
-
     const {
       assetId,
       interactivePublicKey,
@@ -36,6 +21,8 @@ export const clearLocker = async (req, res) => {
       visitorId,
     };
 
+    const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
+
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
 
     const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
@@ -52,10 +39,10 @@ export const clearLocker = async (req, res) => {
       visitor.fetchDataObject(),
     ]);
 
-    const toplayer = `${DEFAULT_URL_FOR_IMAGE_HOSTING}/assets/locker/output/unclaimedLocker.png`;
+    const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
     await droppedAsset?.updateWebImageLayers("", toplayer);
 
-    const clickableLink = `${BASE_URL}/locker`;
+    const clickableLink = `${baseUrl}/locker`;
 
     await droppedAsset?.updateClickType({
       clickType: "link",

@@ -3,11 +3,9 @@ import { getBaseUrl, validateImageInfo } from "./requestHandlers.js";
 import { generateS3Url, generateImageInfoParam } from "./imageUtils.js";
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 
-let BASE_URL;
-
 export const editLocker = async (req, res) => {
   try {
-    BASE_URL = getBaseUrl(req);
+    const { baseUrl } = getBaseUrl(req);
 
     const {
       assetId,
@@ -44,11 +42,17 @@ export const editLocker = async (req, res) => {
       visitor.fetchVisitor(),
     ]);
 
-    let s3Url = await generateS3Url(imageInfo, visitor);
+    let s3Url;
 
-    // Uncomment below to test locally, because we don't have an S3 bucket in localhost
-    // let s3Url =
-    //   "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
+    const host = req.host;
+    if (host === "localhost") {
+      // Mock image placeholder for localhost, since we don't have S3 Bucket permissions for localhost in AWS
+      s3Url =
+        "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
+    } else {
+      s3Url = await generateS3Url(imageInfo, visitor);
+    }
+
     await updateDroppedAsset({
       droppedAsset,
       s3Url,
@@ -58,6 +62,7 @@ export const editLocker = async (req, res) => {
       profileId,
       assetId,
       world,
+      baseUrl,
     });
 
     return res.json({
@@ -87,6 +92,7 @@ async function updateDroppedAsset({
   profileId,
   assetId,
   world,
+  baseUrl,
 }) {
   await world.updateDataObject({
     lockers: {
@@ -99,7 +105,7 @@ async function updateDroppedAsset({
 
   const modifiedName = visitor.username.replace(/ /g, "%20");
   const imageInfoParam = generateImageInfoParam(imageInfo);
-  const clickableLink = `${BASE_URL}/locker/spawned?${imageInfoParam}&visitor-name=${modifiedName}&profileId=${profileId}`;
+  const clickableLink = `${baseUrl}/locker/spawned?${imageInfoParam}&visitor-name=${modifiedName}&profileId=${profileId}`;
 
   await droppedAsset.updateClickType({
     clickType: "link",

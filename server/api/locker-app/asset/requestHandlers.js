@@ -3,12 +3,18 @@ import { logger } from "../../../logs/logger.js";
 export function getBaseUrl(req) {
   const protocol = process.env.INSTANCE_PROTOCOL;
   const host = req.host;
+  let baseUrl;
+  let defaultUrlForImageHosting;
 
   if (host === "localhost") {
-    return `http://localhost:3001`;
+    baseUrl = `http://localhost:3001`;
+    defaultUrlForImageHosting = "https://locker0-dev-topia.topia-rtsdk.com";
   } else {
-    return `${protocol}://${host}`;
+    baseUrl = `${protocol}://${host}`;
+    defaultUrlForImageHosting = baseUrl;
   }
+
+  return { baseUrl, defaultUrlForImageHosting };
 }
 
 export function processRequestQuery(req) {
