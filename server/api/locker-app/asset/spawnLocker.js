@@ -1,22 +1,10 @@
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
+import { getBaseUrl } from "./requestHandlers.js";
 
-let BASE_URL;
-
-/* This route is NOT BEING USED. It's only used as a temp helper to spawn a brand new webImageAsset with a closed Locker Image
- * in order to create a proper scene containing web image assets as locker assets
- */
 export const spawnLocker = async (req, res) => {
   try {
-    const protocol = process.env.INSTANCE_PROTOCOL;
-    const host = req.host;
-    const port = req.port;
-
-    if (host === "localhost") {
-      BASE_URL = `http://localhost:3001`;
-    } else {
-      BASE_URL = `${protocol}://${host}`;
-    }
+    const { baseUrl } = getBaseUrl(req);
 
     const {
       assetId,
@@ -63,6 +51,7 @@ export const spawnLocker = async (req, res) => {
       completeImageName,
       uniqueName,
       spawnPosition,
+      baseUrl,
     });
 
     return res.json({
@@ -92,10 +81,11 @@ async function dropImageAsset({
   completeImageName,
   uniqueName: parentUniqueName,
   spawnPosition,
+  baseUrl,
 }) {
   const { visitorId, interactiveNonce, interactivePublicKey } = credentials;
 
-  const { bottomLayer, toplayer } = getAssetImgUrl(req);
+  const { bottomLayer, toplayer } = getAssetImgUrl(req, baseUrl);
 
   const { moveTo, username } = visitor;
   // const { x, y } = moveTo;
@@ -121,7 +111,7 @@ async function dropImageAsset({
 
   const modifiedName = username.replace(/ /g, "%20");
 
-  const clickableLink = `${BASE_URL}/locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
+  const clickableLink = `${baseUrl}/locker/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
 
   await assetSpawnedDroppedAsset?.updateClickType({
     clickType: "link",
@@ -142,9 +132,9 @@ async function dropImageAsset({
   return assetSpawnedDroppedAsset;
 }
 
-function getAssetImgUrl(req) {
+function getAssetImgUrl(req, baseUrl) {
   const bottomLayer = null;
-  const toplayer = `${BASE_URL}/assets/locker/output/unclaimedLocker.png`;
+  const toplayer = `${baseUrl}/assets/locker/output/unclaimedLocker.png`;
   return { bottomLayer, toplayer };
 }
 
