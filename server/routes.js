@@ -1,18 +1,15 @@
 import {
   getVisitor,
-  deleteAll,
   spawn,
   spawnFromSpawnedAsset,
   pickup,
   get,
-  create,
   getDroppedAssetAndVisitor,
   pickupAllAssets,
   moveToAsset,
   spawnLocker,
   editLocker,
   getWorld,
-  claimLocker,
   clearLocker,
   clearAllLockers,
   moveToLocker,
@@ -60,7 +57,6 @@ router.post("/asset/pickup", validationMiddleware, pickup);
 // Locker
 router.post("/locker/asset/spawn", validationMiddleware, spawnLocker);
 router.put("/locker/asset/spawn", validationMiddleware, editLocker);
-router.post("/locker/claim", validationMiddleware, claimLocker);
 router.put("/locker/clear", validationMiddleware, clearLocker);
 router.put("/locker/clear-all", validationMiddleware, clearAllLockers);
 router.post("/locker/move-to-asset", validationMiddleware, moveToLocker);

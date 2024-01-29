@@ -36,8 +36,8 @@ export const getWorld = async (req, res) => {
   } catch (error) {
     logger.error({
       error,
-      message: "❌ Error getting droppedAsset and Visitor",
-      functionName: "getDroppedAssetAndVisitor",
+      message: "❌ Error getting getWorld",
+      functionName: "getWorld",
       req,
     });
     return res.status(500).send({ error, success: false });

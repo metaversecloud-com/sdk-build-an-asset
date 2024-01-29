@@ -81,8 +81,8 @@ export const clearLocker = async (req, res) => {
   } catch (error) {
     logger.error({
       error,
-      message: "❌ Error while spawning the asset",
-      functionName: "spawn",
+      message: "❌ Error in clearLocker",
+      functionName: "clearLocker",
       req,
     });
     return res
