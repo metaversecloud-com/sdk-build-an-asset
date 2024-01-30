@@ -23,3 +23,24 @@ export async function fetchIsSpawnedAssetInWorld(
     );
   }
 }
+
+export function getBaseUrl(req) {
+  const host = req.host;
+  const port = req.port;
+
+  let BASE_URL;
+  let DEFAULT_URL_FOR_IMAGE_HOSTING;
+  try {
+    if (host === "localhost") {
+      BASE_URL = `http://localhost:3001`;
+      DEFAULT_URL_FOR_IMAGE_HOSTING =
+        "https://snowman-dev-topia.topia-rtsdk.com";
+    } else {
+      BASE_URL = `${protocol}://${host}`;
+      DEFAULT_URL_FOR_IMAGE_HOSTING = BASE_URL;
+    }
+    return { BASE_URL, DEFAULT_URL_FOR_IMAGE_HOSTING };
+  } catch (error) {
+    console.error("❌ Error in getBaseUrl.", JSON.stringify(error));
+  }
+}
