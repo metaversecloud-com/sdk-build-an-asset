@@ -25,29 +25,30 @@ export const clearAllLockers = async (req, res) => {
     let spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
       uniqueName: `lockerSystem-0`,
     });
-    console.log("🚀 ~ file: clearAllLockers.js:28 ~ spawnedAssets:", spawnedAssets)
 
     // spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
 
     // TODO: remove need for update clickType
     const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
     const clickableLink = `${baseUrl}/locker`;
-    const promises = []
+    const promises = [];
     spawnedAssets.map(async (asset) => {
-      promises.push(asset.updateWebImageLayers("", toplayer))
-      promises.push(asset.updateClickType({
+      promises.push(asset.updateWebImageLayers("", toplayer));
+      promises.push(
+        asset.updateClickType({
           clickType: "link",
           clickableLink,
           clickableLinkTitle: "Locker",
           clickableDisplayTextDescription: "Locker",
           clickableDisplayTextHeadline: "Locker",
           isOpenLinkInDrawer: true,
-        }))
+        })
+      );
     });
 
-    promises.push(world.updateDataObject({lockers: {}}));
+    promises.push(world.updateDataObject({ lockers: {} }));
 
-    await Promise.all(promises);
+    await Promise.allSettled(promises);
 
     return res.json({
       success: true,
