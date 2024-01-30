@@ -33,6 +33,13 @@ router.get("/env", (req, res) => {
   });
 });
 
+router.get("/system/health", (req, res) => {
+  return res.json({
+    appVersion: process.env.npm_package_version,
+    status: "OK",
+  });
+});
+
 router.get("/visitor", getVisitor);
 
 router.get("/asset", validationMiddleware, get);
