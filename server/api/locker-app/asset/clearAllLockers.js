@@ -25,8 +25,9 @@ export const clearAllLockers = async (req, res) => {
     let spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
       uniqueName: `lockerSystem-0`,
     });
+    console.log("🚀 ~ file: clearAllLockers.js:28 ~ spawnedAssets:", spawnedAssets)
 
-    spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
+    // spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
 
     // TODO: remove need for update clickType
     const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
