@@ -24,9 +24,8 @@ export const getWorld = async (req, res) => {
 
     await world.fetchDataObject();
 
-    if (!world.dataObject.lockers) {
-      world.setDataObject({ lockers: [] });
-    }
+    if (!world.dataObject.lockers) world.setDataObject({ lockers: {} });
+    
 
     return res.json({
       world,

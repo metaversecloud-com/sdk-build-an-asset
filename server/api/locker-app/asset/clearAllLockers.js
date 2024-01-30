@@ -44,11 +44,7 @@ export const clearAllLockers = async (req, res) => {
         }))
     });
 
-    promises.push(
-      world.updateDataObject({
-        lockers: null,
-      })
-    );
+    promises.push(world.updateDataObject({lockers: {}}));
 
     await Promise.all(promises);
 

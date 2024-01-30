@@ -36,14 +36,14 @@ export const editLocker = async (req, res) => {
     await world.fetchDataObject();
 
     if(world.dataObject.lockers) {
-      const claimedLocker = Object.entries(world.dataObject.lockers).reduce((claimedLocker, [ownerProfileId, locker]) => {
+      const claimedLockers = Object.entries(world.dataObject.lockers).reduce((claimedLockers, [ownerProfileId, locker]) => {
         if (locker && locker.droppedAssetId === assetId && ownerProfileId !== profileId) {
-          return locker.droppedAssetId
+          return locker
         }
-        return claimedLocker;
+        return claimedLockers;
       }, {})
       
-      if (claimedLocker) {
+      if (Object.keys(claimedLockers).length) {
         return res.json({
           msg: "This locker is already taken",
           isLockerAlreadyTaken: true,
