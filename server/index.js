@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 import router from "./routes.js";
 import cors from "cors";
 import checkEnvVariables from "./utils.js";
-import pkg from "./package.json" assert { type: "json" };
 dotenv.config();
 
 import { fileURLToPath } from "url";
@@ -31,13 +30,6 @@ app.use("/backend", router);
 
 app.get("/", (req, res) => {
   return res.send(`Server is running... ${version}`);
-});
-
-app.get("/system/health", (req, res) => {
-  return res.json({
-    appVersion: pkg.version,
-    status: "OK",
-  });
 });
 
 if (process.env.NODE_ENV === "production") {
