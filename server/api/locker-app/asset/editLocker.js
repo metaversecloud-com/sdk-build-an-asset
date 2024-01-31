@@ -26,8 +26,6 @@ export const editLocker = async (req, res) => {
       visitorId,
     };
 
-    imageInfo = {};
-
     if (!validateImageInfo(imageInfo, res)) return;
 
     const world = await World.create(urlSlug, { credentials });
