@@ -79,11 +79,11 @@ export const redirectToEdit = (visitor) => async (dispatch) => {
   }
 };
 
-export const clearLocker = () => async (dispatch) => {
+export const clearLocker = (isClearOwnerAsset) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
     const url = `/backend/locker/clear?${queryParams}`;
-    const response = await axios.put(url);
+    const response = await axios.put(url, { isClearOwnerAsset });
 
     if (response.status === 200) {
       dispatch(setSpawnSuccess(response?.data));
