@@ -11,6 +11,7 @@ export const clearLocker = async (req, res) => {
       urlSlug,
       visitorId,
       ownerProfileId,
+      profileId,
     } = req.query;
 
     const credentials = {
@@ -20,14 +21,24 @@ export const clearLocker = async (req, res) => {
       visitorId,
     };
 
-    const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
-
-    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
-      credentials,
-    });
+    const { isClearOwnerAsset } = req.body;
 
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
+
+    let lockerAssetId;
+
+    if (isClearOwnerAsset) {
+      lockerAssetId = world?.dataObject?.lockers?.[profileId]?.droppedAssetId;
+    } else {
+      lockerAssetId = assetId;
+    }
+
+    const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
+
+    const droppedAsset = DroppedAsset.create(lockerAssetId, urlSlug, {
+      credentials,
+    });
 
     const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
 
@@ -46,11 +57,12 @@ export const clearLocker = async (req, res) => {
       }),
       world.updateDataObject({
         [`lockers.${ownerProfileId}`]: null,
-      })
+      }),
     ]);
 
     return res.json({
       success: true,
+      world,
     });
   } catch (error) {
     logger.error({
@@ -64,3 +76,28 @@ export const clearLocker = async (req, res) => {
       .send({ error: error?.message, spawnSuccess: false, success: false });
   }
 };
+
+function findUserLocker(world, assetId, profileId) {
+  if (world.dataObject.lockers) {
+    const claimedLockers = Object.entries(world.dataObject.lockers).reduce(
+      (claimedLockers, [ownerProfileId, locker]) => {
+        if (
+          locker &&
+          locker.droppedAssetId === assetId &&
+          ownerProfileId !== profileId
+        ) {
+          return locker;
+        }
+        return claimedLockers;
+      },
+      {}
+    );
+
+    if (Object.keys(claimedLockers).length) {
+      return res.json({
+        msg: "This locker is already taken",
+        isLockerAlreadyTaken: true,
+      });
+    }
+  }
+}

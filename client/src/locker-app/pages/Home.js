@@ -7,6 +7,7 @@ import {
   claimLocker,
   moveToAsset,
   redirectToEdit,
+  clearLocker,
 } from "../../redux/actions/locker";
 import Gear from "./Admin/Gear";
 import AdminView from "./Admin/AdminView";
@@ -145,6 +146,17 @@ function Home() {
     }
   };
 
+  const handleClearLocker = async ({ isClearOwnerAsset }) => {
+    try {
+      setIsButtonMoveToMyLockerDisabled(true);
+      await dispatch(clearLocker(isClearOwnerAsset));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsButtonMoveToMyLockerDisabled(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="loader">
@@ -173,6 +185,14 @@ function Home() {
               onClick={() => handleMoveToMyLocker()}
             >
               Move to my locker
+            </button>
+          </div>
+          <div style={{ margin: "10px 0px" }}>
+            <button
+              disabled={isButtonMoveToMyLockerDisabled}
+              onClick={() => handleClearLocker({ isClearOwnerAsset: true })}
+            >
+              Clear my locker
             </button>
           </div>
         </div>
