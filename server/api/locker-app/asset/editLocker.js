@@ -88,6 +88,13 @@ export const editLocker = async (req, res) => {
 
     const modifiedName = username.replace(/ /g, "%20");
     const imageInfoParam = generateImageInfoParam(imageInfo);
+
+    if (!imageInfoParam || !modifiedName || !profileId) {
+      return res
+        .status(400)
+        .json({ error: "Missing imageInfoParam, modifiedName or profileId" });
+    }
+
     const clickableLink = `${baseUrl}/locker/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
 
     const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
