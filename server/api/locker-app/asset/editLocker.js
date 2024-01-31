@@ -17,7 +17,7 @@ export const editLocker = async (req, res) => {
       username,
     } = req.query;
 
-    const { imageInfo } = req.body;
+    let { imageInfo } = req.body;
 
     const credentials = {
       assetId,
@@ -26,19 +26,28 @@ export const editLocker = async (req, res) => {
       visitorId,
     };
 
+    imageInfo = {};
+
     if (!validateImageInfo(imageInfo, res)) return;
 
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
 
-    if(world.dataObject.lockers) {
-      const claimedLockers = Object.entries(world.dataObject.lockers).reduce((claimedLockers, [ownerProfileId, locker]) => {
-        if (locker && locker.droppedAssetId === assetId && ownerProfileId !== profileId) {
-          return locker
-        }
-        return claimedLockers;
-      }, {})
-      
+    if (world.dataObject.lockers) {
+      const claimedLockers = Object.entries(world.dataObject.lockers).reduce(
+        (claimedLockers, [ownerProfileId, locker]) => {
+          if (
+            locker &&
+            locker.droppedAssetId === assetId &&
+            ownerProfileId !== profileId
+          ) {
+            return locker;
+          }
+          return claimedLockers;
+        },
+        {}
+      );
+
       if (Object.keys(claimedLockers).length) {
         return res.json({
           msg: "This locker is already taken",
@@ -52,6 +61,7 @@ export const editLocker = async (req, res) => {
     const host = req.host;
     if (host === "localhost") {
       // Mock image placeholder for localhost, since we don't have S3 Bucket permissions for localhost in AWS
+      const testS3 = await generateS3Url(imageInfo, profileId);
       s3Url =
         "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
     } else {
@@ -81,7 +91,7 @@ export const editLocker = async (req, res) => {
     const modifiedName = username.replace(/ /g, "%20");
     const imageInfoParam = generateImageInfoParam(imageInfo);
     const clickableLink = `${baseUrl}/locker/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
-  
+
     const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
       credentials,
     });

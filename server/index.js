@@ -10,15 +10,21 @@ dotenv.config();
 
 import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 checkEnvVariables();
 const PORT = process.env.PORT || 3000;
 const app = express();
-const version = "27.0";
+const version = "28.0";
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(requestID());
+
+const lockerAssetsPath = path.join(__dirname, "api/locker-app/locker-assets");
+app.use("/locker-assets", express.static(lockerAssetsPath));
 
 app.use("/backend", router);
 
@@ -27,8 +33,6 @@ app.get("/", (req, res) => {
 });
 
 if (process.env.NODE_ENV === "production") {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
   app.use(express.static(path.resolve(__dirname, "../client/build")));
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
