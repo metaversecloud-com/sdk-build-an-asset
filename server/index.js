@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 checkEnvVariables();
 const PORT = process.env.PORT || 3000;
 const app = express();
-const version = "28.0";
+const version = "29.0";
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

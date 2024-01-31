@@ -10,9 +10,10 @@ export const clearLocker = async (req, res) => {
       interactiveNonce,
       urlSlug,
       visitorId,
-      ownerProfileId,
       profileId,
     } = req.query;
+
+    let { ownerProfileId } = req.query;
 
     const credentials = {
       assetId,
@@ -30,6 +31,7 @@ export const clearLocker = async (req, res) => {
 
     if (isClearOwnerAsset) {
       lockerAssetId = world?.dataObject?.lockers?.[profileId]?.droppedAssetId;
+      ownerProfileId = profileId;
     } else {
       lockerAssetId = assetId;
     }
@@ -76,28 +78,3 @@ export const clearLocker = async (req, res) => {
       .send({ error: error?.message, spawnSuccess: false, success: false });
   }
 };
-
-function findUserLocker(world, assetId, profileId) {
-  if (world.dataObject.lockers) {
-    const claimedLockers = Object.entries(world.dataObject.lockers).reduce(
-      (claimedLockers, [ownerProfileId, locker]) => {
-        if (
-          locker &&
-          locker.droppedAssetId === assetId &&
-          ownerProfileId !== profileId
-        ) {
-          return locker;
-        }
-        return claimedLockers;
-      },
-      {}
-    );
-
-    if (Object.keys(claimedLockers).length) {
-      return res.json({
-        msg: "This locker is already taken",
-        isLockerAlreadyTaken: true,
-      });
-    }
-  }
-}
