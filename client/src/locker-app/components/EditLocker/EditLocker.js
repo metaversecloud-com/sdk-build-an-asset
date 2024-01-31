@@ -70,6 +70,7 @@ const categories = {
 
 function EditLocker() {
   const dispatch = useDispatch();
+  const BASE_URL = window.location.origin;
 
   const visitor = useSelector((state) => state?.session?.visitor);
 
@@ -89,7 +90,9 @@ function EditLocker() {
     useState(false);
   const [isButtonMoveToLockerDisabled, setIsButtonMoveToLockerDisabled] =
     useState(false);
-  const [preview, setPreview] = useState("/assets/locker/unclaimedLocker.png");
+  const [preview, setPreview] = useState(
+    `${BASE_URL}/locker-assets/unclaimedLocker.png`
+  );
   const [imageInfo, setImageInfo] = useState({});
   const isLockerAlreadyTaken = useSelector(
     (state) => state?.session?.isLockerAlreadyTaken
@@ -129,7 +132,7 @@ function EditLocker() {
   };
 
   const isSelectedItem = (type, image) => {
-    return selected[type].includes(`/assets/locker/${image}`);
+    return selected[type].includes(`${BASE_URL}/locker-assets/${image}`);
   };
 
   useEffect(() => {
@@ -141,9 +144,9 @@ function EditLocker() {
           const categoryKey2 = `${category.replace(/\s/g, "")}2`;
           acc[category] = [
             urlParams.get(categoryKey1) &&
-              `/assets/locker/${urlParams.get(categoryKey1)}.png`,
+              `${BASE_URL}/locker-assets/${urlParams.get(categoryKey1)}.png`,
             urlParams.get(categoryKey2) &&
-              `/assets/locker/${urlParams.get(categoryKey2)}.png`,
+              `${BASE_URL}/locker-assets/${urlParams.get(categoryKey2)}.png`,
           ].filter(Boolean);
           return acc;
         },
@@ -270,7 +273,9 @@ function EditLocker() {
       </h2>
       <img
         src={
-          preview == "data:," ? "/assets/locker/unclaimedLocker.png" : preview
+          preview == "data:,"
+            ? `${BASE_URL}/locker-assets/unclaimedLocker.png`
+            : preview
         }
         alt="Locker Preview"
         style={{ marginTop: "30px", marginBottom: "30px" }}
@@ -304,7 +309,7 @@ function EditLocker() {
               {categories[type].map((image) => (
                 <img
                   key={image}
-                  src={`/assets/locker/${image}`}
+                  src={`${BASE_URL}/locker-assets/${image}`}
                   alt={image}
                   className="img-accessory"
                   style={{
@@ -317,7 +322,9 @@ function EditLocker() {
                       ? "1px solid #4355e4"
                       : "1px solid #ccc",
                   }}
-                  onClick={() => updateLocker(type, `/assets/locker/${image}`)}
+                  onClick={() =>
+                    updateLocker(type, `${BASE_URL}/locker-assets/${image}`)
+                  }
                 />
               ))}
             </div>

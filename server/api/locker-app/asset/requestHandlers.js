@@ -18,7 +18,7 @@ export function getBaseUrl(req) {
 }
 
 export function validateImageInfo(imageInfo, res) {
-  if (!imageInfo) {
+  if (!imageInfo || imageInfo?.length != 0) {
     res.status(400).json({
       msg: "Input data missing. Please fill the the follow field: imageInfo",
     });
