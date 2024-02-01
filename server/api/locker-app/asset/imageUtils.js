@@ -41,8 +41,7 @@ async function combineImages(imageInfo, baseDir) {
 
   const buffer = await mergedImage.getBufferAsync(Jimp.MIME_PNG);
 
-  // return validatePNG(buffer);
-  return buffer;
+  return validatePNG(buffer);
 }
 
 export async function uploadToS3(buffer, fileName) {

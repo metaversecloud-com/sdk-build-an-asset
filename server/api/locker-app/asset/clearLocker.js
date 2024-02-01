@@ -22,14 +22,14 @@ export const clearLocker = async (req, res) => {
       visitorId,
     };
 
-    const { isClearOwnerAsset } = req.body;
+    const { isClearMyLockerFromUnclaimedLocker } = req.body;
 
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
 
     let lockerAssetId;
 
-    if (isClearOwnerAsset) {
+    if (isClearMyLockerFromUnclaimedLocker) {
       lockerAssetId = world?.dataObject?.lockers?.[profileId]?.droppedAssetId;
       ownerProfileId = profileId;
     } else {

@@ -79,21 +79,24 @@ export const redirectToEdit = (visitor) => async (dispatch) => {
   }
 };
 
-export const clearLocker = (isClearOwnerAsset) => async (dispatch) => {
-  try {
-    const queryParams = getQueryParams();
-    const url = `/backend/locker/clear?${queryParams}`;
-    const response = await axios.put(url, { isClearOwnerAsset });
+export const clearLocker =
+  (isClearMyLockerFromUnclaimedLocker) => async (dispatch) => {
+    try {
+      const queryParams = getQueryParams();
+      const url = `/backend/locker/clear?${queryParams}`;
+      const response = await axios.put(url, {
+        isClearMyLockerFromUnclaimedLocker,
+      });
 
-    if (response.status === 200) {
-      dispatch(setSpawnSuccess(response?.data));
-      return dispatch(push(`/locker?${queryParams}`));
+      if (response.status === 200) {
+        dispatch(setSpawnSuccess(response?.data));
+        return dispatch(push(`/locker?${queryParams}`));
+      }
+    } catch (error) {
+      dispatch(setError("There was an error while spawning the asset"));
+      return false;
     }
-  } catch (error) {
-    dispatch(setError("There was an error while spawning the asset"));
-    return false;
-  }
-};
+  };
 
 export const clearAllLockers = () => async (dispatch) => {
   try {
