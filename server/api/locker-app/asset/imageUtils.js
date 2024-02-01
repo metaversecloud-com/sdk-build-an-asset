@@ -41,7 +41,7 @@ async function combineImages(imageInfo, baseDir) {
 
   const buffer = await mergedImage.getBufferAsync(Jimp.MIME_PNG);
 
-  return buffer;
+  return validatePNG(buffer);
 }
 
 export async function uploadToS3(buffer, fileName) {
@@ -79,4 +79,21 @@ export async function generateS3Url(imageInfo, profileId) {
   const mergedImageBuffer = await combineImages(imageInfo, baseDir);
   const imageFullName = `${profileId}-${Date.now()}.png`;
   return uploadToS3(mergedImageBuffer, imageFullName);
+}
+
+function validatePNG(buffer) {
+  const pngHeader = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+
+  // Verify headers
+  if (!buffer.slice(0, 8).equals(pngHeader)) {
+    throw new Error("invalid headers. png file is corrupted.");
+  }
+
+  // Verify if it has dimensions
+  return Jimp.read(buffer).then((image) => {
+    if (image.bitmap.width <= 0 || image.bitmap.height <= 0) {
+      throw new Error("Invalid png dimensions. Png file is corrupted.");
+    }
+    return buffer;
+  });
 }

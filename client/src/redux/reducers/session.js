@@ -37,6 +37,7 @@ const reducers = {
     state.isAssetSpawnedInWorld = action.payload.isAssetSpawnedInWorld;
     state.spawnedAsset = action.payload.spawnedAsset;
     state.isLockerAlreadyTaken = action.payload.isLockerAlreadyTaken;
+    state.world = action.payload.world;
   },
   setError: (state, action) => {
     state.error = action.payload;

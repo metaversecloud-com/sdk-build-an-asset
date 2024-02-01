@@ -10,8 +10,10 @@ export const clearLocker = async (req, res) => {
       interactiveNonce,
       urlSlug,
       visitorId,
-      ownerProfileId,
+      profileId,
     } = req.query;
+
+    let { ownerProfileId } = req.query;
 
     const credentials = {
       assetId,
@@ -20,14 +22,27 @@ export const clearLocker = async (req, res) => {
       visitorId,
     };
 
-    const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
-
-    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
-      credentials,
-    });
+    const { isClearMyLockerFromUnclaimedLocker } = req.body;
 
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
+
+    let lockerAssetId;
+
+    if (isClearMyLockerFromUnclaimedLocker) {
+      lockerAssetId = world?.dataObject?.lockers?.[profileId]?.droppedAssetId;
+      ownerProfileId = profileId;
+    } else {
+      // Admin route
+      // TODO: verification here
+      lockerAssetId = assetId;
+    }
+
+    const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
+
+    const droppedAsset = DroppedAsset.create(lockerAssetId, urlSlug, {
+      credentials,
+    });
 
     const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
 
@@ -46,11 +61,12 @@ export const clearLocker = async (req, res) => {
       }),
       world.updateDataObject({
         [`lockers.${ownerProfileId}`]: null,
-      })
+      }),
     ]);
 
     return res.json({
       success: true,
+      world,
     });
   } catch (error) {
     logger.error({
