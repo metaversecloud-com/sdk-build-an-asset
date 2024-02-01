@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import router from "./routes.js";
 import cors from "cors";
+import fs from "fs";
 import checkEnvVariables from "./utils.js";
 dotenv.config();
 
@@ -32,6 +33,13 @@ app.get("/", (req, res) => {
   return res.send(`Server is running... ${version}`);
 });
 
+app.get("/system/health", (req, res) => {
+  return res.json({
+    appVersion: getVersion(),
+    status: "OK",
+  });
+});
+
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.resolve(__dirname, "../client/build")));
   app.get("*", (req, res) => {
@@ -42,3 +50,14 @@ if (process.env.NODE_ENV === "production") {
 app.listen(PORT, () => {
   console.info(`Server listening on ${PORT}, version ${version}`);
 });
+
+export function getVersion() {
+  try {
+    const packageJsonContent = fs.readFileSync("./package.json", "utf8");
+    const packageJson = JSON.parse(packageJsonContent);
+    const version = packageJson.version;
+    return version;
+  } catch (error) {
+    console.error("Error reading or parsing package.json:", error);
+  }
+}
