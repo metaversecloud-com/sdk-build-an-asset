@@ -33,6 +33,8 @@ export const clearLocker = async (req, res) => {
       lockerAssetId = world?.dataObject?.lockers?.[profileId]?.droppedAssetId;
       ownerProfileId = profileId;
     } else {
+      // Admin route
+      // TODO: verification here
       lockerAssetId = assetId;
     }
 

@@ -101,6 +101,7 @@ function Home() {
               Move to my locker
             </button>
           </div>
+          {/* Temporary hotfix: In the future this button will be a separate component */}
           <div style={{ margin: "10px 0px" }}>
             <button
               disabled={areButtonsDisabled}
