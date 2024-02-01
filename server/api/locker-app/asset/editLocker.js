@@ -59,7 +59,8 @@ export const editLocker = async (req, res) => {
     const host = req.host;
     if (host === "localhost") {
       // Mock image placeholder for localhost, since we don't have S3 Bucket permissions for localhost in AWS
-      const testS3 = await generateS3Url(imageInfo, profileId);
+      // I'm running this line below to test the image validation
+      await generateS3Url(imageInfo, profileId);
       s3Url =
         "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
     } else {
