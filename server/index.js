@@ -17,7 +17,12 @@ const __dirname = path.dirname(__filename);
 checkEnvVariables();
 const PORT = process.env.PORT || 3000;
 const app = express();
+<<<<<<< Updated upstream
 const version = "30.0";
+=======
+const appVersion = getVersion();
+console.log("appVersion", appVersion);
+>>>>>>> Stashed changes
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -53,7 +58,10 @@ app.listen(PORT, () => {
 
 export function getVersion() {
   try {
-    const packageJsonContent = fs.readFileSync("./package.json", "utf8");
+    const packageJsonContent = fs.readFileSync(
+      path.join(__dirname, "../package.json"),
+      "utf8"
+    );
     const packageJson = JSON.parse(packageJsonContent);
     const version = packageJson.version;
     return version;
