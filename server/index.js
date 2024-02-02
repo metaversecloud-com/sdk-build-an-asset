@@ -17,12 +17,7 @@ const __dirname = path.dirname(__filename);
 checkEnvVariables();
 const PORT = process.env.PORT || 3000;
 const app = express();
-<<<<<<< Updated upstream
-const version = "30.0";
-=======
 const appVersion = getVersion();
-console.log("appVersion", appVersion);
->>>>>>> Stashed changes
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -35,12 +30,12 @@ app.use("/locker-assets", express.static(lockerAssetsPath));
 app.use("/backend", router);
 
 app.get("/", (req, res) => {
-  return res.send(`Server is running... ${version}`);
+  return res.send(`Server is running... ${appVersion}`);
 });
 
 app.get("/system/health", (req, res) => {
   return res.json({
-    appVersion: getVersion(),
+    appVersion,
     status: "OK",
   });
 });
@@ -53,7 +48,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.listen(PORT, () => {
-  console.info(`Server listening on ${PORT}, version ${version}`);
+  console.info(`Server listening on ${PORT}, version ${appVersion}`);
 });
 
 export function getVersion() {
