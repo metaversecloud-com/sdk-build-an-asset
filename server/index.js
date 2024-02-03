@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import router from "./routes.js";
 import cors from "cors";
 import fs from "fs";
+import { execSync } from "child_process";
 import checkEnvVariables from "./utils.js";
 dotenv.config();
 
