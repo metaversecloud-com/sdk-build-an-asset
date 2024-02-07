@@ -61,18 +61,22 @@ export const editLocker = (imageInfo) => async (dispatch) => {
   }
 };
 
-export const redirectToEdit = (visitor) => async (dispatch) => {
+export const claimLocker = (visitor) => async (dispatch) => {
   try {
-    console.log("hello");
     const queryParams = getQueryParams();
 
-    const { username } = visitor;
-    const modifiedName = username.replace(/ /g, "%20");
+    const url = `/backend/locker/claim?${queryParams}`;
+    const response = await axios.post(url);
 
-    const redirectPath = `locker/claimed?visitor-name=${modifiedName}`;
+    if (response.status === 200) {
+      const { username } = visitor;
+      const modifiedName = username.replace(/ /g, "%20");
 
-    const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
-    return dispatch(push(fullPath));
+      const redirectPath = `locker/claimed?visitor-name=${modifiedName}`;
+
+      const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
+      return dispatch(push(fullPath));
+    }
   } catch (error) {
     console.error(error);
     return false;
@@ -182,12 +186,12 @@ export const renameLocker = () => async (dispatch) => {
   }
 };
 
-export const moveToAsset = () => async (dispatch) => {
+export const moveToAsset = (shouldCloseIframe) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
     const url = `/backend/locker/move-to-asset?${queryParams}`;
 
-    const response = await axios.post(url);
+    const response = await axios.post(url, { shouldCloseIframe });
   } catch (error) {
     console.error("error", error);
   }

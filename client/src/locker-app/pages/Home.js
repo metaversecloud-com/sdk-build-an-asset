@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
-import { getWorld, redirectToEdit } from "../../redux/actions/locker";
+import { getWorld, claimLocker } from "../../redux/actions/locker";
 import Gear from "./Admin/Gear";
 import AdminView from "./Admin/AdminView";
 import SplashImage from "../../assets/locker/splashImage.png";
@@ -40,7 +40,7 @@ function Home() {
   const handleClaimLocker = async () => {
     try {
       setAreButtonsDisabled(true);
-      await dispatch(redirectToEdit(visitor));
+      await dispatch(claimLocker(visitor));
     } catch (error) {
       console.error(error);
     } finally {
@@ -84,7 +84,7 @@ function Home() {
 
           <div className="footer-fixed" style={{ backgroundColor: "white" }}>
             <div style={{ margin: "10px 0px" }}>
-              <MoveToLockerButton />
+              <MoveToLockerButton shouldCloseIframe={true} />
             </div>
             <div style={{ margin: "10px 0px" }}>
               <ClearMyLockerButton

@@ -13,6 +13,7 @@ import Gear from "../Admin/Gear";
 import "./ClaimedLocker.scss";
 import ClearMyLockerButton from "../../components/ClearMyLocker/ClearMyLockerButton";
 import ClearMyLockerModal from "../../components/ClearMyLocker/ClearMyLockerModal";
+import MoveToLockerButton from "../../components/MoveToLockerButton/MoveToLockerButton";
 
 function ClaimedLocker() {
   const dispatch = useDispatch();
@@ -99,7 +100,7 @@ function ClaimedLocker() {
       <div className="spawned-wrapper">
         {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
         <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-          <b>Lockerr</b>
+          <b>Locker</b>
         </h2>
         <img
           src={s3Url || "/assets/locker/unclaimedLocker.png"}
@@ -120,6 +121,9 @@ function ClaimedLocker() {
                 >
                   Edit my locker
                 </button>
+              </div>
+              <div style={{ marginBottom: "10px" }}>
+                <MoveToLockerButton shouldCloseIframe={false} />
               </div>
               <ClearMyLockerButton
                 handleToggleShowClearLockerModal={
