@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 
 function ClearMyLockerButton({ handleToggleShowClearLockerModal, fromAdmin }) {
   return (
     <>
       <button
-        class="btn-danger-outline"
+        className={fromAdmin ? "btn-danger-outline" : "btn-danger"}
         onClick={() => handleToggleShowClearLockerModal()}
       >
         {fromAdmin ? (
