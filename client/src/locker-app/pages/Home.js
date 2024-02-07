@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
-import {
-  getWorld,
-  moveToAsset,
-  redirectToEdit,
-  clearLocker,
-} from "../../redux/actions/locker";
+import { getWorld, redirectToEdit } from "../../redux/actions/locker";
 import Gear from "./Admin/Gear";
 import AdminView from "./Admin/AdminView";
 import SplashImage from "../../assets/locker/splashImage.png";
@@ -14,6 +9,7 @@ import SplashImage from "../../assets/locker/splashImage.png";
 import "./Home.scss";
 import ClearMyLockerButton from "../components/ClearMyLocker/ClearMyLockerButton";
 import ClearMyLockerModal from "../components/ClearMyLocker/ClearMyLockerModal";
+import MoveToLockerButton from "../components/MoveToLockerButton/MoveToLockerButton";
 
 function Home() {
   const dispatch = useDispatch();
@@ -45,17 +41,6 @@ function Home() {
     try {
       setAreButtonsDisabled(true);
       await dispatch(redirectToEdit(visitor));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setAreButtonsDisabled(false);
-    }
-  };
-
-  const handleMoveToMyLocker = async () => {
-    try {
-      setAreButtonsDisabled(true);
-      await dispatch(moveToAsset());
     } catch (error) {
       console.error(error);
     } finally {
@@ -99,12 +84,7 @@ function Home() {
 
           <div className="footer-fixed" style={{ backgroundColor: "white" }}>
             <div style={{ margin: "10px 0px" }}>
-              <button
-                disabled={areButtonsDisabled}
-                onClick={() => handleMoveToMyLocker()}
-              >
-                Move to my locker
-              </button>
+              <MoveToLockerButton />
             </div>
             <div style={{ margin: "10px 0px" }}>
               <ClearMyLockerButton
