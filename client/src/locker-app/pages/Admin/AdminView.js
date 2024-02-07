@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearLocker, clearAllLockers } from "../../../redux/actions/locker";
 import backArrow from "../../../assets/icons/backArrow.svg";
+import ClearMyLockerModal from "../../components/ClearMyLocker/ClearMyLockerModal.js";
+import ClearMyLockerButton from "../../components/ClearMyLocker/ClearMyLockerButton.js";
+import ClearAllLockersButton from "../../components/ClearAllLockers/ClearAllLockersButton.js";
+import ClearAllLockersModal from "../../components/ClearAllLockers/ClearAllLockersModal.js";
 import "./AdminView.scss";
 
 function AdminView({ setShowSettings }) {
@@ -9,6 +13,9 @@ function AdminView({ setShowSettings }) {
   const [loading, setLoading] = useState(true);
   const [clearButtonClicked, setClearButtonClicked] = useState(false);
   const [clearAllButtonClicked, setClearAllButtonClicked] = useState(false);
+  const [showClearLockerModal, setShowClearLockerModal] = useState(false);
+  const [showClearAllLockersModal, setShowClearAllLockersModal] =
+    useState(false);
 
   async function handleClearLocker() {
     try {
@@ -32,6 +39,14 @@ function AdminView({ setShowSettings }) {
     }
   }
 
+  function handleToggleShowClearLockerModal() {
+    setShowClearLockerModal(!showClearLockerModal);
+  }
+
+  function handleToggleShowClearAllLockersModal() {
+    setShowClearAllLockersModal(!showClearAllLockersModal);
+  }
+
   function getBackArrow() {
     return (
       <div
@@ -48,13 +63,39 @@ function AdminView({ setShowSettings }) {
 
   return (
     <>
+      {showClearLockerModal ? (
+        <ClearMyLockerModal
+          handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
+          isClearMyLockerFromUnclaimedLocker={false}
+        />
+      ) : (
+        ""
+      )}
+      {showClearAllLockersModal ? (
+        <ClearAllLockersModal
+          handleToggleShowClearAllLockersModal={
+            handleToggleShowClearAllLockersModal
+          }
+          isClearMyLockerFromUnclaimedLocker={false}
+        />
+      ) : (
+        ""
+      )}
       {getBackArrow()}
       <div className="admin-view-wrapper pt-46" style={{ textAlign: "center" }}>
         {/* {showModal ? renderModal() : ""} */}
         <h2>Settings</h2>
 
         <div className="footer-fixed" style={{ color: "#00A76F" }}>
-          <button
+          <div style={{ marginBottom: "10px" }}>
+            <ClearMyLockerButton
+              handleToggleShowClearLockerModal={
+                handleToggleShowClearLockerModal
+              }
+              fromAdmin={true}
+            />
+          </div>
+          {/* <button
             onClick={() => {
               handleClearAllLockers();
             }}
@@ -65,17 +106,12 @@ function AdminView({ setShowSettings }) {
             {clearAllButtonClicked
               ? "Clear all lockers..."
               : "Clear all lockers"}
-          </button>
-          <button
-            onClick={() => {
-              handleClearLocker();
-            }}
-            className="start-btn btn-danger"
-            disabled={clearAllButtonClicked || clearButtonClicked}
-            style={{ marginBottom: "5px" }}
-          >
-            {clearButtonClicked ? "Clear this locker..." : "Clear this locker"}
-          </button>
+          </button> */}
+          <ClearAllLockersButton
+            handleToggleShowClearAllLockersModal={
+              handleToggleShowClearAllLockersModal
+            }
+          />
         </div>
       </div>
     </>

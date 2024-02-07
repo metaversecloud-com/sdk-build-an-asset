@@ -11,6 +11,8 @@ import EditLocker from "../../components/EditLocker/EditLocker";
 import AdminView from "../Admin/AdminView";
 import Gear from "../Admin/Gear";
 import "./ClaimedLocker.scss";
+import ClearMyLockerButton from "../../components/ClearMyLocker/ClearMyLockerButton";
+import ClearMyLockerModal from "../../components/ClearMyLocker/ClearMyLockerModal";
 
 function ClaimedLocker() {
   const dispatch = useDispatch();
@@ -26,14 +28,13 @@ function ClaimedLocker() {
   const [lockerParams, setLockerParams] = useState({});
   const [isButtonClearDisabled, setIsButtonClearDisabled] = useState(false);
   const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
+  const [showClearLockerModal, setShowClearLockerModal] = useState(false);
 
   const visitor = useSelector((state) => state?.session?.visitor);
   const world = useSelector((state) => state?.session?.world);
   const [showSettings, setShowSettings] = useState(false);
 
   const s3Url = world?.dataObject?.lockers?.[ownerProfileId]?.s3Url;
-
-  console.log("s3Url ***", s3Url);
 
   const visitorName = lockerParams["visitor-name"]?.replace("%20", " ");
 
@@ -64,16 +65,9 @@ function ClaimedLocker() {
     setShowCustomizeScreen(true);
   };
 
-  const handleClearLocker = async () => {
-    try {
-      setIsButtonClearDisabled(true);
-      await dispatch(clearLocker());
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsButtonClearDisabled(false);
-    }
-  };
+  function handleToggleShowClearLockerModal() {
+    setShowClearLockerModal(!showClearLockerModal);
+  }
 
   if (loading) {
     return (
@@ -93,44 +87,52 @@ function ClaimedLocker() {
   }
 
   return (
-    <div className="spawned-wrapper">
-      {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
-      <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-        <b>Locker</b>
-      </h2>
-      <img
-        src={s3Url || "/assets/locker/unclaimedLocker.png"}
-        alt={`Locker of ${visitorName}`}
-      />
-      <div style={{ marginTop: "20px" }}>
-        <p>
-          This locker belongs to <b>{visitorName}</b>!
-        </p>
-      </div>
-      {isAssetOwner ? (
-        <>
-          <div style={{ width: "320px" }}>
-            <button
-              onClick={() => handleEditLocker()}
-              style={{ marginBottom: "10px" }}
-            >
-              Edit my locker
-            </button>
-          </div>
-          <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-            <button
-              className="btn-danger"
-              onClick={() => handleClearLocker()}
-              disabled={isButtonClearDisabled}
-            >
-              Delete my locker
-            </button>
-          </div>
-        </>
+    <>
+      {showClearLockerModal ? (
+        <ClearMyLockerModal
+          handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
+          isClearMyLockerFromUnclaimedLocker={false}
+        />
       ) : (
         ""
       )}
-    </div>
+      <div className="spawned-wrapper">
+        {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
+        <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
+          <b>Lockerr</b>
+        </h2>
+        <img
+          src={s3Url || "/assets/locker/unclaimedLocker.png"}
+          alt={`Locker of ${visitorName}`}
+        />
+        <div style={{ marginTop: "20px" }}>
+          <p>
+            This locker belongs to <b>{visitorName}</b>!
+          </p>
+        </div>
+        {isAssetOwner ? (
+          <>
+            <div className="footer-fixed" style={{ backgroundColor: "white" }}>
+              <div style={{ width: "320px" }}>
+                <button
+                  onClick={() => handleEditLocker()}
+                  style={{ marginBottom: "10px" }}
+                >
+                  Edit my locker
+                </button>
+              </div>
+              <ClearMyLockerButton
+                handleToggleShowClearLockerModal={
+                  handleToggleShowClearLockerModal
+                }
+              />
+            </div>
+          </>
+        ) : (
+          ""
+        )}
+      </div>
+    </>
   );
 }
 

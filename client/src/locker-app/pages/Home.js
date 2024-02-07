@@ -12,6 +12,8 @@ import AdminView from "./Admin/AdminView";
 import SplashImage from "../../assets/locker/splashImage.png";
 
 import "./Home.scss";
+import ClearMyLockerButton from "../components/ClearMyLocker/ClearMyLockerButton";
+import ClearMyLockerModal from "../components/ClearMyLocker/ClearMyLockerModal";
 
 function Home() {
   const dispatch = useDispatch();
@@ -26,6 +28,7 @@ function Home() {
 
   const [loading, setLoading] = useState(false);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
+  const [showClearLockerModal, setShowClearLockerModal] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
@@ -60,16 +63,9 @@ function Home() {
     }
   };
 
-  const handleClearLocker = async ({ isClearMyLockerFromUnclaimedLocker }) => {
-    try {
-      setAreButtonsDisabled(true);
-      await dispatch(clearLocker(isClearMyLockerFromUnclaimedLocker));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setAreButtonsDisabled(false);
-    }
-  };
+  function handleToggleShowClearLockerModal() {
+    setShowClearLockerModal(!showClearLockerModal);
+  }
 
   if (loading) {
     return (
@@ -87,29 +83,36 @@ function Home() {
   if (userHasLocker) {
     return (
       <>
+        {showClearLockerModal ? (
+          <ClearMyLockerModal
+            handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
+            isClearMyLockerFromUnclaimedLocker={true}
+          />
+        ) : (
+          ""
+        )}
         <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
           {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
           <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
             You already have a locker!
           </h2>
 
-          <div style={{ margin: "10px 0px" }}>
-            <button
-              disabled={areButtonsDisabled}
-              onClick={() => handleMoveToMyLocker()}
-            >
-              Move to my locker
-            </button>
-          </div>
-          <div style={{ margin: "10px 0px" }}>
-            <button
-              disabled={areButtonsDisabled}
-              onClick={() =>
-                handleClearLocker({ isClearMyLockerFromUnclaimedLocker: true })
-              }
-            >
-              Clear my locker
-            </button>
+          <div className="footer-fixed" style={{ backgroundColor: "white" }}>
+            <div style={{ margin: "10px 0px" }}>
+              <button
+                disabled={areButtonsDisabled}
+                onClick={() => handleMoveToMyLocker()}
+              >
+                Move to my locker
+              </button>
+            </div>
+            <div style={{ margin: "10px 0px" }}>
+              <ClearMyLockerButton
+                handleToggleShowClearLockerModal={
+                  handleToggleShowClearLockerModal
+                }
+              />
+            </div>
           </div>
         </div>
       </>
