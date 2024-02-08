@@ -28,6 +28,7 @@ export function validateImageInfo(imageInfo, res) {
   const requiredFields = [
     "Locker Base",
     "Wallpaper",
+    "Border",
     "Top Shelf",
     "Bottom Shelf",
     "Door",

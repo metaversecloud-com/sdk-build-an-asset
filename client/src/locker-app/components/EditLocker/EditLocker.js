@@ -28,11 +28,8 @@ const categories = {
     "wallpaper_2.png",
     "wallpaper_3.png",
     "wallpaper_4.png",
-    "wallpaper_5.png",
-    "wallpaper_6.png",
-    "wallpaper_7.png",
-    "wallpaper_8.png",
   ],
+  Border: ["border_0.png", "border_1.png", "border_2.png", "border_3.png"],
   "Top Shelf": [
     "topShelf_0.png",
     "topShelf_1.png",
@@ -68,6 +65,15 @@ const categories = {
   ],
 };
 
+const selectionLimits = {
+  "Locker Base": 1,
+  Wallpaper: 1,
+  Border: 1,
+  "Top Shelf": Infinity,
+  "Bottom Shelf": Infinity,
+  Door: Infinity,
+};
+
 function EditLocker() {
   const dispatch = useDispatch();
   const BASE_URL = window.location.origin;
@@ -77,6 +83,7 @@ function EditLocker() {
   const [selected, setSelected] = useState({
     "Locker Base": [],
     Wallpaper: [],
+    Border: [],
     "Top Shelf": [],
     "Bottom Shelf": [],
     Door: [],
@@ -99,6 +106,7 @@ function EditLocker() {
   );
   const [openCategories, setOpenCategories] = useState({
     Wallpaper: false,
+    Border: false,
     "Top Shelf": false,
     "Bottom Shelf": false,
     Door: false,
@@ -118,6 +126,7 @@ function EditLocker() {
     setOpenCategories((prev) => {
       const newCategories = {
         Wallpaper: false,
+        Border: false,
         "Top Shelf": false,
         "Bottom Shelf": false,
         Door: false,
@@ -174,25 +183,31 @@ function EditLocker() {
   const updateLocker = (type, image) => {
     try {
       let updatedSelection = { ...selected };
+      const limit = selectionLimits[type] || Infinity; // Garante um valor padrão caso não especificado
+      const isSelected = selected[type].includes(image);
 
-      if (type === "Locker Base") {
-        // Allow only one selection for Locker Base
-        updatedSelection[type] = [image];
+      if (limit === 1) {
+        // Para categorias com limite de 1, substitua a seleção atual pela nova
+        updatedSelection[type] = isSelected ? [] : [image];
       } else {
-        // Allow multiple selections for the other categories
-        if (selected[type].includes(image)) {
-          updatedSelection[type] = selected[type].filter(
+        // Para categorias sem limite específico ou com limite maior que 1
+        if (isSelected) {
+          // Se o item já está selecionado, remove-o da seleção
+          updatedSelection[type] = updatedSelection[type].filter(
             (item) => item !== image
           );
         } else {
-          if (selected[type].length < 2) {
-            updatedSelection[type] = [...selected[type], image];
+          // Se o item não está selecionado e não ultrapassa o limite, adiciona à seleção
+          if (updatedSelection[type].length < limit) {
+            updatedSelection[type] = [...updatedSelection[type], image];
           }
+          // Se necessário, adicione lógica para lidar com o caso de exceder o limite
         }
       }
 
       setSelected(updatedSelection);
 
+      // Atualiza a informação da imagem para ser usada posteriormente (ex., salvar no backend)
       const updatedImageInfo = Object.keys(updatedSelection).reduce(
         (info, key) => {
           info[key] = updatedSelection[key].map((item) => ({
@@ -204,15 +219,15 @@ function EditLocker() {
       );
       setImageInfo(updatedImageInfo);
 
-      const imagesToMerge = [
-        ...Object.values(updatedSelection)
-          .flat()
-          .map((item) => ({
-            src: item,
-            x: 0,
-            y: 0,
-          })),
-      ].filter((img) => img.src);
+      // Prepara as imagens para a mesclagem e atualiza a pré-visualização
+      const imagesToMerge = Object.values(updatedSelection)
+        .flat()
+        .map((item) => ({
+          src: item,
+          x: 0,
+          y: 0,
+        }))
+        .filter((img) => img.src);
 
       mergeImages(imagesToMerge).then(setPreview);
     } catch (error) {
@@ -339,18 +354,6 @@ function EditLocker() {
       )}
 
       <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-        {/* <div style={{ marginBottom: "5px" }}>
-          <button
-            onClick={handleMoveToLocker}
-            disabled={
-              !allCategoriesSelected() ||
-              isButtonSaveLockerDisabled ||
-              isButtonMoveToLockerDisabled
-            }
-          >
-            Move to my locker
-          </button>
-        </div> */}
         <button
           onClick={handleSaveToBackend}
           disabled={
