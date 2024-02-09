@@ -426,7 +426,9 @@ function EditLocker() {
           <button
             onClick={handleSaveToBackend}
             disabled={
-              isButtonSaveLockerDisabled || isButtonMoveToLockerDisabled
+              !selected["Locker Base"].length > 0 ||
+              isButtonSaveLockerDisabled ||
+              isButtonMoveToLockerDisabled
             }
           >
             Save
