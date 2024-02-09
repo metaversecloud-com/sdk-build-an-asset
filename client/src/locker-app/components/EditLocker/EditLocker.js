@@ -225,14 +225,16 @@ function EditLocker() {
     let updatedSelection = { ...selected };
 
     if (item.hasVariation) {
-      const currentItemIndex = updatedSelection[type].findIndex((i) =>
-        i.includes(item.name.split("_")[0])
-      );
-      if (currentItemIndex !== -1) {
-        updatedSelection[type][currentItemIndex] = image;
-      } else {
-        updatedSelection[type].push(image);
-      }
+      updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
+        const selectedItemBaseName = selectedItem
+          .split("/")
+          .pop()
+          .split(".")[0];
+        return !item.variations.some(
+          (variation) => variation.split(".")[0] === selectedItemBaseName
+        );
+      });
+      updatedSelection[type].push(image);
     } else {
       const isSelected = selected[type].includes(image);
       if (selectionLimits[type] === 1) {
