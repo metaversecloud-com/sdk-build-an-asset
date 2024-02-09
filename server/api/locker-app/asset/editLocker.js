@@ -59,7 +59,7 @@ export const editLocker = async (req, res) => {
     const host = req.host;
     if (host === "localhost") {
       // Mock image placeholder for localhost, since we don't have S3 Bucket permissions for localhost in AWS
-      const testS3 = await generateS3Url(imageInfo, profileId);
+      await generateS3Url(imageInfo, profileId);
       s3Url =
         "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
     } else {
@@ -80,6 +80,7 @@ export const editLocker = async (req, res) => {
         }
       );
     } catch (error) {
+      console.error("Error while updating the locker", error);
       return res.json({
         msg: "This locker is already taken",
         isLockerAlreadyTaken: true,

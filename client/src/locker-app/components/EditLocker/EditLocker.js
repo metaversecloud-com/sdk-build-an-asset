@@ -22,6 +22,8 @@ const categories = {
     { name: "lockerBase_1.png", hasVariation: false },
     { name: "lockerBase_2.png", hasVariation: false },
     { name: "lockerBase_3.png", hasVariation: false },
+    { name: "lockerBase_4.png", hasVariation: false },
+    { name: "lockerBase_5.png", hasVariation: false },
   ],
   Wallpaper: [
     { name: "wallpaper_0.png", hasVariation: false },
@@ -53,21 +55,33 @@ const categories = {
   "Bottom Shelf": [
     { name: "bottomShelf_0.png", hasVariation: false },
     { name: "bottomShelf_1.png", hasVariation: false },
-    { name: "bottomShelf_2.png", hasVariation: false },
-    { name: "bottomShelf_3.png", hasVariation: false },
-    { name: "bottomShelf_4.png", hasVariation: false },
-    { name: "bottomShelf_5.png", hasVariation: false },
-    { name: "bottomShelf_6.png", hasVariation: false },
-    { name: "bottomShelf_7.png", hasVariation: false },
-    { name: "bottomShelf_8.png", hasVariation: false },
+    {
+      name: "bottomShelf_2.png",
+      hasVariation: true,
+      variations: [
+        "bottomShelf_2.png",
+        "bottomShelf_3.png",
+        "bottomShelf_4.png",
+        "bottomShelf_5.png",
+        "bottomShelf_6.png",
+      ],
+    },
+    {
+      name: "bottomShelf_7.png",
+      hasVariation: true,
+      variations: ["bottomShelf_7.png", "bottomShelf_8.png"],
+    },
   ],
   Door: [
-    { name: "door_0.png", hasVariation: false },
+    {
+      name: "door_0.png",
+      hasVariation: true,
+      variations: ["door_0.png", "door_5.png"],
+    },
     { name: "door_1.png", hasVariation: false },
     { name: "door_2.png", hasVariation: false },
     { name: "door_3.png", hasVariation: false },
     { name: "door_4.png", hasVariation: false },
-    { name: "door_5.png", hasVariation: false },
     { name: "door_6.png", hasVariation: false },
     { name: "door_7.png", hasVariation: false },
     { name: "door_8.png", hasVariation: false },
@@ -90,7 +104,7 @@ function EditLocker() {
   const visitor = useSelector((state) => state?.session?.visitor);
 
   const [selected, setSelected] = useState({
-    "Locker Base": [],
+    "Locker Base": [`${BASE_URL}/locker-assets/lockerBase_0.png`],
     Wallpaper: [],
     Border: [],
     "Top Shelf": [],
@@ -99,7 +113,6 @@ function EditLocker() {
   });
 
   const [loading, setLoading] = useState(false);
-  useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [isButtonSaveLockerDisabled, setIsButtonSaveLockerDisabled] =
@@ -126,16 +139,6 @@ function EditLocker() {
     Door: false,
   });
 
-  const allCategoriesSelected = () => {
-    const lockerBaseSelected = selected["Locker Base"].length > 0;
-
-    const otherCategoriesSelected = Object.keys(categories).every(
-      (category) => category === "Locker Base" || selected[category].length > 0
-    );
-
-    return lockerBaseSelected && otherCategoriesSelected;
-  };
-
   const toggleCategory = (category) => {
     setOpenCategories((prev) => {
       const newCategories = {
@@ -161,8 +164,25 @@ function EditLocker() {
     return selected[category].length > 0;
   };
 
-  const isSelectedItem = (type, image) => {
-    return selected[type].includes(`${BASE_URL}/locker-assets/${image}`);
+  const isSelectedItem = (type, imageName) => {
+    return selected[type].some((selectedImage) => {
+      const selectedBaseName = selectedImage
+        .replace(`${BASE_URL}/locker-assets/`, "")
+        .split(".")[0];
+      const itemBaseName = imageName.split(".")[0];
+      return (
+        selectedBaseName === itemBaseName ||
+        categories[type].some((item) => {
+          if (item.name.split(".")[0] === itemBaseName && item.hasVariation) {
+            return item.variations.some((variation) => {
+              const variationBaseName = variation.split(".")[0];
+              return selectedBaseName === variationBaseName;
+            });
+          }
+          return false;
+        })
+      );
+    });
   };
 
   useEffect(() => {
@@ -202,51 +222,55 @@ function EditLocker() {
   }, [dispatch]);
 
   const updateLocker = (type, image, item) => {
-    try {
-      let updatedSelection = { ...selected };
-      const limit = selectionLimits[type] || Infinity;
-      const isSelected = selected[type].includes(image);
+    let updatedSelection = { ...selected };
 
-      if (limit === 1) {
+    if (item.hasVariation) {
+      const currentItemIndex = updatedSelection[type].findIndex((i) =>
+        i.includes(item.name.split("_")[0])
+      );
+      if (currentItemIndex !== -1) {
+        updatedSelection[type][currentItemIndex] = image;
+      } else {
+        updatedSelection[type].push(image);
+      }
+    } else {
+      const isSelected = selected[type].includes(image);
+      if (selectionLimits[type] === 1) {
         updatedSelection[type] = isSelected ? [] : [image];
       } else {
         if (isSelected) {
           updatedSelection[type] = updatedSelection[type].filter(
-            (item) => item !== image
+            (i) => i !== image
           );
         } else {
-          if (updatedSelection[type].length < limit) {
-            updatedSelection[type] = [...updatedSelection[type], image];
-          }
+          updatedSelection[type].push(image);
         }
       }
-
-      setSelected(updatedSelection);
-
-      const updatedImageInfo = Object.keys(updatedSelection).reduce(
-        (info, key) => {
-          info[key] = updatedSelection[key].map((item) => ({
-            imageName: item.split("/").pop().split(".")[0],
-          }));
-          return info;
-        },
-        {}
-      );
-      setImageInfo(updatedImageInfo);
-
-      const imagesToMerge = Object.values(updatedSelection)
-        .flat()
-        .map((item) => ({
-          src: item,
-          x: 0,
-          y: 0,
-        }))
-        .filter((img) => img.src);
-
-      mergeImages(imagesToMerge).then(setPreview);
-    } catch (error) {
-      console.error("Erro ao atualizar o locker:", error);
     }
+
+    setSelected(updatedSelection);
+
+    const updatedImageInfo = Object.keys(updatedSelection).reduce(
+      (info, key) => {
+        info[key] = updatedSelection[key].map((item) => ({
+          imageName: item.split("/").pop().split(".")[0],
+        }));
+        return info;
+      },
+      {}
+    );
+    setImageInfo(updatedImageInfo);
+
+    const imagesToMerge = Object.values(updatedSelection)
+      .flat()
+      .map((i) => ({
+        src: i,
+        x: 0,
+        y: 0,
+      }))
+      .filter((img) => img.src);
+
+    mergeImages(imagesToMerge).then(setPreview);
   };
 
   if (loading) {
@@ -260,17 +284,6 @@ function EditLocker() {
   if (showSettings) {
     return <AdminView setShowSettings={setShowSettings} />;
   }
-
-  const handleVariationSelect = (selectedVariation) => {
-    const updatedSelection = { ...selected };
-
-    const newItemUrl = `${BASE_URL}/locker-assets/${selectedVariation}.png`;
-
-    updatedSelection[currentItem.category] = [newItemUrl];
-
-    setSelected(updatedSelection);
-    setIsModalOpen(false);
-  };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -413,9 +426,7 @@ function EditLocker() {
           <button
             onClick={handleSaveToBackend}
             disabled={
-              !allCategoriesSelected() ||
-              isButtonSaveLockerDisabled ||
-              isButtonMoveToLockerDisabled
+              isButtonSaveLockerDisabled || isButtonMoveToLockerDisabled
             }
           >
             Save

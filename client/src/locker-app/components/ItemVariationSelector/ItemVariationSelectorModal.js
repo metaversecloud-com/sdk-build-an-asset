@@ -1,4 +1,4 @@
-import React from "react"; // Atualizado para remover useState já que não usamos mais
+import React from "react";
 
 function ItemVariationSelectorModal({ isOpen, variations, onSelect, onClose }) {
   const BASE_URL = window.location.origin;
@@ -27,8 +27,6 @@ function ItemVariationSelectorModal({ isOpen, variations, onSelect, onClose }) {
                 alt={`Variação ${index}`}
                 onClick={() => handleVariationClick(variation)}
                 style={{
-                  width: "100px",
-                  height: "100px",
                   objectFit: "cover",
                   borderRadius: "10px",
                   margin: "5px",
