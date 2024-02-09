@@ -18,16 +18,7 @@ import "./EditLocker.scss";
 
 const categories = {
   "Locker Base": [
-    {
-      name: "lockerBase_0.png",
-      hasVariation: true,
-      variations: [
-        "lockerBase_0.png",
-        "lockerBase_1.png",
-        "lockerBase_2.png",
-        "lockerBase_3.png",
-      ],
-    },
+    { name: "lockerBase_0.png", hasVariation: false },
     { name: "lockerBase_1.png", hasVariation: false },
     { name: "lockerBase_2.png", hasVariation: false },
     { name: "lockerBase_3.png", hasVariation: false },
@@ -46,8 +37,11 @@ const categories = {
     { name: "border_3.png", hasVariation: false },
   ],
   "Top Shelf": [
-    { name: "topShelf_0.png", hasVariation: false },
-    { name: "topShelf_1.png", hasVariation: false },
+    {
+      name: "topShelf_0.png",
+      hasVariation: true,
+      variations: ["topShelf_0.png", "topShelf_1.png"],
+    },
     { name: "topShelf_2.png", hasVariation: false },
     { name: "topShelf_3.png", hasVariation: false },
     { name: "topShelf_4.png", hasVariation: false },

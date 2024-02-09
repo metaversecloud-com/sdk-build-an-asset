@@ -10,7 +10,7 @@ function ItemVariationSelectorModal({ isOpen, variations, onSelect, onClose }) {
   return isOpen ? (
     <div className="topia-modal-container visible">
       <div className="topia-modal">
-        <h4>Selecionar Variação do Item</h4>
+        <h4>Select Item</h4>
         <div className="modal-variations">
           <div
             className="variations-container"
@@ -41,7 +41,7 @@ function ItemVariationSelectorModal({ isOpen, variations, onSelect, onClose }) {
         </div>
         <div className="actions" style={{ marginTop: "10px" }}>
           <button className="btn-outline" onClick={onClose}>
-            Cancelar
+            Cancel
           </button>
         </div>
       </div>
