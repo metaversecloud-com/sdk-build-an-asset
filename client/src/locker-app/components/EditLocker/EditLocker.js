@@ -424,17 +424,19 @@ function EditLocker() {
           </p>
         )}
 
-        <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-          <button
-            onClick={handleSaveToBackend}
-            disabled={
-              !selected["Locker Base"].length > 0 ||
-              isButtonSaveLockerDisabled ||
-              isButtonMoveToLockerDisabled
-            }
-          >
-            Save
-          </button>
+        <div className="footer-wrapper">
+          <div className="footer-fixed" style={{ backgroundColor: "white" }}>
+            <button
+              onClick={handleSaveToBackend}
+              disabled={
+                !selected["Locker Base"].length > 0 ||
+                isButtonSaveLockerDisabled ||
+                isButtonMoveToLockerDisabled
+              }
+            >
+              Save
+            </button>
+          </div>
         </div>
       </div>
     </>
