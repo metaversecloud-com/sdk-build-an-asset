@@ -34,7 +34,7 @@ app.get("/", (req, res) => {
   return res.send(`Server is running... ${appVersion}`);
 });
 
-app.get("/system/health", (req, res) => {
+app.get("api/system/health", (req, res) => {
   return res.json({
     appVersion,
     status: "OK",
