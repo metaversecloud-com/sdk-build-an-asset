@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
-import { getWorld, claimLocker } from "../../redux/actions/locker";
-import Gear from "./Admin/Gear";
-import AdminView from "./Admin/AdminView";
-import SplashImage from "../../assets/locker/splashImage.png";
+import { getWorld, claimLocker } from "../../../redux/actions/locker";
+import Gear from "../Admin/Gear";
+import AdminView from "../Admin/AdminView";
+import SplashImage from "../../../assets/locker/splashImage.png";
 
 import "./Home.scss";
-import ClearMyLockerButton from "../components/ClearMyLocker/ClearMyLockerButton";
-import ClearMyLockerModal from "../components/ClearMyLocker/ClearMyLockerModal";
-import MoveToLockerButton from "../components/MoveToLockerButton/MoveToLockerButton";
+import ClearMyLockerButton from "../../components/ClearMyLocker/ClearMyLockerButton";
+import ClearMyLockerModal from "../../components/ClearMyLocker/ClearMyLockerModal";
+import MoveToLockerButton from "../../components/MoveToLockerButton/MoveToLockerButton";
 
 function Home() {
   const dispatch = useDispatch();

@@ -1,0 +1,52 @@
+import React from "react"; // Atualizado para remover useState já que não usamos mais
+
+function ItemVariationSelectorModal({ isOpen, variations, onSelect, onClose }) {
+  const BASE_URL = window.location.origin;
+  const handleVariationClick = (variation) => {
+    onSelect(variation);
+    onClose();
+  };
+
+  return isOpen ? (
+    <div className="topia-modal-container visible">
+      <div className="topia-modal">
+        <h4>Selecionar Variação do Item</h4>
+        <div className="modal-variations">
+          <div
+            className="variations-container"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-around",
+            }}
+          >
+            {variations.map((variation, index) => (
+              <img
+                key={index}
+                src={`${BASE_URL}/locker-assets/${variation}`}
+                alt={`Variação ${index}`}
+                onClick={() => handleVariationClick(variation)}
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  objectFit: "cover",
+                  borderRadius: "10px",
+                  margin: "5px",
+                  cursor: "pointer",
+                  border: "1px solid #ccc",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="actions" style={{ marginTop: "10px" }}>
+          <button className="btn-outline" onClick={onClose}>
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null;
+}
+
+export default ItemVariationSelectorModal;
