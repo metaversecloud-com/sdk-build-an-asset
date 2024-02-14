@@ -34,6 +34,8 @@ Currently, we are using this project to build Snowmen and customize Lockers!
 
 ## Getting Started 🚀
 
+Make sure to fill all environment variables. The model is in .env-example file
+
 ### Production Mode
 
 1. Install dependencies
