@@ -1,68 +1,62 @@
 # Build-an-Asset 🎩⛄🔒
 
-Welcome to the Build-an-Asset project! This is your go-to spot for building custom snowmen and customizing lockers in the virtual world. Developed with Node.js and React, this project lets you create, customize, and place your very own snowman or locker within the game.
+## Introduction / Summary
 
-Currently, we are using this project to build Snowmen and customize Lockers!
+Welcome to Build-an-Asset, your virtual playground for crafting unique snowmen and customizing lockers in a vibrant digital world. Leveraging Node.js and React, this project offers an immersive experience, allowing users to express their creativity and interact within a shared space. Dive into a world where your custom snowmen and lockers add a personal touch to the digital landscape.
 
-## Features 🌟
+## Key Features
 
-### In-world Interactivity
+- **In-World Interactivity**: Engage with clickable assets to start your creation process through a seamless iFrame integration (drawer).
+- **Snowman Customization**: Choose from various hats, scarves, and arm styles to design your snowman with a real-time preview feature.
+- **Locker Customization**: Personalize lockers with individual configurations and dynamic states (Claimed/Unclaimed), accessible via unique URLs.
 
-- **Clickable Assets**: Look for the "Build-a-Snowman" or "Customize-a-Locker" signs in the world. One click and you're in the workshop.
-- **iFrame Integration**: A seamless iFrame pops up to give you the ultimate building or customizing experience.
+## Canvas Elements & Interactions
 
-### Build Your Snowman 🛠
+Users can interact with "Build-a-Snowman" or "Customize-a-Locker" signs within the game world, triggering an iFrame that guides them through the customization process.
 
-- **Customizable**: Pick a hat, choose a scarf, and decide on the arm style.
-- **Real-Time Preview**: As you make selections, watch your snowman come to life.
+## Drawer Content
 
-### Customize Your Locker 🔒
+The drawer presents customization options, allowing for the creation and personalization of assets which are then instantaneously placed in the world.
 
-- **Individual Configuration**: Each locker can be customized individually. Access the customization via a unique URL pattern.
-- **Dynamic States**: Lockers have two states: Claimed and Unclaimed. Customize and see your changes reflected in the world.
+## Admin Features
 
-### Drop Your Asset in the World ⛄🔒
+An admin panel enables the management of assets, offering controls for game resets.
 
-- **Instant Placement**: Hit "Add Snowman" or "Save Locker", and voilà, your creation is part of the world.
-- **Admin Panel**: For game admins, manage all assets and gather analytics.
+## Themes Description
 
-## Tech Stack 🛠️
+Themes such as "Build a Snowman" and "Decorate a Locker" provide seasonal and thematic contexts for user creations, enriching the virtual environment.
 
-- **Backend**: Node.js
-- **Frontend**: React
-- **Storage**: Snowmen images are stored in an S3 bucket.
+## Data Objects
 
-## Getting Started 🚀
+Snowmen are hosted inside the app and locker images are stored in an S3 bucket. The Locker App can identify the owners through the world dataObject, with profileId as keys, and locker id (droppedAsset id) as the value.
 
-Make sure to fill all environment variables. The model is in .env-example file
+## Developer Sections
 
-### Production Mode
+### Getting Started
 
-1. Install dependencies
+Refer to the `.env-example` file to configure your environment variables correctly.
 
-   ```
-   npm install
-   ```
+#### Production Mode
 
-2. Start the server
-   ```
-   npm start
-   ```
+1. Install dependencies: `npm install`
+2. Start the server: `npm start`
 
-### Development Mode
+#### Development Mode
 
-1. Start Server
+1. Start the server: `npm start`
+2. In a new terminal, navigate to the client directory: `cd client && npm start`
+3. Access `http://localhost:3001/snowman` or `http://localhost:3001/locker` to begin customization.
 
-   ```
-   npm start
-   ```
+### .env Variables
 
-2. Start Client
+Ensure all required environment variables are set as outlined in the `.env-example` file.
 
-   ```
-   cd client && npm start
-   ```
+### API Keys
 
-3. Visit `http://localhost:3001/snowman` and start building your snowman!
+Find the `INTERACTIVE_KEY`, and `INTERACTIVE_SECRET` in the admin settings in https://topia.io.
 
-4. Visit `http://localhost:3001/locker` and start customizing your locker!
+### Helpful Links
+
+- View it in action: [https://topia.io/snowman-prod](https://topia.io/snowman-prod)
+- View it in action: [https://topia.io/locker-app-production](https://topia.io/locker-app-production)
+- How to play guide in Notion: [[https://www.notion.so/topiaio/Build-an-Asset-64518134dae840958b1bdd7982c3c423](https://www.notion.so/topiaio/Build-an-Asset-64518134dae840958b1bdd7982c3c423)]
