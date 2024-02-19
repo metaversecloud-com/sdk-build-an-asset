@@ -83,7 +83,6 @@ export const editLocker = async (req, res) => {
       console.error("Error while updating the locker", error);
       return res.json({
         msg: "This locker is already taken",
-        isLockerAlreadyTaken: true,
       });
     }
 

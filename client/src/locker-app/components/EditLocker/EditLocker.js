@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
-import { editLocker, moveToAsset } from "../../../redux/actions/locker";
+import { editLocker } from "../../../redux/actions/locker";
 import { Collapse, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -117,8 +117,6 @@ function EditLocker() {
   const [validationErrors, setValidationErrors] = useState({});
   const [isButtonSaveLockerDisabled, setIsButtonSaveLockerDisabled] =
     useState(false);
-  const [isButtonMoveToLockerDisabled, setIsButtonMoveToLockerDisabled] =
-    useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentItemVariations, setCurrentItemVariations] = useState([]);
@@ -218,7 +216,14 @@ function EditLocker() {
         .catch((error) => console.error("Erro ao mesclar imagens:", error));
     };
 
-    fetchInitialState();
+    try {
+      setLoading(true);
+      fetchInitialState();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }, [dispatch]);
 
   const updateLocker = (type, image, item) => {
@@ -275,18 +280,6 @@ function EditLocker() {
     mergeImages(imagesToMerge).then(setPreview);
   };
 
-  if (loading) {
-    return (
-      <div className="loader">
-        <ClipLoader color={"#123abc"} loading={loading} size={150} />
-      </div>
-    );
-  }
-
-  if (showSettings) {
-    return <AdminView setShowSettings={setShowSettings} />;
-  }
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -301,6 +294,18 @@ function EditLocker() {
       setIsButtonSaveLockerDisabled(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="loader">
+        <ClipLoader color={"#123abc"} loading={loading} size={150} />
+      </div>
+    );
+  }
+
+  if (showSettings) {
+    return <AdminView setShowSettings={setShowSettings} />;
+  }
 
   if (isLockerAlreadyTaken) {
     return (
@@ -430,8 +435,7 @@ function EditLocker() {
               onClick={handleSaveToBackend}
               disabled={
                 !selected["Locker Base"].length > 0 ||
-                isButtonSaveLockerDisabled ||
-                isButtonMoveToLockerDisabled
+                isButtonSaveLockerDisabled
               }
             >
               Save

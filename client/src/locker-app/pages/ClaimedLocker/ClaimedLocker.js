@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  pickupAsset,
-  getWorld,
-  clearLocker,
-  getDroppedAsset,
-} from "../../../redux/actions/locker";
+import { getWorld } from "../../../redux/actions/locker";
 import EditLocker from "../../components/EditLocker/EditLocker";
 import AdminView from "../Admin/AdminView";
 import Gear from "../Admin/Gear";
@@ -19,7 +14,6 @@ function ClaimedLocker() {
   const dispatch = useDispatch();
 
   const queryParameters = new URLSearchParams(window.location.search);
-  const assetId = queryParameters.get("assetId");
   const profileId = queryParameters.get("profileId");
   const ownerProfileId = queryParameters.get("ownerProfileId");
 
@@ -27,7 +21,6 @@ function ClaimedLocker() {
 
   const [loading, setLoading] = useState(false);
   const [lockerParams, setLockerParams] = useState({});
-  const [isButtonClearDisabled, setIsButtonClearDisabled] = useState(false);
   const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
   const [showClearLockerModal, setShowClearLockerModal] = useState(false);
 
@@ -38,11 +31,6 @@ function ClaimedLocker() {
   const s3Url = world?.dataObject?.lockers?.[ownerProfileId]?.s3Url;
 
   const visitorName = lockerParams["visitor-name"]?.replace("%20", " ");
-
-  // if (world?.dataObject?.lockers?.[profileId]) {
-  //   isAssetOwner =
-  //     world?.dataObject?.lockers?.[profileId]?.droppedAssetId == assetId;
-  // }
 
   useEffect(() => {
     const fetchInitialState = async () => {

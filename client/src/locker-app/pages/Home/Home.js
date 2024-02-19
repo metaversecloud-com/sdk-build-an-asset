@@ -5,11 +5,10 @@ import { getWorld, claimLocker } from "../../../redux/actions/locker";
 import Gear from "../Admin/Gear";
 import AdminView from "../Admin/AdminView";
 import SplashImage from "../../../assets/locker/splashImage.png";
-
-import "./Home.scss";
 import ClearMyLockerButton from "../../components/ClearMyLocker/ClearMyLockerButton";
 import ClearMyLockerModal from "../../components/ClearMyLocker/ClearMyLockerModal";
 import MoveToLockerButton from "../../components/MoveToLockerButton/MoveToLockerButton";
+import "./Home.scss";
 
 function Home() {
   const dispatch = useDispatch();
@@ -84,7 +83,7 @@ function Home() {
 
           <div className="footer-fixed" style={{ backgroundColor: "white" }}>
             <div style={{ margin: "10px 0px" }}>
-              <MoveToLockerButton shouldCloseIframe={true} />
+              <MoveToLockerButton closeIframeAfterMove={true} />
             </div>
             <div style={{ margin: "10px 0px" }}>
               <ClearMyLockerButton

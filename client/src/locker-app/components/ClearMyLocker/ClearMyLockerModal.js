@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { clearLocker } from "../../../redux/actions/locker.js";
 
 function ClearMyLockerButtonModal({
@@ -13,7 +13,6 @@ function ClearMyLockerButtonModal({
     try {
       setAreButtonsDisabled(true);
       await dispatch(clearLocker(isClearMyLockerFromUnclaimedLocker));
-      handleToggleShowClearLockerModal();
     } catch (error) {
       console.error(error);
     } finally {
@@ -23,7 +22,7 @@ function ClearMyLockerButtonModal({
   };
 
   return (
-    <div id="" class="topia-modal-container visible">
+    <div className="topia-modal-container visible">
       <div className="topia-modal">
         <h4>Clear locker</h4>
         <p>Are you sure you'd like to continue?</p>

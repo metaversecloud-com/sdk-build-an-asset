@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { moveToAsset } from "../../../redux/actions/locker";
 
-function MoveToLockerButton({ shouldCloseIframe }) {
+function MoveToLockerButton({ closeIframeAfterMove }) {
   const dispatch = useDispatch();
 
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
@@ -10,7 +10,7 @@ function MoveToLockerButton({ shouldCloseIframe }) {
   const handleMoveToMyLocker = async () => {
     try {
       setAreButtonsDisabled(true);
-      await dispatch(moveToAsset(shouldCloseIframe));
+      await dispatch(moveToAsset(closeIframeAfterMove));
     } catch (error) {
       console.error(error);
     } finally {

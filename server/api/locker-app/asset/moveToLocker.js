@@ -19,6 +19,8 @@ export const moveToLocker = async (req, res) => {
       visitorId,
     };
 
+    const { closeIframeAfterMove } = req.body;
+
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
 
     const world = await World.create(urlSlug, { credentials });
@@ -39,7 +41,9 @@ export const moveToLocker = async (req, res) => {
       y,
     });
 
-    await visitor.closeIframe(assetId);
+    if (closeIframeAfterMove) {
+      await visitor.closeIframe(assetId);
+    }
 
     return res.json({
       success: true,
