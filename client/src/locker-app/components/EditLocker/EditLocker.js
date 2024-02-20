@@ -230,16 +230,23 @@ function EditLocker() {
     let updatedSelection = { ...selected };
 
     if (item.hasVariation) {
-      updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
-        const selectedItemBaseName = selectedItem
-          .split("/")
-          .pop()
-          .split(".")[0];
-        return !item.variations.some(
-          (variation) => variation.split(".")[0] === selectedItemBaseName
+      const isSelectedVariation = updatedSelection[type].includes(image);
+
+      if (isSelectedVariation) {
+        updatedSelection[type] = updatedSelection[type].filter(
+          (selectedItem) => selectedItem !== image
         );
-      });
-      updatedSelection[type].push(image);
+      } else {
+        updatedSelection[type] = updatedSelection[type].filter(
+          (selectedItem) => {
+            return !item.variations.some(
+              (variation) =>
+                `${BASE_URL}/locker-assets/${variation}` === selectedItem
+            );
+          }
+        );
+        updatedSelection[type].push(image);
+      }
     } else {
       const isSelected = selected[type].includes(image);
       if (selectionLimits[type] === 1) {
@@ -326,12 +333,6 @@ function EditLocker() {
           variations={currentItemVariations}
           onSelect={(selectedVariation) => {
             const imageUrl = `${BASE_URL}/locker-assets/${selectedVariation}`;
-            console.log(
-              "updateLocker1 params",
-              currentItem.type,
-              imageUrl,
-              currentItem
-            );
             updateLocker(currentItem.type, imageUrl, currentItem);
           }}
           onClose={handleCloseModal}
