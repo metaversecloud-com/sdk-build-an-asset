@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { clearLocker, clearAllLockers } from "../../../redux/actions/locker";
+import React, { useState } from "react";
 import backArrow from "../../../assets/icons/backArrow.svg";
 import ClearMyLockerModal from "../../components/ClearMyLocker/ClearMyLockerModal.js";
 import ClearMyLockerButton from "../../components/ClearMyLocker/ClearMyLockerButton.js";
@@ -9,35 +7,9 @@ import ClearAllLockersModal from "../../components/ClearAllLockers/ClearAllLocke
 import "./AdminView.scss";
 
 function AdminView({ setShowSettings }) {
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const [clearButtonClicked, setClearButtonClicked] = useState(false);
-  const [clearAllButtonClicked, setClearAllButtonClicked] = useState(false);
   const [showClearLockerModal, setShowClearLockerModal] = useState(false);
   const [showClearAllLockersModal, setShowClearAllLockersModal] =
     useState(false);
-
-  async function handleClearLocker() {
-    try {
-      setClearButtonClicked(true);
-      await dispatch(clearLocker());
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setClearButtonClicked(false);
-    }
-  }
-
-  async function handleClearAllLockers() {
-    try {
-      setClearAllButtonClicked(true);
-      await dispatch(clearAllLockers());
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setClearAllButtonClicked(false);
-    }
-  }
 
   function handleToggleShowClearLockerModal() {
     setShowClearLockerModal(!showClearLockerModal);
@@ -95,18 +67,6 @@ function AdminView({ setShowSettings }) {
               fromAdmin={true}
             />
           </div>
-          {/* <button
-            onClick={() => {
-              handleClearAllLockers();
-            }}
-            className="start-btn btn-danger"
-            disabled={clearAllButtonClicked || clearButtonClicked}
-            style={{ marginBottom: "5px" }}
-          >
-            {clearAllButtonClicked
-              ? "Clear all lockers..."
-              : "Clear all lockers"}
-          </button> */}
           <ClearAllLockersButton
             handleToggleShowClearAllLockersModal={
               handleToggleShowClearAllLockersModal

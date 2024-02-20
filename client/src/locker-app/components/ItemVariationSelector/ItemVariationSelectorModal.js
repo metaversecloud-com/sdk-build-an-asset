@@ -24,7 +24,7 @@ function ItemVariationSelectorModal({ isOpen, variations, onSelect, onClose }) {
               <img
                 key={index}
                 src={`${BASE_URL}/locker-assets/${variation}`}
-                alt={`Variação ${index}`}
+                alt={`Variation ${index}`}
                 onClick={() => handleVariationClick(variation)}
                 style={{
                   objectFit: "cover",

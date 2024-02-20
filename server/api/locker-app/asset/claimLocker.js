@@ -105,8 +105,8 @@ export const claimLocker = async (req, res) => {
   } catch (error) {
     logger.error({
       error,
-      message: "❌ Error while editing the locker",
-      functionName: "editLocker",
+      message: "❌ Error while claming the locker",
+      functionName: "claimLocker",
       req,
     });
     return res.status(500).send({ error: error?.message, success: false });
