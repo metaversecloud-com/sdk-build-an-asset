@@ -91,7 +91,10 @@ function EditLocker() {
   const [isButtonMoveToLockerDisabled, setIsButtonMoveToLockerDisabled] =
     useState(false);
   const [preview, setPreview] = useState(
-    `${BASE_URL}/locker-assets/unclaimedLocker.png`
+    `https://${
+      process.env.S3_BUCKET_BUILD_AN_ASSET ||
+      process.env.REACT_APP_S3_BUCKET_BUILD_AN_ASSET
+    }.s3.amazonaws.com/unclaimedLocker.png`
   );
   const [imageInfo, setImageInfo] = useState({});
   const isLockerAlreadyTaken = useSelector(
@@ -274,7 +277,7 @@ function EditLocker() {
       <img
         src={
           preview == "data:,"
-            ? `${BASE_URL}/locker-assets/unclaimedLocker.png`
+            ? `https://${process.env.S3_BUCKET_BUILD_AN_ASSET}.s3.amazonaws.com/unclaimedLocker.png`
             : preview
         }
         alt="Locker Preview"

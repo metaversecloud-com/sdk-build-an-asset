@@ -38,13 +38,13 @@ export const clearLocker = async (req, res) => {
       lockerAssetId = assetId;
     }
 
-    const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
+    const { baseUrl } = getBaseUrl(req);
 
     const droppedAsset = DroppedAsset.create(lockerAssetId, urlSlug, {
       credentials,
     });
 
-    const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
+    const toplayer = `https://${process.env.S3_BUCKET_BUILD_AN_ASSET}.s3.amazonaws.com/unclaimedLocker.png`;
 
     const clickableLink = `${baseUrl}/locker`;
 

@@ -19,7 +19,7 @@ export const clearAllLockers = async (req, res) => {
       visitorId,
     };
 
-    const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
+    const { baseUrl } = getBaseUrl(req);
     const world = await World.create(urlSlug, { credentials });
 
     let spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
@@ -29,7 +29,8 @@ export const clearAllLockers = async (req, res) => {
     // spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
 
     // TODO: remove need for update clickType
-    const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
+    const toplayer = `https://${process.env.S3_BUCKET_BUILD_AN_ASSET}.s3.amazonaws.com/unclaimedLocker.png`;
+
     const clickableLink = `${baseUrl}/locker`;
     const promises = [];
     spawnedAssets.map(async (asset) => {

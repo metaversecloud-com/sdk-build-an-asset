@@ -99,7 +99,13 @@ function ClaimedLocker() {
         <b>Locker</b>
       </h2>
       <img
-        src={s3Url || "/assets/locker/unclaimedLocker.png"}
+        src={
+          s3Url ||
+          `https://${
+            process.env.S3_BUCKET_BUILD_AN_ASSET ||
+            process.env.REACT_APP_S3_BUCKET_BUILD_AN_ASSET
+          }.s3.amazonaws.com/unclaimedLocker.png`
+        }
         alt={`Locker of ${visitorName}`}
       />
       <div style={{ marginTop: "20px" }}>
