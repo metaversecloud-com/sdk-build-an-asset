@@ -92,8 +92,7 @@ function EditLocker() {
     useState(false);
   const [preview, setPreview] = useState(
     `https://${
-      process.env.S3_BUCKET_BUILD_AN_ASSET ||
-      process.env.REACT_APP_S3_BUCKET_BUILD_AN_ASSET
+      process.env.S3_BUCKET_BUILD_AN_ASSET || "build-an-asset"
     }.s3.amazonaws.com/unclaimedLocker.png`
   );
   const [imageInfo, setImageInfo] = useState({});
@@ -277,7 +276,9 @@ function EditLocker() {
       <img
         src={
           preview == "data:,"
-            ? `https://${process.env.S3_BUCKET_BUILD_AN_ASSET}.s3.amazonaws.com/unclaimedLocker.png`
+            ? `https://${
+                process.env.S3_BUCKET_BUILD_AN_ASSET || "build-an-asset"
+              }.s3.amazonaws.com/unclaimedLocker.png`
             : preview
         }
         alt="Locker Preview"

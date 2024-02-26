@@ -44,7 +44,9 @@ export const clearLocker = async (req, res) => {
       credentials,
     });
 
-    const toplayer = `https://${process.env.S3_BUCKET_BUILD_AN_ASSET}.s3.amazonaws.com/unclaimedLocker.png`;
+    const toplayer = `https://${
+      process.env.S3_BUCKET_BUILD_AN_ASSET || "build-an-asset"
+    }.s3.amazonaws.com/unclaimedLocker.png`;
 
     const clickableLink = `${baseUrl}/locker`;
 

@@ -102,8 +102,7 @@ function ClaimedLocker() {
         src={
           s3Url ||
           `https://${
-            process.env.S3_BUCKET_BUILD_AN_ASSET ||
-            process.env.REACT_APP_S3_BUCKET_BUILD_AN_ASSET
+            process.env.S3_BUCKET_BUILD_AN_ASSET || "build-an-asset"
           }.s3.amazonaws.com/unclaimedLocker.png`
         }
         alt={`Locker of ${visitorName}`}

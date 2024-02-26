@@ -29,7 +29,9 @@ export const clearAllLockers = async (req, res) => {
     // spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
 
     // TODO: remove need for update clickType
-    const toplayer = `https://${process.env.S3_BUCKET_BUILD_AN_ASSET}.s3.amazonaws.com/unclaimedLocker.png`;
+    const toplayer = `https://${
+      process.env.S3_BUCKET_BUILD_AN_ASSET || "build-an-asset"
+    }.s3.amazonaws.com/unclaimedLocker.png`;
 
     const clickableLink = `${baseUrl}/locker`;
     const promises = [];
