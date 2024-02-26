@@ -30,7 +30,7 @@ export const clearAllLockers = async (req, res) => {
 
     // TODO: remove need for update clickType
     const toplayer = `https://${
-      process.env.S3_BUCKET_BUILD_AN_ASSET || "build-an-asset"
+      process.env.S3_BUCKET_BUILD_AN_ASSET || "sdk-build-an-asset"
     }.s3.amazonaws.com/unclaimedLocker.png`;
 
     const clickableLink = `${baseUrl}/locker`;
