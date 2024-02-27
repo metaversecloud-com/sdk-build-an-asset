@@ -1,6 +1,7 @@
 import { Visitor, DroppedAsset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 import { getBaseUrl } from "./requestHandlers.js";
+import { getS3URL } from "../../utils.js";
 
 export const clearAllLockers = async (req, res) => {
   try {
@@ -19,7 +20,7 @@ export const clearAllLockers = async (req, res) => {
       visitorId,
     };
 
-    const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
+    const { baseUrl } = getBaseUrl(req);
     const world = await World.create(urlSlug, { credentials });
 
     let spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
@@ -29,7 +30,8 @@ export const clearAllLockers = async (req, res) => {
     // spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
 
     // TODO: remove need for update clickType
-    const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
+    const toplayer = `${getS3URL()}/unclaimedLocker.png`;
+
     const clickableLink = `${baseUrl}/locker`;
     const promises = [];
     spawnedAssets.map(async (asset) => {

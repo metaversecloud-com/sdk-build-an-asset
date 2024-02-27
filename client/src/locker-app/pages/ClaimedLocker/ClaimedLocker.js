@@ -11,6 +11,7 @@ import EditLocker from "../../components/EditLocker/EditLocker";
 import AdminView from "../Admin/AdminView";
 import Gear from "../Admin/Gear";
 import "./ClaimedLocker.scss";
+import { getS3URL } from "../../utils/utils.js";
 
 function ClaimedLocker() {
   const dispatch = useDispatch();
@@ -99,7 +100,7 @@ function ClaimedLocker() {
         <b>Locker</b>
       </h2>
       <img
-        src={s3Url || "/assets/locker/unclaimedLocker.png"}
+        src={s3Url || `${getS3URL()}/unclaimedLocker.png`}
         alt={`Locker of ${visitorName}`}
       />
       <div style={{ marginTop: "20px" }}>
