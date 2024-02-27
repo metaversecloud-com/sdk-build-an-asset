@@ -12,6 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Gear from "../../pages/Admin/Gear";
 import AdminView from "../../pages/Admin/AdminView";
+import { getS3URL } from "../../utils/utils.js";
 
 import "./EditLocker.scss";
 
@@ -90,11 +91,7 @@ function EditLocker() {
     useState(false);
   const [isButtonMoveToLockerDisabled, setIsButtonMoveToLockerDisabled] =
     useState(false);
-  const [preview, setPreview] = useState(
-    `https://${
-      process.env.S3_BUCKET_BUILD_AN_ASSET || "sdk-build-an-asset"
-    }.s3.amazonaws.com/unclaimedLocker.png`
-  );
+  const [preview, setPreview] = useState(getS3URL());
   const [imageInfo, setImageInfo] = useState({});
   const isLockerAlreadyTaken = useSelector(
     (state) => state?.session?.isLockerAlreadyTaken
@@ -275,11 +272,7 @@ function EditLocker() {
       </h2>
       <img
         src={
-          preview == "data:,"
-            ? `https://${
-                process.env.S3_BUCKET_BUILD_AN_ASSET || "sdk-build-an-asset"
-              }.s3.amazonaws.com/unclaimedLocker.png`
-            : preview
+          preview == "data:," ? `${getS3URL()}/unclaimedLocker.png` : preview
         }
         alt="Locker Preview"
         style={{ marginTop: "30px", marginBottom: "30px" }}
