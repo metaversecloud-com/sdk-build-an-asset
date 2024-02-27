@@ -39,8 +39,6 @@ app.get("/api/system/health", (req, res) => {
     status: "OK",
     envs: {
       S3_BUCKET_BUILD_AN_ASSET: process.env.S3_BUCKET_BUILD_AN_ASSET,
-      REACT_APP_S3_BUCKET_BUILD_AN_ASSET:
-        process.env.REACT_APP_S3_BUCKET_BUILD_AN_ASSET,
     },
   });
 });
