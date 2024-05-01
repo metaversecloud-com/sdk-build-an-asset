@@ -9,6 +9,7 @@ import {
   faChevronDown,
   faChevronUp,
   faCheck,
+  faChevronLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import Gear from "../../pages/Admin/Gear";
 import AdminView from "../../pages/Admin/AdminView";
@@ -381,43 +382,66 @@ function EditLocker() {
             <Collapse isOpen={openCategories[type]}>
               <div style={{ marginBottom: "10px" }}>
                 {categories[type].map((item) => (
-                  <img
+                  <div
                     key={item.name}
-                    src={`${BASE_URL}/locker-assets/${item.name}`}
-                    alt={item.name}
-                    className="img-accessory"
-                    style={{
-                      borderRadius: "10px",
-                      padding: "5px",
-                      backgroundColor: isSelectedItem(type, item.name)
-                        ? "#edeffc"
-                        : "transparent",
-                      border: isSelectedItem(type, item.name)
-                        ? "1px solid #4355e4"
-                        : "1px solid #ccc",
-                      cursor: "pointer",
-                      margin: "5px",
-                    }}
-                    onClick={() => {
-                      if (item.hasVariation) {
-                        console.log("item", item);
-                        handleOpenModalWithVariations(item, type);
-                        return;
-                      } else {
-                        console.log(
-                          "updateLocker2 params",
-                          type,
-                          `${BASE_URL}/locker-assets/${item.name}`,
-                          item
-                        );
-                        updateLocker(
-                          type,
-                          `${BASE_URL}/locker-assets/${item.name}`,
-                          item
-                        );
-                      }
-                    }}
-                  />
+                    style={{ position: "relative", display: "inline-block" }}
+                  >
+                    {item.hasVariation && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "12px",
+                          right: "12px",
+                          backgroundColor: "white",
+                          borderRadius: "50%",
+                          border: "1px solid #ccc",
+                          width: "16px",
+                          height: "16px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          zIndex: 1,
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          icon={faChevronLeft}
+                          style={{
+                            color: "rgb(204, 204, 204)",
+                            fontSize: "12px",
+                          }}
+                        />
+                      </div>
+                    )}
+                    <img
+                      src={`${BASE_URL}/locker-assets/${item.name}`}
+                      alt={item.name}
+                      className="img-accessory"
+                      style={{
+                        borderRadius: "10px",
+                        padding: "5px",
+                        backgroundColor: isSelectedItem(type, item.name)
+                          ? "#edeffc"
+                          : "transparent",
+                        border: isSelectedItem(type, item.name)
+                          ? "1px solid #4355e4"
+                          : "1px solid #ccc",
+                        cursor: "pointer",
+                        margin: "5px",
+                      }}
+                      onClick={() => {
+                        if (item.hasVariation) {
+                          handleOpenModalWithVariations(item, type);
+                          return;
+                        } else {
+                          updateLocker(
+                            type,
+                            `${BASE_URL}/locker-assets/${item.name}`,
+                            item
+                          );
+                        }
+                      }}
+                    />
+                  </div>
                 ))}
               </div>
             </Collapse>
