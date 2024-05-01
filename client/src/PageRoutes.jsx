@@ -4,7 +4,7 @@ import { history } from "./redux/store";
 
 import { Route, Routes } from "react-router-dom";
 
-import LockerHome from "./locker-app/pages/Home";
+import LockerHome from "./locker-app/pages/Home/Home.js";
 import Home from "./snowman-app/pages/Home";
 import SnowmanHome from "./snowman-app/pages/Home";
 import Spawned from "./snowman-app/pages/Spawned/Spawned";

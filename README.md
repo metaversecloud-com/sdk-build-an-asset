@@ -1,63 +1,62 @@
-# Build-an-Asset 🎩⛄
+# Build-an-Asset 🎩⛄🔒
 
-Welcome to the Build-an-Asset project! This is your go-to spot for building custom snowmen in the virtual world. Developed with Node.js and React, this project lets you create, customize, and place your very own snowman within the game.
-Currently we are using this project to build a Snowman!
+## Introduction / Summary
 
-## Features 🌟
+Welcome to Build-an-Asset, your virtual playground for crafting unique snowmen and customizing lockers in a vibrant digital world. Leveraging Node.js and React, this project offers an immersive experience, allowing users to express their creativity and interact within a shared space. Dive into a world where your custom snowmen and lockers add a personal touch to the digital landscape.
 
-### In-world Interactivity
+## Key Features
 
-- **Clickable Assets**: Look for the "Build-a-Snowman" sign in the world. One click and you're in the snowman workshop.
-- **iFrame Integration**: A seamless iFrame pops up to give you the ultimate snowman-building experience.
+- **In-World Interactivity**: Engage with clickable assets to start your creation process through a seamless iFrame integration (drawer).
+- **Snowman Customization**: Choose from various hats, scarves, and arm styles to design your snowman with a real-time preview feature.
+- **Locker Customization**: Personalize lockers with individual configurations and dynamic states (Claimed/Unclaimed), accessible via unique URLs.
 
-### Build Your Snowman 🛠
+## Canvas Elements & Interactions
 
-- **Customizable**: Pick a hat, choose a scarf, and decide on the arm style.
-- **Real-Time Preview**: As you make selections, watch your snowman come to life.
+Users can interact with "Build-a-Snowman" or "Customize-a-Locker" signs within the game world, triggering an iFrame that guides them through the customization process.
 
-### Drop Your Snowman in the World ⛄
+## Drawer Content
 
-- **Instant Placement**: Hit "Add Snowman" and voilà, your creation is part of the Stride world.
-- **Admin Panel**: For game admins, you can manage all snowmen and gather analytics.
+The drawer presents customization options, allowing for the creation and personalization of assets which are then instantaneously placed in the world.
 
-## Tech Stack 🛠️
+## Admin Features
 
-- **Backend**: Node.js
-- **Frontend**: React
-- **Image Merging**: [merge-images](https://www.npmjs.com/package/merge-images)
-- **Storage**: Snowmen images are stored in an S3 bucket.
+An admin panel enables the management of assets, offering controls for game resets.
 
-## Getting Started 🚀
+## Themes Description
 
-### Production Mode
+Themes such as "Build a Snowman" and "Decorate a Locker" provide seasonal and thematic contexts for user creations, enriching the virtual environment.
 
-1. Install dependencies
+## Data Objects
 
-   ```
-   npm install
-   ```
+Snowmen are hosted inside the app and locker images are stored in an S3 bucket. The Locker App can identify the owners through the world dataObject, with profileId as keys, and locker id (droppedAsset id) as the value.
 
-2. Start the server
-   ```
-   npm start
-   ```
+## Developer Sections
 
-### Development Mode
+### Getting Started
 
-1. Start Server
+Refer to the `.env-example` file to configure your environment variables correctly.
 
-   ```
-   npm start
-   ```
+#### Production Mode
 
-2. Start Client
+1. Install dependencies: `npm install`
+2. Start the server: `npm start`
 
-   ```
-   cd client && npm start
-   ```
+#### Development Mode
 
-3. Visit `http://localhost:3001` and start building your snowman!
+1. Start the server: `npm start`
+2. In a new terminal, navigate to the client directory: `cd client && npm start`
+3. Access `http://localhost:3001/snowman` or `http://localhost:3001/locker` to begin customization.
 
-## Contribution Guidelines 🤝
+### .env Variables
 
-Feel free to open issues or submit PRs. For any questions, you can contact the maintainer.
+Ensure all required environment variables are set as outlined in the `.env-example` file.
+
+### API Keys
+
+Find the `INTERACTIVE_KEY`, and `INTERACTIVE_SECRET` in the admin settings in https://topia.io.
+
+### Helpful Links
+
+- View it in action: [https://topia.io/snowman-prod](https://topia.io/snowman-prod)
+- View it in action: [https://topia.io/locker-app-production](https://topia.io/locker-app-production)
+- How to play guide in Notion: [[https://www.notion.so/topiaio/Build-an-Asset-64518134dae840958b1bdd7982c3c423](https://www.notion.so/topiaio/Build-an-Asset-64518134dae840958b1bdd7982c3c423)]

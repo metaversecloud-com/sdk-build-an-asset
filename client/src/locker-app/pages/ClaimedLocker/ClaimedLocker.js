@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  pickupAsset,
-  getWorld,
-  clearLocker,
-  getDroppedAsset,
-} from "../../../redux/actions/locker";
+import { getWorld } from "../../../redux/actions/locker";
 import EditLocker from "../../components/EditLocker/EditLocker";
 import AdminView from "../Admin/AdminView";
 import Gear from "../Admin/Gear";
 import "./ClaimedLocker.scss";
-import { getS3URL } from "../../utils/utils.js";
+import ClearMyLockerButton from "../../components/ClearMyLocker/ClearMyLockerButton";
+import ClearMyLockerModal from "../../components/ClearMyLocker/ClearMyLockerModal";
+import MoveToLockerButton from "../../components/MoveToLockerButton/MoveToLockerButton";
 
 function ClaimedLocker() {
   const dispatch = useDispatch();
 
   const queryParameters = new URLSearchParams(window.location.search);
-  const assetId = queryParameters.get("assetId");
   const profileId = queryParameters.get("profileId");
   const ownerProfileId = queryParameters.get("ownerProfileId");
 
@@ -25,8 +21,8 @@ function ClaimedLocker() {
 
   const [loading, setLoading] = useState(false);
   const [lockerParams, setLockerParams] = useState({});
-  const [isButtonClearDisabled, setIsButtonClearDisabled] = useState(false);
   const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
+  const [showClearLockerModal, setShowClearLockerModal] = useState(false);
 
   const visitor = useSelector((state) => state?.session?.visitor);
   const world = useSelector((state) => state?.session?.world);
@@ -34,14 +30,7 @@ function ClaimedLocker() {
 
   const s3Url = world?.dataObject?.lockers?.[ownerProfileId]?.s3Url;
 
-  console.log("s3Url ***", s3Url);
-
   const visitorName = lockerParams["visitor-name"]?.replace("%20", " ");
-
-  // if (world?.dataObject?.lockers?.[profileId]) {
-  //   isAssetOwner =
-  //     world?.dataObject?.lockers?.[profileId]?.droppedAssetId == assetId;
-  // }
 
   useEffect(() => {
     const fetchInitialState = async () => {
@@ -65,16 +54,9 @@ function ClaimedLocker() {
     setShowCustomizeScreen(true);
   };
 
-  const handleClearLocker = async () => {
-    try {
-      setIsButtonClearDisabled(true);
-      await dispatch(clearLocker());
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsButtonClearDisabled(false);
-    }
-  };
+  function handleToggleShowClearLockerModal() {
+    setShowClearLockerModal(!showClearLockerModal);
+  }
 
   if (loading) {
     return (
@@ -94,44 +76,55 @@ function ClaimedLocker() {
   }
 
   return (
-    <div className="spawned-wrapper">
-      {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
-      <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-        <b>Locker</b>
-      </h2>
-      <img
-        src={s3Url || `${getS3URL()}/unclaimedLocker.png`}
-        alt={`Locker of ${visitorName}`}
-      />
-      <div style={{ marginTop: "20px" }}>
-        <p>
-          This locker belongs to <b>{visitorName}</b>!
-        </p>
-      </div>
-      {isAssetOwner ? (
-        <>
-          <div style={{ width: "320px" }}>
-            <button
-              onClick={() => handleEditLocker()}
-              style={{ marginBottom: "10px" }}
-            >
-              Edit my locker
-            </button>
-          </div>
-          <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-            <button
-              className="btn-danger"
-              onClick={() => handleClearLocker()}
-              disabled={isButtonClearDisabled}
-            >
-              Delete my locker
-            </button>
-          </div>
-        </>
+    <>
+      {showClearLockerModal ? (
+        <ClearMyLockerModal
+          handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
+          isClearMyLockerFromUnclaimedLocker={false}
+        />
       ) : (
         ""
       )}
-    </div>
+      <div className="spawned-wrapper">
+        {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
+        <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
+          <b>Locker</b>
+        </h2>
+        <img
+          src={s3Url || "/assets/locker/unclaimedLocker.png"}
+          alt={`Locker of ${visitorName}`}
+        />
+        <div style={{ marginTop: "20px" }}>
+          <p>
+            This locker belongs to <b>{visitorName}</b>!
+          </p>
+        </div>
+        {isAssetOwner ? (
+          <>
+            <div className="footer-fixed" style={{ backgroundColor: "white" }}>
+              <div style={{ width: "320px" }}>
+                <button
+                  onClick={() => handleEditLocker()}
+                  style={{ marginBottom: "10px" }}
+                >
+                  Edit my locker
+                </button>
+              </div>
+              <div style={{ marginBottom: "10px" }}>
+                <MoveToLockerButton shouldCloseIframe={false} />
+              </div>
+              <ClearMyLockerButton
+                handleToggleShowClearLockerModal={
+                  handleToggleShowClearLockerModal
+                }
+              />
+            </div>
+          </>
+        ) : (
+          ""
+        )}
+      </div>
+    </>
   );
 }
 

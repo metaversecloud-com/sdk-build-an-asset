@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import router from "./routes.js";
 import cors from "cors";
 import fs from "fs";
+import { execSync } from "child_process";
 import checkEnvVariables from "./utils.js";
 dotenv.config();
 
@@ -33,7 +34,7 @@ app.get("/", (req, res) => {
   return res.send(`Server is running... ${appVersion}`);
 });
 
-app.get("/api/system/health", (req, res) => {
+app.get("api/system/health", (req, res) => {
   return res.json({
     appVersion,
     status: "OK",
@@ -56,7 +57,10 @@ app.listen(PORT, () => {
 
 export function getVersion() {
   try {
-    const packageJsonContent = fs.readFileSync("./package.json", "utf8");
+    const packageJsonContent = fs.readFileSync(
+      path.join(__dirname, "../package.json"),
+      "utf8"
+    );
     const packageJson = JSON.parse(packageJsonContent);
     const version = packageJson.version;
     return version;

@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
-import {
-  getWorld,
-  moveToAsset,
-  redirectToEdit,
-  clearLocker,
-} from "../../redux/actions/locker";
-import Gear from "./Admin/Gear";
-import AdminView from "./Admin/AdminView";
-import SplashImage from "../../assets/locker/splashImage.png";
-
+import { getWorld, claimLocker } from "../../../redux/actions/locker";
+import Gear from "../Admin/Gear";
+import AdminView from "../Admin/AdminView";
+import SplashImage from "../../../assets/locker/splashImage.png";
+import ClearMyLockerButton from "../../components/ClearMyLocker/ClearMyLockerButton";
+import ClearMyLockerModal from "../../components/ClearMyLocker/ClearMyLockerModal";
+import MoveToLockerButton from "../../components/MoveToLockerButton/MoveToLockerButton";
 import "./Home.scss";
 
 function Home() {
@@ -26,6 +23,7 @@ function Home() {
 
   const [loading, setLoading] = useState(false);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
+  const [showClearLockerModal, setShowClearLockerModal] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
@@ -41,7 +39,7 @@ function Home() {
   const handleClaimLocker = async () => {
     try {
       setAreButtonsDisabled(true);
-      await dispatch(redirectToEdit(visitor));
+      await dispatch(claimLocker(visitor));
     } catch (error) {
       console.error(error);
     } finally {
@@ -49,27 +47,9 @@ function Home() {
     }
   };
 
-  const handleMoveToMyLocker = async () => {
-    try {
-      setAreButtonsDisabled(true);
-      await dispatch(moveToAsset());
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setAreButtonsDisabled(false);
-    }
-  };
-
-  const handleClearLocker = async ({ isClearMyLockerFromUnclaimedLocker }) => {
-    try {
-      setAreButtonsDisabled(true);
-      await dispatch(clearLocker(isClearMyLockerFromUnclaimedLocker));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setAreButtonsDisabled(false);
-    }
-  };
+  function handleToggleShowClearLockerModal() {
+    setShowClearLockerModal(!showClearLockerModal);
+  }
 
   if (loading) {
     return (
@@ -87,30 +67,31 @@ function Home() {
   if (userHasLocker) {
     return (
       <>
+        {showClearLockerModal ? (
+          <ClearMyLockerModal
+            handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
+            isClearMyLockerFromUnclaimedLocker={true}
+          />
+        ) : (
+          ""
+        )}
         <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
           {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
           <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
             You already have a locker!
           </h2>
 
-          <div style={{ margin: "10px 0px" }}>
-            <button
-              disabled={areButtonsDisabled}
-              onClick={() => handleMoveToMyLocker()}
-            >
-              Move to my locker
-            </button>
-          </div>
-          {/* Temporary hotfix: In the future this button will be a separate component */}
-          <div style={{ margin: "10px 0px" }}>
-            <button
-              disabled={areButtonsDisabled}
-              onClick={() =>
-                handleClearLocker({ isClearMyLockerFromUnclaimedLocker: true })
-              }
-            >
-              Clear my locker
-            </button>
+          <div className="footer-fixed" style={{ backgroundColor: "white" }}>
+            <div style={{ margin: "10px 0px" }}>
+              <MoveToLockerButton closeIframeAfterMove={true} />
+            </div>
+            <div style={{ margin: "10px 0px" }}>
+              <ClearMyLockerButton
+                handleToggleShowClearLockerModal={
+                  handleToggleShowClearLockerModal
+                }
+              />
+            </div>
           </div>
         </div>
       </>
