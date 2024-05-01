@@ -1,6 +1,7 @@
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 import { getBaseUrl } from "./requestHandlers.js";
+import { getS3URL } from "../../utils.js";
 
 export const clearLocker = async (req, res) => {
   try {
@@ -36,13 +37,13 @@ export const clearLocker = async (req, res) => {
       lockerAssetId = assetId;
     }
 
-    const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
+    const { baseUrl } = getBaseUrl(req);
 
     const droppedAsset = DroppedAsset.create(lockerAssetId, urlSlug, {
       credentials,
     });
 
-    const toplayer = `${defaultUrlForImageHosting}/assets/locker/output/unclaimedLocker.png`;
+    const toplayer = `${getS3URL()}/unclaimedLocker.png`;
 
     const clickableLink = `${baseUrl}/locker`;
 

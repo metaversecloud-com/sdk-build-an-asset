@@ -38,6 +38,9 @@ app.get("api/system/health", (req, res) => {
   return res.json({
     appVersion,
     status: "OK",
+    envs: {
+      S3_BUCKET_BUILD_AN_ASSET: process.env.S3_BUCKET_BUILD_AN_ASSET,
+    },
   });
 });
 
