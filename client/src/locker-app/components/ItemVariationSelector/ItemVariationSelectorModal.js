@@ -1,20 +1,52 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-function ItemVariationSelectorModal({ isOpen, variations, onSelect, onClose }) {
+function ItemVariationSelectorModal({
+  isOpen,
+  variations,
+  onSelect,
+  onClose,
+  selectedVariation,
+}) {
   const BASE_URL = window.location.origin;
+  const [selectedItem, setSelectedItem] = useState(selectedVariation);
+
+  useEffect(() => {
+    setSelectedItem(selectedVariation);
+  }, [selectedVariation]);
+
   const handleVariationClick = (variation) => {
-    onSelect(variation);
-    onClose();
+    if (selectedItem === variation) {
+      setSelectedItem(null);
+    } else {
+      setSelectedItem(variation);
+    }
   };
 
-  const handleCancel = () => {
+  const handleOk = () => {
+    if (selectedItem !== selectedVariation) {
+      onSelect(selectedItem);
+    }
     onClose();
   };
 
   return isOpen ? (
     <div className="topia-modal-container visible">
       <div className="topia-modal">
-        <h4>Select Item</h4>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <h4>Select Item</h4>
+          <span
+            style={{ cursor: "pointer", fontSize: "20px" }}
+            onClick={onClose}
+          >
+            &times;
+          </span>
+        </div>
         <div className="modal-variations">
           <div
             className="variations-container"
@@ -35,15 +67,18 @@ function ItemVariationSelectorModal({ isOpen, variations, onSelect, onClose }) {
                   borderRadius: "10px",
                   margin: "5px",
                   cursor: "pointer",
-                  border: "1px solid #ccc",
+                  border:
+                    selectedItem === variation
+                      ? "2px solid #4355e4"
+                      : "1px solid #ccc",
                 }}
               />
             ))}
           </div>
         </div>
         <div className="actions" style={{ marginTop: "10px" }}>
-          <button className="btn-outline" onClick={handleCancel}>
-            Cancel
+          <button className="btn-primary" onClick={handleOk}>
+            OK
           </button>
         </div>
       </div>

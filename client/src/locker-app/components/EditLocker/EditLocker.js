@@ -122,6 +122,7 @@ function EditLocker() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentItemVariations, setCurrentItemVariations] = useState([]);
   const [currentItem, setCurrentItem] = useState(null);
+  const [selectedVariation, setSelectedVariation] = useState(null);
 
   const [preview, setPreview] = useState(
     `${BASE_URL}/locker-assets/defaultClaimedLocker.png`
@@ -155,9 +156,24 @@ function EditLocker() {
 
   const handleOpenModalWithVariations = (item, type) => {
     const variations = item.variations || [];
+    const currentSelection = selected[type].find((selectedImage) => {
+      if (!selectedImage) return false;
+
+      const selectedBaseName = selectedImage
+        .replace(`${BASE_URL}/locker-assets/`, "")
+        .split(".")[0];
+      return item.variations.some((variation) => {
+        const variationBaseName = variation.split(".")[0];
+        return selectedBaseName === variationBaseName;
+      });
+    });
+    const currentSelectionVariation = currentSelection
+      ? currentSelection.replace(`${BASE_URL}/locker-assets/`, "")
+      : null;
     setCurrentItemVariations(variations);
     setCurrentItem({ ...item, type });
     setIsModalOpen(true);
+    setSelectedVariation(currentSelectionVariation);
   };
 
   const isCategorySelected = (category) => {
@@ -166,6 +182,8 @@ function EditLocker() {
 
   const isSelectedItem = (type, imageName) => {
     return selected[type].some((selectedImage) => {
+      if (!selectedImage) return false;
+
       const selectedBaseName = selectedImage
         .replace(`${BASE_URL}/locker-assets/`, "")
         .split(".")[0];
@@ -231,35 +249,50 @@ function EditLocker() {
   const updateLocker = (type, image, item) => {
     let updatedSelection = { ...selected };
 
-    if (item.hasVariation) {
-      const isSelectedVariation = updatedSelection[type].includes(image);
-
-      if (isSelectedVariation) {
-        updatedSelection[type] = updatedSelection[type].filter(
-          (selectedItem) => selectedItem !== image
+    if (image === null) {
+      // Se a imagem for null, remova o item selecionado
+      updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
+        if (item && item.hasVariation) {
+          return !item.variations.some(
+            (variation) =>
+              `${BASE_URL}/locker-assets/${variation}` === selectedItem
+          );
+        }
+        return (
+          item && selectedItem !== `${BASE_URL}/locker-assets/${item.name}`
         );
-      } else {
-        updatedSelection[type] = updatedSelection[type].filter(
-          (selectedItem) => {
-            return !item.variations.some(
-              (variation) =>
-                `${BASE_URL}/locker-assets/${variation}` === selectedItem
-            );
-          }
-        );
-        updatedSelection[type].push(image);
-      }
+      });
     } else {
-      const isSelected = selected[type].includes(image);
-      if (selectionLimits[type] === 1) {
-        updatedSelection[type] = isSelected ? [] : [image];
-      } else {
-        if (isSelected) {
+      if (item.hasVariation) {
+        const isSelectedVariation = updatedSelection[type].includes(image);
+
+        if (isSelectedVariation) {
           updatedSelection[type] = updatedSelection[type].filter(
-            (i) => i !== image
+            (selectedItem) => selectedItem !== image
           );
         } else {
+          updatedSelection[type] = updatedSelection[type].filter(
+            (selectedItem) => {
+              return !item.variations.some(
+                (variation) =>
+                  `${BASE_URL}/locker-assets/${variation}` === selectedItem
+              );
+            }
+          );
           updatedSelection[type].push(image);
+        }
+      } else {
+        const isSelected = selected[type].includes(image);
+        if (selectionLimits[type] === 1) {
+          updatedSelection[type] = isSelected ? [] : [image];
+        } else {
+          if (isSelected) {
+            updatedSelection[type] = updatedSelection[type].filter(
+              (i) => i !== image
+            );
+          } else {
+            updatedSelection[type].push(image);
+          }
         }
       }
     }
@@ -268,9 +301,16 @@ function EditLocker() {
 
     const updatedImageInfo = Object.keys(updatedSelection).reduce(
       (info, key) => {
-        info[key] = updatedSelection[key].map((item) => ({
-          imageName: item.split("/").pop().split(".")[0],
-        }));
+        info[key] = updatedSelection[key]
+          .map((item) => {
+            if (item) {
+              return {
+                imageName: item.split("/").pop().split(".")[0],
+              };
+            }
+            return null;
+          })
+          .filter(Boolean);
         return info;
       },
       {}
@@ -334,10 +374,15 @@ function EditLocker() {
           isOpen={isModalOpen}
           variations={currentItemVariations}
           onSelect={(selectedVariation) => {
-            const imageUrl = `${BASE_URL}/locker-assets/${selectedVariation}`;
-            updateLocker(currentItem.type, imageUrl, currentItem);
+            if (selectedVariation) {
+              const imageUrl = `${BASE_URL}/locker-assets/${selectedVariation}`;
+              updateLocker(currentItem.type, imageUrl, currentItem);
+            } else {
+              updateLocker(currentItem.type, null, currentItem);
+            }
           }}
           onClose={handleCloseModal}
+          selectedVariation={selectedVariation}
         />
       ) : (
         ""
