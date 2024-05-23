@@ -87,16 +87,18 @@ function ClaimedLocker() {
       )}
       <div className="spawned-wrapper">
         {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
-        <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
+        <h2 style={{ marginBottom: "0px", padding: "24px" }}>
           <b>Locker</b>
         </h2>
         <img
           src={s3Url || "/assets/locker/unclaimedLocker.png"}
           alt={`Locker of ${visitorName}`}
+          style={{ width: "200px" }}
         />
         <div style={{ marginTop: "20px" }}>
+          <p>This locker belongs to</p>
           <p>
-            This locker belongs to <b>{visitorName}</b>!
+            <b>{visitorName}</b>!
           </p>
         </div>
         {isAssetOwner ? (
@@ -107,7 +109,7 @@ function ClaimedLocker() {
                   onClick={() => handleEditLocker()}
                   style={{ marginBottom: "10px" }}
                 >
-                  Edit my locker
+                  Edit Locker
                 </button>
               </div>
               <div style={{ marginBottom: "10px" }}>

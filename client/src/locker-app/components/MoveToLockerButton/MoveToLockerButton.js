@@ -25,7 +25,7 @@ function MoveToLockerButton({ closeIframeAfterMove }) {
         disabled={areButtonsDisabled}
         onClick={() => handleMoveToMyLocker()}
       >
-        Move to my locker
+        Find Locker
       </button>
     </>
   );

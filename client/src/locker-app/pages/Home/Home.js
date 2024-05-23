@@ -77,9 +77,8 @@ function Home() {
         )}
         <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
           {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
-          <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-            You already have a locker!
-          </h2>
+          <h2 style={{}}>You already have a locker!</h2>
+          <p>To choose this one instead, click "Empty Locker" button below.</p>
 
           <div className="footer-fixed" style={{ backgroundColor: "white" }}>
             <div style={{ margin: "10px 0px" }}>
@@ -102,7 +101,7 @@ function Home() {
     <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
       {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
       <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-        Decorate Your Locker
+        Decorate your Locker
       </h2>
       <img
         src={SplashImage}

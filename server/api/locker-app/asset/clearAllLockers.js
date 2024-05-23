@@ -1,4 +1,4 @@
-import { Visitor, DroppedAsset, World } from "../../topiaInit.js";
+import { World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 import { getBaseUrl } from "./requestHandlers.js";
 import { getS3URL } from "../../utils.js";
@@ -26,8 +26,6 @@ export const clearAllLockers = async (req, res) => {
     let spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
       uniqueName: `lockerSystem-0`,
     });
-
-    // spawnedAssets = spawnedAssets.filter((asset) => asset !== null);
 
     // TODO: remove need for update clickType
     const toplayer = `${getS3URL()}/unclaimedLocker.png`;

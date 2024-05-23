@@ -131,6 +131,7 @@ function EditLocker() {
     (state) => state?.session?.isLockerAlreadyTaken
   );
   const [openCategories, setOpenCategories] = useState({
+    "Locker Base": true,
     Wallpaper: false,
     Border: false,
     "Top Shelf": false,
@@ -394,20 +395,20 @@ function EditLocker() {
                           right: "12px",
                           backgroundColor: "white",
                           borderRadius: "50%",
-                          border: "1px solid #ccc",
                           width: "16px",
                           height: "16px",
                           display: "flex",
-                          justifyContent: "center",
+                          justifyContent: "end",
                           alignItems: "center",
                           zIndex: 1,
                         }}
                       >
-                        <FontAwesomeIcon
-                          icon={faChevronLeft}
+                        <img
+                          src="https://sdk-style.s3.amazonaws.com/icons/expand.svg"
+                          alt="Expand"
                           style={{
-                            color: "rgb(204, 204, 204)",
-                            fontSize: "12px",
+                            width: "12px",
+                            height: "12px",
                           }}
                         />
                       </div>

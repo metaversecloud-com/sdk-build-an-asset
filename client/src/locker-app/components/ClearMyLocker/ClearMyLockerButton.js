@@ -9,10 +9,10 @@ function ClearMyLockerButton({ handleToggleShowClearLockerModal, fromAdmin }) {
       >
         {fromAdmin ? (
           <span>
-            Clear <b>this</b> locker
+            Empty <b>this</b> Locker
           </span>
         ) : (
-          <span>Clear my locker</span>
+          <span>Empty Locker</span>
         )}
       </button>
     </>

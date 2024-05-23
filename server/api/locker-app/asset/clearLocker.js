@@ -1,4 +1,4 @@
-import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
+import { DroppedAsset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 import { getBaseUrl } from "./requestHandlers.js";
 import { getS3URL } from "../../utils.js";

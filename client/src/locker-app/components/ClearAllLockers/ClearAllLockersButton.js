@@ -8,7 +8,7 @@ function ClearAllLockersButton({ handleToggleShowClearAllLockersModal }) {
         onClick={() => handleToggleShowClearAllLockersModal()}
       >
         <span>
-          Clear <b>all</b> lockers
+          Empty <b>all</b> Lockers
         </span>
       </button>
     </>

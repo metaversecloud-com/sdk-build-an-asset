@@ -23,7 +23,7 @@ function ClearAllLockersButtonModal({ handleToggleShowClearAllLockersModal }) {
     <div id="" class="topia-modal-container visible">
       <div className="topia-modal">
         <h4>
-          Clear <b>all</b> lockers
+          Empty <b>all</b> Lockers
         </h4>
         <p>Are you sure you'd like to continue?</p>
         <div className="actions">
@@ -40,7 +40,7 @@ function ClearAllLockersButtonModal({ handleToggleShowClearAllLockersModal }) {
             onClick={() => handleClearAllLockers()}
             disabled={areButtonsDisabled}
           >
-            Clear All
+            Empty All
           </button>
         </div>
       </div>

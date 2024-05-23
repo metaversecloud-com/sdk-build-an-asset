@@ -24,8 +24,11 @@ function ClearMyLockerButtonModal({
   return (
     <div className="topia-modal-container visible">
       <div className="topia-modal">
-        <h4>Clear locker</h4>
-        <p>Are you sure you'd like to continue?</p>
+        <h4>Empty Locker</h4>
+        <p>
+          If you clear your locker, it will be emptied and unclaimed. You can
+          then choose a new locker.
+        </p>
         <div className="actions">
           <button
             id="close"
@@ -33,14 +36,14 @@ function ClearMyLockerButtonModal({
             onClick={() => handleToggleShowClearLockerModal()}
             disabled={areButtonsDisabled}
           >
-            Close
+            No
           </button>
           <button
             className="btn-danger-outline"
             onClick={() => handleClearLocker()}
             disabled={areButtonsDisabled}
           >
-            Confirm
+            Yes
           </button>
         </div>
       </div>

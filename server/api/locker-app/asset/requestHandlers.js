@@ -1,5 +1,3 @@
-import { logger } from "../../../logs/logger.js";
-
 export function getBaseUrl(req) {
   const protocol = process.env.INSTANCE_PROTOCOL;
   const host = req.host;
