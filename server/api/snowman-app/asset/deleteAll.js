@@ -34,6 +34,11 @@ export const deleteAll = async (req, res) => {
 
     await deleteAllAssets(urlSlug, allAssetAssets, credentials);
 
+    world
+      .updateDataObject({}, { analytics: [`resets`] })
+      .then()
+      .catch(() => console.error("Error submitting reset analytics"));
+
     return res.json({ success: true });
   } catch (error) {
     logger.error({

@@ -9,6 +9,7 @@ export const create = async (req, res) => {
       interactiveNonce,
       urlSlug,
       visitorId,
+      profileId,
     } = req.query;
 
     const { assetType, name } = req.body;
@@ -32,7 +33,10 @@ export const create = async (req, res) => {
         assetType,
         name,
       };
-      await visitor.setDataObject({ asset });
+      await visitor.setDataObject(
+        { asset },
+        { analytics: [`snowman-starts`], uniqueKey: profileId }
+      );
     }
 
     return res.json({ asset: visitor?.dataObject?.asset, success: true });

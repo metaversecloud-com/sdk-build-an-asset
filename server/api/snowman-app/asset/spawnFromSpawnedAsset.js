@@ -105,9 +105,12 @@ async function updateImageAsset({
     y: y,
   };
 
-  await droppedAsset?.updateDataObject({
-    completeImageName,
-  });
+  await droppedAsset?.updateDataObject(
+    {
+      completeImageName,
+    },
+    { analytics: [`snowman-builds`], uniqueKey: visitor?.profileId }
+  );
 
   const modifiedName = username.replace(/ /g, "%20");
 

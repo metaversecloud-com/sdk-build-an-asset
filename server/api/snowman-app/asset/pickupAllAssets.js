@@ -34,6 +34,17 @@ export const pickupAllAssets = async (req, res) => {
 
     await deleteAllAssets(urlSlug, allAssetAssets, credentials);
 
+    world
+      .updateDataObject(
+        {},
+        {
+          analytics: [`snowman-pickupAllAssets`],
+          uniqueKey: visitor?.profileId,
+        }
+      )
+      .then()
+      .catch(console.error("Error when sending pickupAllAssets to analytics"));
+
     return res.json({ success: true });
   } catch (error) {
     logger.error({

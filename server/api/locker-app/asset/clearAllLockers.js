@@ -46,7 +46,9 @@ export const clearAllLockers = async (req, res) => {
       );
     });
 
-    promises.push(world.updateDataObject({ lockers: {} }));
+    promises.push(
+      world.updateDataObject({ lockers: {} }, { analytics: [`locker-resets`] })
+    );
 
     await Promise.allSettled(promises);
 

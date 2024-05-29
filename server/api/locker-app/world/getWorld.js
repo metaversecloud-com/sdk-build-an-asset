@@ -25,7 +25,14 @@ export const getWorld = async (req, res) => {
     await world.fetchDataObject();
 
     if (!world.dataObject.lockers) world.setDataObject({ lockers: {} });
-    
+
+    world
+      .updateDataObject(
+        {},
+        { analytics: [`locker-starts`], uniqueKey: profileId }
+      )
+      .then()
+      .catch(console.error("Error sending the starts analytics"));
 
     return res.json({
       world,

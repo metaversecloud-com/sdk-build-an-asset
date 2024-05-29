@@ -46,6 +46,14 @@ export const pickup = async (req, res) => {
 async function removeAllUserAssets(urlSlug, visitor, credentials) {
   const world = await World.create(urlSlug, { credentials });
 
+  world
+    .updateDataObject(
+      {},
+      { analytics: [`snowman-pickupUserAsset`], uniqueKey: visitor?.profileId }
+    )
+    .then()
+    .catch(console.error("Error when sending pickupUserAsset analytics"));
+
   try {
     const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
       uniqueName: `assetSystem-${visitor?.profileId}`,

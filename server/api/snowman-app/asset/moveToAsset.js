@@ -16,6 +16,7 @@ export const moveToAsset = async (req, res) => {
       interactiveNonce,
       interactivePublicKey,
       visitorId,
+      profileId,
     };
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
@@ -40,6 +41,14 @@ export const moveToAsset = async (req, res) => {
       x,
       y,
     });
+
+    world
+      .updateDataObject(
+        {},
+        { analytics: [`snowman-moveToAsset`], uniqueKey: profileId }
+      )
+      .then()
+      .catch(console.error("Error when sending move to asset to analytics"));
 
     return res.json({
       asset: visitor?.dataObject?.asset,

@@ -59,6 +59,8 @@ export const claimLocker = async (req, res) => {
           [`lockers.${profileId}`]: { droppedAssetId: assetId, s3Url },
         },
         {
+          analytics: [`locker-builds`],
+          uniqueKey: profileId,
           lock: {
             lockId: `${assetId}-${new Date(
               Math.round(new Date().getTime() / 10000) * 10000

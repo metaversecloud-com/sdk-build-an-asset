@@ -58,9 +58,12 @@ export const clearLocker = async (req, res) => {
         clickableDisplayTextHeadline: "Locker",
         isOpenLinkInDrawer: true,
       }),
-      world.updateDataObject({
-        [`lockers.${ownerProfileId}`]: null,
-      }),
+      world.updateDataObject(
+        {
+          [`lockers.${ownerProfileId}`]: null,
+        },
+        { analytics: [`locker-unclaims`], uniqueKey: profileId }
+      ),
     ]);
 
     return res.json({
