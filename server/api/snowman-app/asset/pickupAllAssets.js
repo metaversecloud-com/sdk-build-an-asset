@@ -40,6 +40,7 @@ export const pickupAllAssets = async (req, res) => {
         {
           analytics: [`snowman-pickupAllAssets`],
           uniqueKey: visitor?.profileId,
+          profileId,
         }
       )
       .then()

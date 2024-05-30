@@ -45,7 +45,7 @@ export const moveToAsset = async (req, res) => {
     world
       .updateDataObject(
         {},
-        { analytics: [`snowman-moveToAsset`], uniqueKey: profileId }
+        { analytics: [`snowman-moveToAsset`], uniqueKey: profileId, profileId }
       )
       .then()
       .catch(console.error("Error when sending move to asset to analytics"));

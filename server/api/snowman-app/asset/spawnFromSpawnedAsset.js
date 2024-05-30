@@ -109,7 +109,11 @@ async function updateImageAsset({
     {
       completeImageName,
     },
-    { analytics: [`snowman-builds`], uniqueKey: visitor?.profileId }
+    {
+      analytics: [`snowman-builds`],
+      uniqueKey: visitor?.profileId,
+      profileId: visitor?.profileId,
+    }
   );
 
   const modifiedName = username.replace(/ /g, "%20");

@@ -49,7 +49,11 @@ async function removeAllUserAssets(urlSlug, visitor, credentials) {
   world
     .updateDataObject(
       {},
-      { analytics: [`snowman-pickupUserAsset`], uniqueKey: visitor?.profileId }
+      {
+        analytics: [`snowman-pickupUserAsset`],
+        uniqueKey: visitor?.profileId,
+        profileId: visitor?.profileId,
+      }
     )
     .then()
     .catch(console.error("Error when sending pickupUserAsset analytics"));

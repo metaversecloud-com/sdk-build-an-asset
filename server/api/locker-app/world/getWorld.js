@@ -29,7 +29,7 @@ export const getWorld = async (req, res) => {
     world
       .updateDataObject(
         {},
-        { analytics: [`locker-starts`], uniqueKey: profileId }
+        { analytics: [`locker-starts`], uniqueKey: profileId, profileId }
       )
       .then()
       .catch(console.error("Error sending the starts analytics"));

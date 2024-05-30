@@ -78,6 +78,7 @@ export const editLocker = async (req, res) => {
             )}`,
           },
           analytics: [`locker-updates`],
+          profileId,
           uniqueKey: profileId,
         }
       );

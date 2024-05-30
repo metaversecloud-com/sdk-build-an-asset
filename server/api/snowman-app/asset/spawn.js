@@ -151,7 +151,11 @@ async function dropImageAsset({
       completeImageName,
       parentAssetId: credentials?.assetId,
     },
-    { analytics: [`snowman-builds`], uniqueKey: visitor?.profileId }
+    {
+      analytics: [`snowman-builds`],
+      uniqueKey: visitor?.profileId,
+      profileId: visitor?.profileId,
+    }
   );
 
   const modifiedName = username.replace(/ /g, "%20");

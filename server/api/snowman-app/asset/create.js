@@ -35,7 +35,7 @@ export const create = async (req, res) => {
       };
       await visitor.setDataObject(
         { asset },
-        { analytics: [`snowman-starts`], uniqueKey: profileId }
+        { analytics: [`snowman-starts`], uniqueKey: profileId, profileId }
       );
     }
 
