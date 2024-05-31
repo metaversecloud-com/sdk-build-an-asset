@@ -110,9 +110,13 @@ async function updateImageAsset({
       completeImageName,
     },
     {
-      analytics: [`snowman-builds`],
-      uniqueKey: visitor?.profileId,
-      profileId: visitor?.profileId,
+      analytics: [
+        {
+          analyticName: `snowman-builds`,
+          uniqueKey: visitor?.profileId,
+          profileId: visitor?.profileId,
+        },
+      ],
     }
   );
 

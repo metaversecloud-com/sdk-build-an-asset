@@ -35,7 +35,7 @@ export const deleteAll = async (req, res) => {
     await deleteAllAssets(urlSlug, allAssetAssets, credentials);
 
     world
-      .updateDataObject({}, { analytics: [`snowman-resets`] })
+      .updateDataObject({}, { analytics: [{ analyticName: `snowman-resets` }] })
       .then()
       .catch(() => console.error("Error submitting reset analytics"));
 

@@ -38,9 +38,13 @@ export const pickupAllAssets = async (req, res) => {
       .updateDataObject(
         {},
         {
-          analytics: [`snowman-pickupAllAssets`],
-          uniqueKey: visitor?.profileId,
-          profileId,
+          analytics: [
+            {
+              analyticName: `snowman-pickupAllAssets`,
+              uniqueKey: visitor?.profileId,
+              profileId,
+            },
+          ],
         }
       )
       .then()

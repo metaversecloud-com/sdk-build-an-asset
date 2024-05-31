@@ -1,5 +1,6 @@
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
+import { addNewRowToGoogleSheets } from "../../addNewRowToGoogleSheets.js";
 
 let BASE_URL;
 
@@ -152,11 +153,24 @@ async function dropImageAsset({
       parentAssetId: credentials?.assetId,
     },
     {
-      analytics: [`snowman-builds`],
-      uniqueKey: visitor?.profileId,
-      profileId: visitor?.profileId,
+      analytics: [
+        {
+          analyticName: `snowman-builds`,
+          uniqueKey: visitor?.profileId,
+          profileId: visitor?.profileId,
+        },
+      ],
     }
   );
+
+  addNewRowToGoogleSheets({
+    identityId: req?.query?.identityId,
+    displayName: req?.query?.displayName,
+    appName: "Build an Asset",
+    event: "snowman-starts",
+  })
+    .then()
+    .catch();
 
   const modifiedName = username.replace(/ /g, "%20");
 

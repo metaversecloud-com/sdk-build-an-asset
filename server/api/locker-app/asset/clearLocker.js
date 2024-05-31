@@ -62,7 +62,15 @@ export const clearLocker = async (req, res) => {
         {
           [`lockers.${ownerProfileId}`]: null,
         },
-        { analytics: [`locker-unclaims`], profileId, uniqueKey: profileId }
+        {
+          analytics: [
+            {
+              analyticName: `locker-unclaims`,
+              profileId,
+              uniqueKey: profileId,
+            },
+          ],
+        }
       ),
     ]);
 

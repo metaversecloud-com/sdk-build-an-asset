@@ -77,9 +77,9 @@ export const editLocker = async (req, res) => {
               Math.round(new Date().getTime() / 10000) * 10000
             )}`,
           },
-          analytics: [`locker-updates`],
-          profileId,
-          uniqueKey: profileId,
+          analytics: [
+            { analyticName: `locker-updates`, profileId, uniqueKey: profileId },
+          ],
         }
       );
     } catch (error) {

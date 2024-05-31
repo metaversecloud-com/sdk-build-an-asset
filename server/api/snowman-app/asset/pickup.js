@@ -50,9 +50,13 @@ async function removeAllUserAssets(urlSlug, visitor, credentials) {
     .updateDataObject(
       {},
       {
-        analytics: [`snowman-pickupUserAsset`],
-        uniqueKey: visitor?.profileId,
-        profileId: visitor?.profileId,
+        analytics: [
+          {
+            analyticName: `snowman-pickupUserAsset`,
+            uniqueKey: visitor?.profileId,
+            profileId: visitor?.profileId,
+          },
+        ],
       }
     )
     .then()

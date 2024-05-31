@@ -31,6 +31,9 @@ router.get("/env", (req, res) => {
     INTERACTIVE_KEY: process.env.INTERACTIVE_KEY,
     IMG_ASSET_ID: process.env.IMG_ASSET_ID,
     S3_BUCKET: process.env.S3_BUCKET,
+    GOOGLESHEETS_CLIENT_EMAIL: process.env.CLIENT_EMAIL ? "SET" : "UNSET",
+    GOOGLESHEETS_SHEET_ID: process.env.SHEET_ID ? "SET" : "UNSET",
+    GOOGLESHEETS_PRIVATE_KEY: process.env.PRIVATE_KEY ? "SET" : "UNSET",
   });
 });
 

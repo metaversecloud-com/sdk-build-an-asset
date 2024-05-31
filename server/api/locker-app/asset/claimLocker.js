@@ -2,6 +2,7 @@ import { logger } from "../../../logs/logger.js";
 import { getBaseUrl, validateImageInfo } from "./requestHandlers.js";
 import { generateS3Url, generateImageInfoParam } from "./imageUtils.js";
 import { DroppedAsset, World } from "../../topiaInit.js";
+import { addNewRowToGoogleSheets } from "../../addNewRowToGoogleSheets.js";
 
 export const claimLocker = async (req, res) => {
   try {
@@ -59,9 +60,14 @@ export const claimLocker = async (req, res) => {
           [`lockers.${profileId}`]: { droppedAssetId: assetId, s3Url },
         },
         {
-          analytics: [`locker-builds`],
-          uniqueKey: profileId,
-          profileId,
+          analytics: [
+            {
+              analyticName: `locker-builds`,
+              uniqueKey: profileId,
+              profileId,
+              urlSlug,
+            },
+          ],
           lock: {
             lockId: `${assetId}-${new Date(
               Math.round(new Date().getTime() / 10000) * 10000
@@ -69,6 +75,15 @@ export const claimLocker = async (req, res) => {
           },
         }
       );
+
+      addNewRowToGoogleSheets({
+        identityId: req?.query?.identityId,
+        displayName: req?.query?.displayName,
+        appName: "Build an Asset",
+        event: "locker-starts",
+      })
+        .then()
+        .catch();
     } catch (error) {
       return res.json({
         msg: "This locker is already taken",
