@@ -106,6 +106,7 @@ export const editLocker = async (req, res) => {
 
     // TODO: remove need for update clickType
     await Promise.all([
+      droppedAsset.fetchDroppedAssetById(assetId),
       droppedAsset.updateWebImageLayers("", s3Url),
       droppedAsset.updateClickType({
         clickType: "link",
@@ -116,6 +117,15 @@ export const editLocker = async (req, res) => {
         isOpenLinkInDrawer: true,
       }),
     ]);
+
+    await world.triggerParticle({
+      name: process.env.PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER || "Bubbles",
+      duration: 3,
+      position: {
+        x: droppedAsset?.position?.x,
+        y: droppedAsset?.position?.y,
+      },
+    });
 
     return res.json({
       spawnSuccess: true,

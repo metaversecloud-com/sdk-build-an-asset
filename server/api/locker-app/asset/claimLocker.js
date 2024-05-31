@@ -120,7 +120,9 @@ export const claimLocker = async (req, res) => {
     ]);
 
     await world.triggerParticle({
-      name: process.env.PARTICLE_EFFECT_CLAIM_LOCKER || "firework2_magenta",
+      name:
+        process.env.PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER ||
+        "firework2_magenta",
       duration: 3,
       position: {
         x: droppedAsset?.position?.x,
