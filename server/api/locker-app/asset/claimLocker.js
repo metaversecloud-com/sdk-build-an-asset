@@ -76,6 +76,8 @@ export const claimLocker = async (req, res) => {
         }
       );
 
+      // TODO
+
       addNewRowToGoogleSheets({
         identityId: req?.query?.identityId,
         displayName: req?.query?.displayName,
@@ -105,6 +107,7 @@ export const claimLocker = async (req, res) => {
 
     // TODO: remove need for update clickType
     await Promise.all([
+      droppedAsset.fetchDroppedAssetById(assetId),
       droppedAsset.updateWebImageLayers("", s3Url),
       droppedAsset.updateClickType({
         clickType: "link",
@@ -115,6 +118,15 @@ export const claimLocker = async (req, res) => {
         isOpenLinkInDrawer: true,
       }),
     ]);
+
+    await world.triggerParticle({
+      name: process.env.PARTICLE_EFFECT_CLAIM_LOCKER || "firework2_magenta",
+      duration: 3,
+      position: {
+        x: droppedAsset?.position?.x,
+        y: droppedAsset?.position?.y,
+      },
+    });
 
     return res.json({
       success: true,
