@@ -14,6 +14,7 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const SERVER_START_DATE = new Date();
 
 checkEnvVariables();
 const PORT = process.env.PORT || 3000;
@@ -34,13 +35,32 @@ app.get("/", (req, res) => {
   return res.send(`Server is running... ${appVersion}`);
 });
 
-app.get("api/system/health", (req, res) => {
+app.get("/api/system/health", (req, res) => {
   return res.json({
-    appVersion,
-    status: "OK",
-    envs: {
-      S3_BUCKET_BUILD_AN_ASSET: process.env.S3_BUCKET_BUILD_AN_ASSET,
-    },
+    DEPLOY_DATE: SERVER_START_DATE,
+    NODE_ENV: process.env.NODE_ENV,
+    INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN,
+    INSTANCE_PROTOCOL: process.env.INSTANCE_PROTOCOL,
+    INTERACTIVE_KEY: process.env.INTERACTIVE_KEY,
+    IMG_ASSET_ID: process.env.IMG_ASSET_ID,
+    S3_BUCKET: process.env.S3_BUCKET,
+    PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER: process.env
+      .PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER
+      ? PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER
+      : "UNSET",
+    PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER: process.env
+      .PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER
+      ? PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER
+      : "UNSET",
+
+    GOOGLESHEETS_CLIENT_EMAIL: process.env.GOOGLESHEETS_CLIENT_EMAIL
+      ? "SET"
+      : "UNSET",
+    GOOGLESHEETS_SHEET_ID: process.env.GOOGLESHEETS_SHEET_ID ? "SET" : "UNSET",
+    GOOGLESHEETS_PRIVATE_KEY: process.env.GOOGLESHEETS_PRIVATE_KEY
+      ? "SET"
+      : "UNSET",
+    COMMIT_HASH: process.env.COMMIT_HASH ? COMMIT_HASH : "UNSET",
   });
 });
 
