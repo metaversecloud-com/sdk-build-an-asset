@@ -17,6 +17,8 @@ import {
 } from "./api/index.js";
 import express from "express";
 import { validationMiddleware } from "./middleware/validation.js";
+
+const SERVER_START_DATE = new Date();
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -25,6 +27,7 @@ router.get("/", (req, res) => {
 
 router.get("/env", (req, res) => {
   return res.json({
+    DEPLOY_DATE: SERVER_START_DATE,
     NODE_ENV: process.env.NODE_ENV,
     INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN,
     INSTANCE_PROTOCOL: process.env.INSTANCE_PROTOCOL,
