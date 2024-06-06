@@ -2,7 +2,7 @@ import { JWT } from "google-auth-library";
 import sheets from "@googleapis/sheets";
 
 // Configure the Google Sheets client
-const privateKey = process.env.GOOGLESHEETS_PRIVATE_KEY.replace(/\\n/g, "\n");
+const privateKey = process.env.GOOGLESHEETS_PRIVATE_KEY?.replace(/\\n/g, "\n");
 
 const auth = new JWT({
   email: process.env.GOOGLESHEETS_CLIENT_EMAIL,
@@ -10,7 +10,7 @@ const auth = new JWT({
   scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 });
 
-const sheetsClient = sheets.sheets({ version: "v4", auth });
+const sheetsClient = sheets?.sheets({ version: "v4", auth });
 
 /**
  * @summary

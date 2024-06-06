@@ -127,7 +127,7 @@ async function dropImageAsset({
   uniqueName: parentUniqueName,
   spawnPosition,
 }) {
-  const { visitorId, interactiveNonce, interactivePublicKey } = credentials;
+  const { interactivePublicKey } = credentials;
 
   const { bottomLayer, toplayer } = getAssetImgUrl(req);
 

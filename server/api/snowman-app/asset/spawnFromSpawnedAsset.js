@@ -1,4 +1,4 @@
-import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
+import { DroppedAsset, Visitor } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 
 let BASE_URL;
@@ -7,7 +7,6 @@ export const spawnFromSpawnedAsset = async (req, res) => {
   try {
     const protocol = process.env.INSTANCE_PROTOCOL;
     const host = req.host;
-    const port = req.port;
 
     if (host === "localhost") {
       BASE_URL = `https://snowman-dev-topia.topia-rtsdk.com`;
@@ -59,8 +58,6 @@ export const spawnFromSpawnedAsset = async (req, res) => {
       return res.json({ spawnSuccess: false, success: false });
     }
 
-    // await removeAllUserAssets(urlSlug, visitor, credentials);
-
     await updateImageAsset({
       urlSlug,
       credentials,
@@ -94,8 +91,6 @@ async function updateImageAsset({
   uniqueName: parentUniqueName,
   droppedAsset,
 }) {
-  const { visitorId, interactiveNonce, interactivePublicKey } = credentials;
-
   const { assetImgUrlLayer0, assetImgUrlLayer1 } = getAssetImgUrl(req);
 
   const { moveTo, username } = visitor;
