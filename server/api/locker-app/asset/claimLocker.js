@@ -76,8 +76,6 @@ export const claimLocker = async (req, res) => {
         }
       );
 
-      // TODO
-
       addNewRowToGoogleSheets({
         identityId: req?.query?.identityId,
         displayName: req?.query?.displayName,
