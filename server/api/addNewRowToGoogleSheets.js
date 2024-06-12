@@ -23,7 +23,7 @@ const sheetsClient = sheets?.sheets({ version: "v4", auth });
  *   addNewRowToGoogleSheets({
  *         identityId: req?.query?.identityId,
  *         displayName: req?.query?.displayName,
- *         appName: "Race",
+ *         appName: "The app name",
  *         event: "starts",
  *       })
  *         .then()
@@ -58,10 +58,10 @@ export const addNewRowToGoogleSheets = async ({
 
     await sheetsClient.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLESHEETS_SHEET_ID,
-      range: "Sheet1",
+      range: GOOGLESHEETS_RANGE || "Sheet1",
       valueInputOption: "RAW",
       insertDataOption: "INSERT_ROWS",
-      resource: {
+      requestBody: {
         values: [dataRowToBeInsertedInGoogleSheets],
       },
     });
