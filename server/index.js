@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 import router from "./routes.js";
 import cors from "cors";
 import fs from "fs";
-import { execSync } from "child_process";
 import checkEnvVariables from "./utils.js";
 dotenv.config();
 
@@ -37,8 +36,13 @@ app.get("/", (req, res) => {
 
 app.get("/api/system/health", (req, res) => {
   return res.json({
-    DEPLOY_DATE: SERVER_START_DATE,
     NODE_ENV: process.env.NODE_ENV,
+    DEPLOYMENT_DATE: SERVER_START_DATE,
+    COMMIT_HASH: process.env.COMMIT_HASH ? COMMIT_HASH : "NOT SET",
+    SHOWCASE_WORLDS_URLS: [
+      "https://topia.io/snowman-prod",
+      "https://topia.io/locker-app-prod",
+    ],
     INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN,
     INSTANCE_PROTOCOL: process.env.INSTANCE_PROTOCOL,
     INTERACTIVE_KEY: process.env.INTERACTIVE_KEY,
@@ -47,20 +51,21 @@ app.get("/api/system/health", (req, res) => {
     PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER: process.env
       .PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER
       ? PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER
-      : "UNSET",
+      : "NOT SET",
     PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER: process.env
       .PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER
       ? PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER
-      : "UNSET",
+      : "NOT SET",
 
     GOOGLESHEETS_CLIENT_EMAIL: process.env.GOOGLESHEETS_CLIENT_EMAIL
       ? "SET"
-      : "UNSET",
-    GOOGLESHEETS_SHEET_ID: process.env.GOOGLESHEETS_SHEET_ID ? "SET" : "UNSET",
+      : "NOT SET",
+    GOOGLESHEETS_SHEET_ID: process.env.GOOGLESHEETS_SHEET_ID
+      ? "SET"
+      : "NOT SET",
     GOOGLESHEETS_PRIVATE_KEY: process.env.GOOGLESHEETS_PRIVATE_KEY
       ? "SET"
-      : "UNSET",
-    COMMIT_HASH: process.env.COMMIT_HASH ? COMMIT_HASH : "UNSET",
+      : "NOT SET",
   });
 });
 

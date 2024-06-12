@@ -32,51 +32,28 @@ function ItemVariationSelectorModal({
   return isOpen ? (
     <div className="topia-modal-container visible">
       <div className="topia-modal">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+        <div className="modal-header">
           <h4>Select Item</h4>
-          <span
-            style={{ cursor: "pointer", fontSize: "20px" }}
-            onClick={onClose}
-          >
+          <span className="close-btn" onClick={onClose}>
             &times;
           </span>
         </div>
         <div className="modal-variations">
-          <div
-            className="variations-container"
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "space-around",
-            }}
-          >
+          <div className="variations-container">
             {variations.map((variation, index) => (
               <img
                 key={index}
                 src={`${BASE_URL}/locker-assets/${variation}`}
                 alt={`Variation ${index}`}
                 onClick={() => handleVariationClick(variation)}
-                style={{
-                  objectFit: "cover",
-                  borderRadius: "10px",
-                  margin: "5px",
-                  cursor: "pointer",
-                  border:
-                    selectedItem === variation
-                      ? "2px solid #4355e4"
-                      : "1px solid #ccc",
-                }}
+                className={`variation-item ${
+                  selectedItem === variation ? "selected" : ""
+                }`}
               />
             ))}
           </div>
         </div>
-        <div className="actions" style={{ marginTop: "10px" }}>
+        <div className="actions">
           <button className="btn-primary" onClick={handleOk}>
             OK
           </button>
