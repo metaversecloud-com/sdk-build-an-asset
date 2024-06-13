@@ -1,4 +1,4 @@
-import { DroppedAsset, Visitor, User, World } from "../../topiaInit.js";
+import { Visitor, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 
 export const moveToAsset = async (req, res) => {

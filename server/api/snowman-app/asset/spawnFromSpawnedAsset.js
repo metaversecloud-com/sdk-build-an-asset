@@ -83,8 +83,6 @@ export const spawnFromSpawnedAsset = async (req, res) => {
 };
 
 async function updateImageAsset({
-  urlSlug,
-  credentials,
   visitor,
   req,
   completeImageName,

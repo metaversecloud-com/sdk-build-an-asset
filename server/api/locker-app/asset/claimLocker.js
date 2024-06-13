@@ -1,6 +1,5 @@
 import { logger } from "../../../logs/logger.js";
-import { getBaseUrl, validateImageInfo } from "./requestHandlers.js";
-import { generateS3Url, generateImageInfoParam } from "./imageUtils.js";
+import { getBaseUrl } from "./requestHandlers.js";
 import { DroppedAsset, World } from "../../topiaInit.js";
 import { addNewRowToGoogleSheets } from "../../addNewRowToGoogleSheets.js";
 
