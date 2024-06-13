@@ -15,16 +15,16 @@ const sheetsClient = sheets?.sheets({ version: "v4", auth });
 /**
  * @summary
  * Insert a new row into a spreadsheet.
- * Currently this is being used for the SpreadSheet in:
- * https://docs.google.com/spreadsheets/d/sheetIdExample12345/edit#gid=0
+ * Currently this is being used for SpreadSheet in:
+ * https://docs.google.com/spreadsheets/d/{SHEET_ID_EXAMPLE}/edit#gid=0
  *
  * @usage
  * ```js
  *   addNewRowToGoogleSheets({
  *         identityId: req?.query?.identityId,
  *         displayName: req?.query?.displayName,
- *         appName: "The app name",
- *         event: "starts",
+ *         appName: "App Name Example",
+ *         event: "starts example event name",
  *         urlSlug
  *       })
  *         .then()
@@ -52,8 +52,8 @@ export const addNewRowToGoogleSheets = async ({
     const dataRowToBeInsertedInGoogleSheets = [
       formattedDate,
       formattedTime,
-      identityId,
-      displayName || username,
+      sanitizeString(identityId),
+      sanitizeString(displayName) || username,
       appName,
       event,
       urlSlug,
@@ -61,7 +61,7 @@ export const addNewRowToGoogleSheets = async ({
 
     await sheetsClient.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLESHEETS_SHEET_ID,
-      range: GOOGLESHEETS_RANGE || "Sheet1",
+      range: "Sheet1",
       valueInputOption: "RAW",
       insertDataOption: "INSERT_ROWS",
       requestBody: {
@@ -72,3 +72,7 @@ export const addNewRowToGoogleSheets = async ({
     console.error(JSON.stringify(error));
   }
 };
+
+function sanitizeString(input) {
+  return input && input !== "null" ? input : "";
+}
