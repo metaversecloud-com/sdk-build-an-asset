@@ -36,6 +36,7 @@ export const addNewRowToGoogleSheets = async ({
   username,
   appName,
   event,
+  urlSlug,
 }) => {
   try {
     // Only execute this function if we have GOOGLESHEETS_SHEET_ID in the environment variables.
@@ -54,6 +55,7 @@ export const addNewRowToGoogleSheets = async ({
       displayName || username,
       appName,
       event,
+      urlSlug,
     ];
 
     await sheetsClient.spreadsheets.values.append({

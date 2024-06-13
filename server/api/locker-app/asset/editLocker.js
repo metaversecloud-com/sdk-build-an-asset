@@ -1,7 +1,7 @@
 import { logger } from "../../../logs/logger.js";
 import { getBaseUrl, validateImageInfo } from "./requestHandlers.js";
 import { generateS3Url, generateImageInfoParam } from "./imageUtils.js";
-import { DroppedAsset, World } from "../../topiaInit.js";
+import { DroppedAsset, World, Visitor } from "../../topiaInit.js";
 
 export const editLocker = async (req, res) => {
   try {
@@ -28,6 +28,7 @@ export const editLocker = async (req, res) => {
 
     if (!validateImageInfo(imageInfo, res)) return;
 
+    const visitor = Visitor.create(visitorId, urlSlug, credentials);
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
 
@@ -118,14 +119,26 @@ export const editLocker = async (req, res) => {
       }),
     ]);
 
-    await world.triggerParticle({
-      name: process.env.PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER || "Bubbles",
-      duration: 3,
-      position: {
-        x: droppedAsset?.position?.x,
-        y: droppedAsset?.position?.y,
-      },
-    });
+    await world
+      .triggerParticle({
+        name: process.env.PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER || "Bubbles",
+        duration: 3,
+        position: {
+          x: droppedAsset?.position?.x,
+          y: droppedAsset?.position?.y,
+        },
+      })
+      .then()
+      .catch();
+
+    visitor
+      .fireToast({
+        groupId: "lockerApp",
+        title: "✅ Success",
+        text: "The locker has been decorated. Your changes have been saved!",
+      })
+      .then()
+      .catch();
 
     return res.json({
       spawnSuccess: true,

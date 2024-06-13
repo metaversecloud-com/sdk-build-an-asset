@@ -168,6 +168,7 @@ async function dropImageAsset({
     displayName: req?.query?.displayName,
     appName: "Build an Asset",
     event: "snowman-starts",
+    urlSlug,
   })
     .then()
     .catch();

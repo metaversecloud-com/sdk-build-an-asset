@@ -81,6 +81,7 @@ export const claimLocker = async (req, res) => {
         displayName: req?.query?.displayName,
         appName: "Build an Asset",
         event: "locker-starts",
+        urlSlug,
       })
         .then()
         .catch();
@@ -117,16 +118,19 @@ export const claimLocker = async (req, res) => {
       }),
     ]);
 
-    await world.triggerParticle({
-      name:
-        process.env.PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER ||
-        "firework2_magenta",
-      duration: 3,
-      position: {
-        x: droppedAsset?.position?.x,
-        y: droppedAsset?.position?.y,
-      },
-    });
+    world
+      .triggerParticle({
+        name:
+          process.env.PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER ||
+          "firework2_magenta",
+        duration: 3,
+        position: {
+          x: droppedAsset?.position?.x,
+          y: droppedAsset?.position?.y,
+        },
+      })
+      .then()
+      .catch();
 
     return res.json({
       success: true,
