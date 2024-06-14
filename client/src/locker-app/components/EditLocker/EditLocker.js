@@ -25,15 +25,11 @@ const categories = {
     { name: "lockerBase_3.png", hasVariation: false },
     { name: "lockerBase_4.png", hasVariation: false },
     { name: "lockerBase_5.png", hasVariation: false },
-  ],
-  Wallpaper: [
     { name: "wallpaper_0.png", hasVariation: false },
     { name: "wallpaper_1.png", hasVariation: false },
     { name: "wallpaper_2.png", hasVariation: false },
     { name: "wallpaper_3.png", hasVariation: false },
     { name: "wallpaper_4.png", hasVariation: false },
-  ],
-  Border: [
     { name: "border_0.png", hasVariation: false },
     { name: "border_1.png", hasVariation: false },
     { name: "border_2.png", hasVariation: false },
@@ -100,7 +96,6 @@ const categories = {
         "bottomShelf_12.png",
         "bottomShelf_13.png",
         "bottomShelf_14.png",
-        "bottomShelf_15.png",
       ],
     },
     {
@@ -193,8 +188,6 @@ const categories = {
 
 const selectionLimits = {
   "Locker Base": 1,
-  Wallpaper: 1,
-  Border: 1,
   "Top Shelf": Infinity,
   "Bottom Shelf": Infinity,
   Door: Infinity,
@@ -208,8 +201,6 @@ function EditLocker() {
 
   const [selected, setSelected] = useState({
     "Locker Base": [`${BASE_URL}/locker-assets/lockerBase_0.png`],
-    Wallpaper: [],
-    Border: [],
     "Top Shelf": [],
     "Bottom Shelf": [],
     Door: [],
@@ -527,8 +518,11 @@ function EditLocker() {
                 style={{ marginLeft: "10px" }}
               />
             </Button>
-            <Collapse isOpen={openCategories[type]}>
-              <div style={{ marginBottom: "10px" }}>
+            <Collapse
+              isOpen={openCategories[type]}
+              style={{ textAlign: "center" }}
+            >
+              <div style={{ marginBottom: "10px", textAlign: "left" }}>
                 {categories[type].map((item) => (
                   <div
                     key={item.name}

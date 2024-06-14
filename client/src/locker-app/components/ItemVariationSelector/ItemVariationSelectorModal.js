@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./ItemVariationSelectorModal.scss";
 
 function ItemVariationSelectorModal({
   isOpen,
@@ -53,8 +54,12 @@ function ItemVariationSelectorModal({
             ))}
           </div>
         </div>
-        <div className="actions">
-          <button className="btn-primary" onClick={handleOk}>
+        <div className="footer-wrapper">
+          <button
+            className="btn-primary"
+            onClick={handleOk}
+            style={{ width: "70%" }}
+          >
             OK
           </button>
         </div>
