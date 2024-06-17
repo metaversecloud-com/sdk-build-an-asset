@@ -19,21 +19,39 @@ import "./EditLocker.scss";
 
 const categories = {
   "Locker Base": [
-    { name: "lockerBase_0.png", hasVariation: false },
-    { name: "lockerBase_1.png", hasVariation: false },
-    { name: "lockerBase_2.png", hasVariation: false },
-    { name: "lockerBase_3.png", hasVariation: false },
-    { name: "lockerBase_4.png", hasVariation: false },
-    { name: "lockerBase_5.png", hasVariation: false },
-    { name: "wallpaper_0.png", hasVariation: false },
-    { name: "wallpaper_1.png", hasVariation: false },
-    { name: "wallpaper_2.png", hasVariation: false },
-    { name: "wallpaper_3.png", hasVariation: false },
-    { name: "wallpaper_4.png", hasVariation: false },
-    { name: "border_0.png", hasVariation: false },
-    { name: "border_1.png", hasVariation: false },
-    { name: "border_2.png", hasVariation: false },
-    { name: "border_3.png", hasVariation: false },
+    {
+      name: "lockerBase_0.png",
+      hasVariation: true,
+      variations: [
+        "lockerBase_0.png",
+        "lockerBase_1.png",
+        "lockerBase_2.png",
+        "lockerBase_3.png",
+        "lockerBase_4.png",
+        "lockerBase_5.png",
+      ],
+    },
+    {
+      name: "wallpaper_0.png",
+      hasVariation: true,
+      variations: [
+        "wallpaper_0.png",
+        "wallpaper_1.png",
+        "wallpaper_2.png",
+        "wallpaper_3.png",
+        "wallpaper_4.png",
+      ],
+    },
+    {
+      name: "border_0.png",
+      hasVariation: true,
+      variations: [
+        "border_0.png",
+        "border_1.png",
+        "border_2.png",
+        "border_3.png",
+      ],
+    },
   ],
   "Top Shelf": [
     {
@@ -98,11 +116,7 @@ const categories = {
         "bottomShelf_14.png",
       ],
     },
-    {
-      name: "bottomShelf_16.png",
-      hasVariation: true,
-      variations: ["bottomShelf_16.png", "bottomShelf_17.png"],
-    },
+
     {
       name: "bottomShelf_18.png",
       hasVariation: true,
@@ -532,8 +546,8 @@ function EditLocker() {
                       <div
                         style={{
                           position: "absolute",
-                          top: "12px",
-                          right: "12px",
+                          top: "7px",
+                          right: "7px",
                           backgroundColor: "white",
                           borderRadius: "50%",
                           width: "16px",
@@ -545,11 +559,11 @@ function EditLocker() {
                         }}
                       >
                         <img
-                          src="https://sdk-style.s3.amazonaws.com/icons/expand.svg"
+                          src="https://sdk-style.s3.amazonaws.com/icons/copy.svg"
                           alt="Expand"
                           style={{
-                            width: "12px",
-                            height: "12px",
+                            width: "15px",
+                            height: "15px",
                           }}
                         />
                       </div>
