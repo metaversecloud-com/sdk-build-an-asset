@@ -41,6 +41,8 @@ const categories = {
         "wallpaper_2.png",
         "wallpaper_3.png",
         "wallpaper_4.png",
+        "wallpaper_5.png",
+        "wallpaper_6.png",
       ],
     },
     {
@@ -51,6 +53,7 @@ const categories = {
         "border_1.png",
         "border_2.png",
         "border_3.png",
+        "border_4.png",
       ],
     },
   ],
