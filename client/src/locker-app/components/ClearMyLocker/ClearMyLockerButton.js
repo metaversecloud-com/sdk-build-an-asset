@@ -7,13 +7,7 @@ function ClearMyLockerButton({ handleToggleShowClearLockerModal, fromAdmin }) {
         className={fromAdmin ? "btn-danger-outline" : "btn-danger"}
         onClick={() => handleToggleShowClearLockerModal()}
       >
-        {fromAdmin ? (
-          <span>
-            Empty <b>this</b> Locker
-          </span>
-        ) : (
-          <span>Empty Locker</span>
-        )}
+        {fromAdmin ? <span>Empty this Locker</span> : <span>Empty Locker</span>}
       </button>
     </>
   );

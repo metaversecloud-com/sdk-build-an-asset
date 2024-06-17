@@ -22,6 +22,7 @@ const categories = {
     {
       name: "lockerBase_0.png",
       hasVariation: true,
+      isRequired: true,
       variations: [
         "lockerBase_0.png",
         "lockerBase_1.png",
@@ -357,7 +358,9 @@ function EditLocker() {
     let updatedSelection = { ...selected };
 
     if (image === null) {
-      // Se a imagem for null, remova o item selecionado
+      if (type === "Locker Base" && item.name === "lockerBase_0.png") {
+        return;
+      }
       updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
         if (item && item.hasVariation) {
           return !item.variations.some(

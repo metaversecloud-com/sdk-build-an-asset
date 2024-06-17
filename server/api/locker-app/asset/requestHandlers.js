@@ -23,14 +23,7 @@ export function validateImageInfo(imageInfo, res) {
     return false;
   }
 
-  const requiredFields = [
-    "Locker Base",
-    "Wallpaper",
-    "Border",
-    "Top Shelf",
-    "Bottom Shelf",
-    "Door",
-  ];
+  const requiredFields = ["Locker Base", "Top Shelf", "Bottom Shelf", "Door"];
 
   const hasAllRequiredFields = requiredFields.every(
     (field) =>

@@ -7,9 +7,7 @@ function ClearAllLockersButton({ handleToggleShowClearAllLockersModal }) {
         class="btn-danger"
         onClick={() => handleToggleShowClearAllLockersModal()}
       >
-        <span>
-          Empty <b>all</b> Lockers
-        </span>
+        <span>Empty all Lockers</span>
       </button>
     </>
   );

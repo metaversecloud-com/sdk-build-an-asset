@@ -22,7 +22,9 @@ function ClearAllLockersButtonModal({ handleToggleShowClearAllLockersModal }) {
   return (
     <div id="" class="topia-modal-container visible">
       <div className="topia-modal">
-        <h4>Empty all Lockers</h4>
+        <h4>
+          Empty <b>all</b> Lockers
+        </h4>
         <p>Are you sure you'd like to continue?</p>
         <div className="actions">
           <button
