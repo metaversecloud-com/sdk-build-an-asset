@@ -358,8 +358,9 @@ function EditLocker() {
     let updatedSelection = { ...selected };
 
     if (image === null) {
-      if (type === "Locker Base" && item.name === "lockerBase_0.png") {
-        return;
+      // Se a imagem for null, remova o item selecionado, exceto para o item marcado como isRequired
+      if (item.isRequired) {
+        return; // Não permite desselecionar o item marcado como isRequired
       }
       updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
         if (item && item.hasVariation) {
@@ -377,6 +378,10 @@ function EditLocker() {
         const isSelectedVariation = updatedSelection[type].includes(image);
 
         if (isSelectedVariation) {
+          // Não permite desselecionar o item marcado como isRequired
+          if (item.isRequired) {
+            return;
+          }
           updatedSelection[type] = updatedSelection[type].filter(
             (selectedItem) => selectedItem !== image
           );
@@ -397,6 +402,10 @@ function EditLocker() {
           updatedSelection[type] = isSelected ? [] : [image];
         } else {
           if (isSelected) {
+            // Não permite desselecionar o item marcado como isRequired
+            if (item.isRequired) {
+              return;
+            }
             updatedSelection[type] = updatedSelection[type].filter(
               (i) => i !== image
             );
@@ -405,6 +414,22 @@ function EditLocker() {
           }
         }
       }
+    }
+
+    // Verifica se há um item marcado como isRequired que não está selecionado
+    const requiredItem = categories[type].find((item) => item.isRequired);
+    if (
+      requiredItem &&
+      !updatedSelection[type].some((selectedItem) =>
+        requiredItem.variations.includes(
+          selectedItem.replace(`${BASE_URL}/locker-assets/`, "")
+        )
+      )
+    ) {
+      // Se não houver um item isRequired selecionado, seleciona automaticamente o primeiro item isRequired
+      updatedSelection[type].push(
+        `${BASE_URL}/locker-assets/${requiredItem.variations[0]}`
+      );
     }
 
     setSelected(updatedSelection);
@@ -429,12 +454,32 @@ function EditLocker() {
 
     const imagesToMerge = Object.values(updatedSelection)
       .flat()
+      .filter((img) => img)
+      .sort((a, b) => {
+        // Coloca o item isRequired do "Locker Base" sempre atrás de todos os outros itens
+        if (
+          a.includes("lockerBase") &&
+          categories["Locker Base"]
+            .find((item) => item.isRequired)
+            ?.variations.includes(a.replace(`${BASE_URL}/locker-assets/`, ""))
+        ) {
+          return -1;
+        }
+        if (
+          b.includes("lockerBase") &&
+          categories["Locker Base"]
+            .find((item) => item.isRequired)
+            ?.variations.includes(b.replace(`${BASE_URL}/locker-assets/`, ""))
+        ) {
+          return 1;
+        }
+        return 0;
+      })
       .map((i) => ({
         src: i,
         x: 0,
         y: 0,
-      }))
-      .filter((img) => img.src);
+      }));
 
     mergeImages(imagesToMerge).then(setPreview);
   };
