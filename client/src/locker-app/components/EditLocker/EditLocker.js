@@ -427,9 +427,26 @@ function EditLocker() {
       )
     ) {
       // Se não houver um item isRequired selecionado, seleciona automaticamente o primeiro item isRequired
-      updatedSelection[type].push(
+      updatedSelection[type].unshift(
         `${BASE_URL}/locker-assets/${requiredItem.variations[0]}`
       );
+    }
+
+    // Garante que o item isRequired do "Locker Base" fique sempre no início do array
+    if (type === "Locker Base") {
+      const requiredItemIndex = updatedSelection[type].findIndex(
+        (selectedItem) =>
+          requiredItem.variations.includes(
+            selectedItem.replace(`${BASE_URL}/locker-assets/`, "")
+          )
+      );
+      if (requiredItemIndex !== -1) {
+        const requiredImage = updatedSelection[type].splice(
+          requiredItemIndex,
+          1
+        )[0];
+        updatedSelection[type].unshift(requiredImage);
+      }
     }
 
     setSelected(updatedSelection);
@@ -454,32 +471,12 @@ function EditLocker() {
 
     const imagesToMerge = Object.values(updatedSelection)
       .flat()
-      .filter((img) => img)
-      .sort((a, b) => {
-        // Coloca o item isRequired do "Locker Base" sempre atrás de todos os outros itens
-        if (
-          a.includes("lockerBase") &&
-          categories["Locker Base"]
-            .find((item) => item.isRequired)
-            ?.variations.includes(a.replace(`${BASE_URL}/locker-assets/`, ""))
-        ) {
-          return -1;
-        }
-        if (
-          b.includes("lockerBase") &&
-          categories["Locker Base"]
-            .find((item) => item.isRequired)
-            ?.variations.includes(b.replace(`${BASE_URL}/locker-assets/`, ""))
-        ) {
-          return 1;
-        }
-        return 0;
-      })
       .map((i) => ({
         src: i,
         x: 0,
         y: 0,
-      }));
+      }))
+      .filter((img) => img.src);
 
     mergeImages(imagesToMerge).then(setPreview);
   };
