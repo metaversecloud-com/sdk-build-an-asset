@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { clearLocker } from "../../../redux/actions/locker.js";
 
-function ClearMyLockerButtonModal({
+function ClearMyAssetModal({
   handleToggleShowClearLockerModal,
-  isClearMyLockerFromUnclaimedLocker,
+  isClearAssetFromUnclaimedLocker,
 }) {
   const dispatch = useDispatch();
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
@@ -12,7 +12,7 @@ function ClearMyLockerButtonModal({
   const handleClearLocker = async () => {
     try {
       setAreButtonsDisabled(true);
-      await dispatch(clearLocker(isClearMyLockerFromUnclaimedLocker));
+      await dispatch(clearLocker(isClearAssetFromUnclaimedLocker));
     } catch (error) {
       console.error(error);
     } finally {
@@ -51,4 +51,4 @@ function ClearMyLockerButtonModal({
   );
 }
 
-export default ClearMyLockerButtonModal;
+export default ClearMyAssetModal;

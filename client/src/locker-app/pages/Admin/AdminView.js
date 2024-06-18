@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import backArrow from "../../../assets/icons/backArrow.svg";
-import ClearMyLockerModal from "../../components/ClearMyLocker/ClearMyLockerModal.js";
-import ClearMyLockerButton from "../../components/ClearMyLocker/ClearMyLockerButton.js";
+import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal.js";
+import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton.js";
 import ClearAllLockersButton from "../../components/ClearAllLockers/ClearAllLockersButton.js";
 import ClearAllLockersModal from "../../components/ClearAllLockers/ClearAllLockersModal.js";
 import "./AdminView.scss";
@@ -36,9 +36,9 @@ function AdminView({ setShowSettings }) {
   return (
     <>
       {showClearLockerModal ? (
-        <ClearMyLockerModal
+        <ClearMyAssetModal
           handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
-          isClearMyLockerFromUnclaimedLocker={false}
+          isClearAssetFromUnclaimedLocker={false}
         />
       ) : (
         ""
@@ -48,7 +48,7 @@ function AdminView({ setShowSettings }) {
           handleToggleShowClearAllLockersModal={
             handleToggleShowClearAllLockersModal
           }
-          isClearMyLockerFromUnclaimedLocker={false}
+          isClearAssetFromUnclaimedLocker={false}
         />
       ) : (
         ""
@@ -60,7 +60,7 @@ function AdminView({ setShowSettings }) {
 
         <div className="footer-fixed" style={{ color: "#00A76F" }}>
           <div style={{ marginBottom: "10px" }}>
-            <ClearMyLockerButton
+            <ClearMyAssetButton
               handleToggleShowClearLockerModal={
                 handleToggleShowClearLockerModal
               }

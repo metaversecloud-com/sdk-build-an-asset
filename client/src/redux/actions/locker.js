@@ -86,12 +86,12 @@ export const claimLocker = (visitor) => async (dispatch) => {
 };
 
 export const clearLocker =
-  (isClearMyLockerFromUnclaimedLocker) => async (dispatch) => {
+  (isClearAssetFromUnclaimedLocker) => async (dispatch) => {
     try {
       const queryParams = getQueryParams();
       const url = `/backend/locker/clear?${queryParams}`;
       const response = await axios.put(url, {
-        isClearMyLockerFromUnclaimedLocker,
+        isClearAssetFromUnclaimedLocker,
       });
 
       if (response.status === 200) {

@@ -6,8 +6,8 @@ import EditLocker from "../../components/EditLocker/EditLocker";
 import AdminView from "../Admin/AdminView";
 import Gear from "../Admin/Gear";
 import "./ClaimedLocker.scss";
-import ClearMyLockerButton from "../../components/ClearMyLocker/ClearMyLockerButton";
-import ClearMyLockerModal from "../../components/ClearMyLocker/ClearMyLockerModal";
+import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton";
+import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal";
 import MoveToLockerButton from "../../components/MoveToLockerButton/MoveToLockerButton";
 
 function ClaimedLocker() {
@@ -78,9 +78,9 @@ function ClaimedLocker() {
   return (
     <>
       {showClearLockerModal ? (
-        <ClearMyLockerModal
+        <ClearMyAssetModal
           handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
-          isClearMyLockerFromUnclaimedLocker={false}
+          isClearAssetFromUnclaimedLocker={false}
         />
       ) : (
         ""
@@ -115,7 +115,7 @@ function ClaimedLocker() {
               <div style={{ marginBottom: "10px" }}>
                 <MoveToLockerButton shouldCloseIframe={false} />
               </div>
-              <ClearMyLockerButton
+              <ClearMyAssetButton
                 handleToggleShowClearLockerModal={
                   handleToggleShowClearLockerModal
                 }

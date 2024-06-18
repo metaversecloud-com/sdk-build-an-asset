@@ -26,9 +26,8 @@ export const getWorld = async (req, res) => {
 
     if (!world.dataObject.lockers) world.setDataObject({ lockers: {} });
 
-    world
-      .updateDataObject(
-        {},
+    visitor
+      .updatePublicKeyAnalytics([
         {
           analytics: [
             {
@@ -38,8 +37,8 @@ export const getWorld = async (req, res) => {
               urlSlug,
             },
           ],
-        }
-      )
+        },
+      ])
       .then()
       .catch(console.error("Error sending the starts analytics"));
 

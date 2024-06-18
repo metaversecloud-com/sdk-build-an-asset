@@ -1,6 +1,6 @@
 import React from "react";
 
-function ClearMyLockerButton({ handleToggleShowClearLockerModal, fromAdmin }) {
+function ClearMyAssetButton({ handleToggleShowClearLockerModal, fromAdmin }) {
   return (
     <>
       <button
@@ -13,4 +13,4 @@ function ClearMyLockerButton({ handleToggleShowClearLockerModal, fromAdmin }) {
   );
 }
 
-export default ClearMyLockerButton;
+export default ClearMyAssetButton;

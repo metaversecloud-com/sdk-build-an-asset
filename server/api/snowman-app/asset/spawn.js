@@ -127,7 +127,7 @@ async function dropImageAsset({
   uniqueName: parentUniqueName,
   spawnPosition,
 }) {
-  const { interactivePublicKey } = credentials;
+  const { interactivePublicKey, profileId, assetId } = credentials;
 
   const { bottomLayer, toplayer } = getAssetImgUrl(req);
 
@@ -148,9 +148,9 @@ async function dropImageAsset({
 
   await assetSpawnedDroppedAsset?.updateDataObject(
     {
-      profileId: visitor?.profileId,
+      profileId,
       completeImageName,
-      parentAssetId: credentials?.assetId,
+      parentAssetId: assetId,
     },
     {
       analytics: [

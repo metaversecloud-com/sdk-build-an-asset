@@ -5,8 +5,8 @@ import { getWorld, claimLocker } from "../../../redux/actions/locker";
 import Gear from "../Admin/Gear";
 import AdminView from "../Admin/AdminView";
 import SplashImage from "../../../assets/locker/splashImage.png";
-import ClearMyLockerButton from "../../components/ClearMyLocker/ClearMyLockerButton";
-import ClearMyLockerModal from "../../components/ClearMyLocker/ClearMyLockerModal";
+import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton";
+import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal";
 import MoveToLockerButton from "../../components/MoveToLockerButton/MoveToLockerButton";
 import "./Home.scss";
 
@@ -68,9 +68,9 @@ function Home() {
     return (
       <>
         {showClearLockerModal ? (
-          <ClearMyLockerModal
+          <ClearMyAssetModal
             handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
-            isClearMyLockerFromUnclaimedLocker={true}
+            isClearAssetFromUnclaimedLocker={true}
           />
         ) : (
           ""
@@ -85,7 +85,7 @@ function Home() {
               <MoveToLockerButton closeIframeAfterMove={true} />
             </div>
             <div style={{ margin: "10px 0px" }}>
-              <ClearMyLockerButton
+              <ClearMyAssetButton
                 handleToggleShowClearLockerModal={
                   handleToggleShowClearLockerModal
                 }
