@@ -83,7 +83,7 @@ export const claimLocker = async (req, res) => {
         urlSlug,
       })
         .then()
-        .catch();
+        .catch((error) => console.error(JSON.stringify(error)));
     } catch (error) {
       return res.json({
         msg: "This locker is already taken",
@@ -129,7 +129,7 @@ export const claimLocker = async (req, res) => {
         },
       })
       .then()
-      .catch();
+      .catch((error) => {});
 
     return res.json({
       success: true,

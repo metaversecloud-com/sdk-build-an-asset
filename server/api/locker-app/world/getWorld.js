@@ -40,7 +40,7 @@ export const getWorld = async (req, res) => {
         },
       ])
       .then()
-      .catch(console.error("Error sending the starts analytics"));
+      .catch((error) => console.error(JSON.stringify(error)));
 
     return res.json({
       world,

@@ -60,7 +60,7 @@ async function removeAllUserAssets(urlSlug, visitor, credentials) {
       }
     )
     .then()
-    .catch(console.error("Error when sending pickupUserAsset analytics"));
+    .catch((error) => console.error(JSON.stringify(error)));
 
   try {
     const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({

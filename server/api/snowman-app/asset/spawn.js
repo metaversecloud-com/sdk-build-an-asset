@@ -171,7 +171,7 @@ async function dropImageAsset({
     urlSlug,
   })
     .then()
-    .catch();
+    .catch((error) => console.error(JSON.stringify(error)));
 
   const modifiedName = username.replace(/ /g, "%20");
 

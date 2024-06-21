@@ -129,7 +129,7 @@ export const editLocker = async (req, res) => {
         },
       })
       .then()
-      .catch();
+      .catch((error) => {});
 
     visitor
       .fireToast({
@@ -138,7 +138,7 @@ export const editLocker = async (req, res) => {
         text: "The locker has been decorated. Your changes have been saved!",
       })
       .then()
-      .catch();
+      .catch((error) => console.error(JSON.stringify(error)));
 
     return res.json({
       spawnSuccess: true,

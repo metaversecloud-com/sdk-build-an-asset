@@ -48,7 +48,7 @@ export const pickupAllAssets = async (req, res) => {
         }
       )
       .then()
-      .catch(console.error("Error when sending pickupAllAssets to analytics"));
+      .catch((error) => console.error(JSON.stringify(error)));
 
     return res.json({ success: true });
   } catch (error) {
