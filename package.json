@@ -3,7 +3,7 @@
   "name": "sdk-build-an-asset",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.438.0",
-    "@rtsdk/topia": "^0.8.1",
+    "@rtsdk/topia": "^0.11.8",
     "axios": "^1.5.1",
     "body-parser": "^1.20.2",
     "concurrently": "^8.2.2",
@@ -32,8 +32,8 @@
     "unlink-sdk": "yalc remove @rtsdk/topia",
     "server": "npm start -w server",
     "client": "npm start -w client",
-    "start": "source commit_info.txt; npm start -w server"
+    "start": "source commit_info.txt;npm start -w server"
   },
   "type": "module",
-  "version": "1.3.1"
+  "version": "1.2.2"
 }

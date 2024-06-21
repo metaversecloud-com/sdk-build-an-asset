@@ -1,4 +1,4 @@
-import { DroppedAsset, Visitor, User, World } from "../../topiaInit.js";
+import { Visitor, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 
 export const moveToAsset = async (req, res) => {
@@ -16,6 +16,7 @@ export const moveToAsset = async (req, res) => {
       interactiveNonce,
       interactivePublicKey,
       visitorId,
+      profileId,
     };
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });

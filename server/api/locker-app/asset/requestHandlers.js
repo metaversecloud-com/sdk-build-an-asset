@@ -1,5 +1,3 @@
-import { logger } from "../../../logs/logger.js";
-
 export function getBaseUrl(req) {
   const protocol = process.env.INSTANCE_PROTOCOL;
   const host = req.host;
@@ -25,13 +23,7 @@ export function validateImageInfo(imageInfo, res) {
     return false;
   }
 
-  const requiredFields = [
-    "Locker Base",
-    "Wallpaper",
-    "Top Shelf",
-    "Bottom Shelf",
-    "Door",
-  ];
+  const requiredFields = ["Locker Base", "Top Shelf", "Bottom Shelf", "Door"];
 
   const hasAllRequiredFields = requiredFields.every(
     (field) =>

@@ -1,5 +1,6 @@
 import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
+import { addNewRowToGoogleSheets } from "../../addNewRowToGoogleSheets.js";
 
 let BASE_URL;
 
@@ -52,16 +53,6 @@ export const spawn = async (req, res) => {
       visitor.fetchDataObject(),
     ]);
 
-    // if (
-    //   visitor?.privateZoneId != droppedAsset?.id &&
-    //   visitor?.privateZoneId != droppedAsset?.dataObject?.parentAssetId
-    // ) {
-    //   return res.json({ spawnSuccess: false, success: false });
-    // }
-
-    // snowman placa x:0 y:200
-    // superior direita: x 600   y -500
-    // superior esquerda x: -600
     const world = await World.create(urlSlug, { credentials });
     const background = (
       await world.fetchDroppedAssetsWithUniqueName({
@@ -136,7 +127,7 @@ async function dropImageAsset({
   uniqueName: parentUniqueName,
   spawnPosition,
 }) {
-  const { visitorId, interactiveNonce, interactivePublicKey } = credentials;
+  const { interactivePublicKey, profileId, assetId } = credentials;
 
   const { bottomLayer, toplayer } = getAssetImgUrl(req);
 
@@ -155,11 +146,32 @@ async function dropImageAsset({
     interactivePublicKey,
   });
 
-  await assetSpawnedDroppedAsset?.updateDataObject({
-    profileId: visitor?.profileId,
-    completeImageName,
-    parentAssetId: credentials?.assetId,
-  });
+  await assetSpawnedDroppedAsset?.updateDataObject(
+    {
+      profileId,
+      completeImageName,
+      parentAssetId: assetId,
+    },
+    {
+      analytics: [
+        {
+          analyticName: `snowman-builds`,
+          uniqueKey: visitor?.profileId,
+          profileId: visitor?.profileId,
+        },
+      ],
+    }
+  );
+
+  addNewRowToGoogleSheets({
+    identityId: req?.query?.identityId,
+    displayName: req?.query?.displayName,
+    appName: "Build an Asset",
+    event: "snowman-starts",
+    urlSlug,
+  })
+    .then()
+    .catch((error) => console.error(JSON.stringify(error)));
 
   const modifiedName = username.replace(/ /g, "%20");
 

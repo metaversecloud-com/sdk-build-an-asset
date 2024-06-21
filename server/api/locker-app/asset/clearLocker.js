@@ -1,4 +1,4 @@
-import { DroppedAsset, Visitor, Asset, World } from "../../topiaInit.js";
+import { DroppedAsset, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 import { getBaseUrl } from "./requestHandlers.js";
 import { getS3URL } from "../../utils.js";
@@ -23,19 +23,17 @@ export const clearLocker = async (req, res) => {
       visitorId,
     };
 
-    const { isClearMyLockerFromUnclaimedLocker } = req.body;
+    const { isClearAssetFromUnclaimedLocker } = req.body;
 
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
 
     let lockerAssetId;
 
-    if (isClearMyLockerFromUnclaimedLocker) {
+    if (isClearAssetFromUnclaimedLocker) {
       lockerAssetId = world?.dataObject?.lockers?.[profileId]?.droppedAssetId;
       ownerProfileId = profileId;
     } else {
-      // Admin route
-      // TODO: verification here
       lockerAssetId = assetId;
     }
 
@@ -60,9 +58,20 @@ export const clearLocker = async (req, res) => {
         clickableDisplayTextHeadline: "Locker",
         isOpenLinkInDrawer: true,
       }),
-      world.updateDataObject({
-        [`lockers.${ownerProfileId}`]: null,
-      }),
+      world.updateDataObject(
+        {
+          [`lockers.${ownerProfileId}`]: null,
+        },
+        {
+          analytics: [
+            {
+              analyticName: `locker-unclaims`,
+              profileId,
+              uniqueKey: profileId,
+            },
+          ],
+        }
+      ),
     ]);
 
     return res.json({

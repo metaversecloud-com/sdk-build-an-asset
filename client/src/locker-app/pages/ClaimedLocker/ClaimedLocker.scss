@@ -1,8 +1,5 @@
 .spawned-wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  display: block;
   height: 100vh;
   text-align: center;
   max-width: 352px;
@@ -15,4 +12,3 @@
     height: auto;
   }
 }
-

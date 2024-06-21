@@ -1,4 +1,4 @@
-import { DroppedAsset, Visitor, User, World } from "../../topiaInit.js";
+import { DroppedAsset, Visitor, World } from "../../topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 
 export const moveToLocker = async (req, res) => {
@@ -18,6 +18,8 @@ export const moveToLocker = async (req, res) => {
       interactivePublicKey,
       visitorId,
     };
+
+    const { closeIframeAfterMove } = req.body;
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
 
@@ -39,7 +41,9 @@ export const moveToLocker = async (req, res) => {
       y,
     });
 
-    await visitor.closeIframe(assetId);
+    if (closeIframeAfterMove) {
+      await visitor.closeIframe(assetId);
+    }
 
     return res.json({
       success: true,

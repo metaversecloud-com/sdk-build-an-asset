@@ -25,7 +25,22 @@ export const getWorld = async (req, res) => {
     await world.fetchDataObject();
 
     if (!world.dataObject.lockers) world.setDataObject({ lockers: {} });
-    
+
+    visitor
+      .updatePublicKeyAnalytics([
+        {
+          analytics: [
+            {
+              analyticName: `locker-starts`,
+              uniqueKey: profileId,
+              profileId,
+              urlSlug,
+            },
+          ],
+        },
+      ])
+      .then()
+      .catch((error) => console.error(JSON.stringify(error)));
 
     return res.json({
       world,
