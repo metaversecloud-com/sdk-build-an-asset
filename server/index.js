@@ -38,7 +38,7 @@ app.get("/api/system/health", (req, res) => {
   return res.json({
     NODE_ENV: process.env.NODE_ENV,
     DEPLOYMENT_DATE: SERVER_START_DATE,
-    COMMIT_HASH: process.env.COMMIT_HASH ? COMMIT_HASH : "NOT SET",
+    COMMIT_HASH: process.env.COMMIT_HASH ? process.env.COMMIT_HASH : "NOT SET",
     SHOWCASE_WORLDS_URLS: [
       "https://topia.io/snowman-prod",
       "https://topia.io/locker-app-prod",
