@@ -9,6 +9,7 @@ export const moveToAsset = async (req, res) => {
       interactiveNonce,
       urlSlug,
       visitorId,
+      profileId,
     } = req.query;
 
     const credentials = {

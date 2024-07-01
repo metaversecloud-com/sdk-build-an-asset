@@ -11,7 +11,7 @@ export const spawn = async (req, res) => {
     const port = req.port;
 
     if (host === "localhost") {
-      BASE_URL = `https://snowman0-dev-Topia.topia-rtsdk.com`;
+      BASE_URL = `https://snowman0-prod-Topia.topia-rtsdk.com`;
     } else {
       BASE_URL = `${protocol}://${host}`;
     }
