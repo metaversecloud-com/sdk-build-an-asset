@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
-import { editLocker } from "../../../redux/actions/locker";
+import { editLocker } from "../../../redux/actions/locker.js";
 import { Collapse, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,11 +11,11 @@ import {
   faCheck,
   faChevronLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import Gear from "../../pages/Admin/Gear";
-import AdminView from "../../pages/Admin/AdminView";
+import Gear from "../../pages/Admin/Gear.js";
+import AdminView from "../../pages/Admin/AdminView.js";
 import ItemVariationSelectorModal from "../ItemVariationSelector/ItemVariationSelectorModal.js";
 
-import "./EditLocker.scss";
+import "./EditAsset.scss";
 
 const categories = {
   "Locker Base": [
@@ -211,7 +211,7 @@ const selectionLimits = {
   Door: Infinity,
 };
 
-function EditLocker() {
+function EditAsset() {
   const dispatch = useDispatch();
   const BASE_URL = window.location.origin;
 
@@ -236,7 +236,7 @@ function EditLocker() {
   const [selectedVariation, setSelectedVariation] = useState(null);
 
   const [preview, setPreview] = useState(
-    `${BASE_URL}/locker-assets/defaultClaimedLocker.png`
+    `${BASE_URL}/locker-assets/defaultClaimedAsset.png`
   );
   const [imageInfo, setImageInfo] = useState({});
   const isLockerAlreadyTaken = useSelector(
@@ -550,7 +550,7 @@ function EditLocker() {
         <img
           src={
             preview == "data:,"
-              ? `${BASE_URL}/locker-assets/defaultClaimedLocker.png`
+              ? `${BASE_URL}/locker-assets/defaultClaimedAsset.png`
               : preview
           }
           alt="Locker Preview"
@@ -676,4 +676,4 @@ function EditLocker() {
   );
 }
 
-export default EditLocker;
+export default EditAsset;

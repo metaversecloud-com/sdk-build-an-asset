@@ -51,7 +51,7 @@ export const claimLocker = async (req, res) => {
       }
     }
 
-    const s3Url = `${defaultUrlForImageHosting}/assets/locker/output/defaultClaimedLocker.png`;
+    const s3Url = `${defaultUrlForImageHosting}/assets/locker/output/defaultClaimedAsset.png`;
 
     try {
       await world.updateDataObject(

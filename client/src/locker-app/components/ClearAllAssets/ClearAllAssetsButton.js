@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 
-function ClearAllLockersButton({ handleToggleShowClearAllLockersModal }) {
+function ClearAllCustomizedAssetsButton({
+  handleToggleShowClearAllLockersModal,
+}) {
   return (
     <>
       <button
@@ -13,4 +15,4 @@ function ClearAllLockersButton({ handleToggleShowClearAllLockersModal }) {
   );
 }
 
-export default ClearAllLockersButton;
+export default ClearAllCustomizedAssetsButton;

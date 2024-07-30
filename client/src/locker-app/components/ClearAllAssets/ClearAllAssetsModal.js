@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearAllLockers } from "../../../redux/actions/locker.js";
 
-function ClearAllLockersButtonModal({ handleToggleShowClearAllLockersModal }) {
+function ClearAllCustomizedAssetsModal({
+  handleToggleShowClearAllLockersModal,
+}) {
   const dispatch = useDispatch();
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
 
@@ -48,4 +50,4 @@ function ClearAllLockersButtonModal({ handleToggleShowClearAllLockersModal }) {
   );
 }
 
-export default ClearAllLockersButtonModal;
+export default ClearAllCustomizedAssetsModal;

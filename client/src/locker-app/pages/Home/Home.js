@@ -7,7 +7,7 @@ import AdminView from "../Admin/AdminView";
 import SplashImage from "../../../assets/locker/splashImage.png";
 import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton";
 import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal";
-import MoveToLockerButton from "../../components/MoveToLockerButton/MoveToLockerButton";
+import MoveToAssetButton from "../../components/MoveToAssetButton/MoveToAssetButton";
 import "./Home.scss";
 
 function Home() {
@@ -82,7 +82,7 @@ function Home() {
 
           <div className="footer-fixed" style={{ backgroundColor: "white" }}>
             <div style={{ margin: "10px 0px" }}>
-              <MoveToLockerButton closeIframeAfterMove={true} />
+              <MoveToAssetButton closeIframeAfterMove={true} />
             </div>
             <div style={{ margin: "10px 0px" }}>
               <ClearMyAssetButton

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import backArrow from "../../../assets/icons/backArrow.svg";
 import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal.js";
 import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton.js";
-import ClearAllLockersButton from "../../components/ClearAllLockers/ClearAllLockersButton.js";
-import ClearAllLockersModal from "../../components/ClearAllLockers/ClearAllLockersModal.js";
+import ClearAllLockersButton from "../../components/ClearAllAssets/ClearAllAssetsButton.js";
+import ClearAllLockersModal from "../../components/ClearAllAssets/ClearAllAssetsModal.js";
 import "./AdminView.scss";
 
 function AdminView({ setShowSettings }) {

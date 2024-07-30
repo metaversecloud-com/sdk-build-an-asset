@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
 import { getWorld } from "../../../redux/actions/locker";
-import EditLocker from "../../components/EditLocker/EditLocker";
+import EditAsset from "../../components/EditAsset/EditAsset";
 import AdminView from "../Admin/AdminView";
 import Gear from "../Admin/Gear";
-import "./ClaimedLocker.scss";
+import "./ClaimedAsset.scss";
 import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton";
 import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal";
-import MoveToLockerButton from "../../components/MoveToLockerButton/MoveToLockerButton";
+import MoveToAssetButton from "../../components/MoveToAssetButton/MoveToAssetButton";
 
-function ClaimedLocker() {
+function ClaimedAsset() {
   const dispatch = useDispatch();
 
   const queryParameters = new URLSearchParams(window.location.search);
@@ -50,7 +50,7 @@ function ClaimedLocker() {
     fetchInitialState();
   }, [dispatch]);
 
-  const handleEditLocker = async () => {
+  const handleEditAsset = async () => {
     setShowCustomizeScreen(true);
   };
 
@@ -72,7 +72,7 @@ function ClaimedLocker() {
 
   // Show customize screen if Edit button is clicked, or if this screen was reached from Claim Locker button
   if (showCustomizeScreen || lockerParams?.edit == "true") {
-    return <EditLocker lockerParams={lockerParams} />;
+    return <EditAsset lockerParams={lockerParams} />;
   }
 
   return (
@@ -106,14 +106,14 @@ function ClaimedLocker() {
             <div className="footer-fixed" style={{ backgroundColor: "white" }}>
               <div style={{ width: "320px" }}>
                 <button
-                  onClick={() => handleEditLocker()}
+                  onClick={() => handleEditAsset()}
                   style={{ marginBottom: "10px" }}
                 >
                   Edit Locker
                 </button>
               </div>
               <div style={{ marginBottom: "10px" }}>
-                <MoveToLockerButton shouldCloseIframe={false} />
+                <MoveToAssetButton shouldCloseIframe={false} />
               </div>
               <ClearMyAssetButton
                 handleToggleShowClearLockerModal={
@@ -130,4 +130,4 @@ function ClaimedLocker() {
   );
 }
 
-export default ClaimedLocker;
+export default ClaimedAsset;
