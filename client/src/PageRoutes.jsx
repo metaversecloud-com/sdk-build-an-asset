@@ -4,11 +4,11 @@ import { history } from "./redux/store";
 
 import { Route, Routes } from "react-router-dom";
 
-import LockerHome from "./locker-app/pages/Home/Home.js";
+import LockerHome from "./app/pages/Home/Home.js";
 import Home from "./snowman-app/pages/Home";
 import SnowmanHome from "./snowman-app/pages/Home";
 import Spawned from "./snowman-app/pages/Spawned/Spawned";
-import ClaimedAsset from "./locker-app/pages/ClaimedAsset/ClaimedAsset";
+import ClaimedAsset from "./app/pages/ClaimedAsset/ClaimedAsset";
 
 const PageRoutes = () => {
   return (

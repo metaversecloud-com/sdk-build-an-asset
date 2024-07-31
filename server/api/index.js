@@ -10,10 +10,10 @@ export * from "./snowman-app/asset/pickupAllAssets.js";
 export * from "./snowman-app/asset/moveToAsset.js";
 
 // Locker
-export * from "./locker-app/asset/editLocker.js";
-export * from "./locker-app/asset/clearLocker.js";
-export * from "./locker-app/asset/clearAllLockers.js";
-export * from "./locker-app/asset/moveToLocker.js";
-export * from "./locker-app/asset/getDroppedAsset.js";
-export * from "./locker-app/asset/claimLocker.js";
-export * from "./locker-app/world/getWorld.js";
+export * from "./app/asset/editLocker.js";
+export * from "./app/asset/clearLocker.js";
+export * from "./app/asset/clearAllLockers.js";
+export * from "./app/asset/moveToLocker.js";
+export * from "./app/asset/getDroppedAsset.js";
+export * from "./app/asset/claimLocker.js";
+export * from "./app/world/getWorld.js";

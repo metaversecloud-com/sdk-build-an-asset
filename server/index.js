@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(requestID());
 
-const lockerAssetsPath = path.join(__dirname, "api/locker-app/locker-assets");
+const lockerAssetsPath = path.join(__dirname, "api/app/locker-assets");
 app.use("/locker-assets", express.static(lockerAssetsPath));
 
 app.use("/backend", router);
@@ -41,7 +41,7 @@ app.get("/api/system/health", (req, res) => {
     COMMIT_HASH: process.env.COMMIT_HASH ? process.env.COMMIT_HASH : "NOT SET",
     SHOWCASE_WORLDS_URLS: [
       "https://topia.io/snowman-prod",
-      "https://topia.io/locker-app-prod",
+      "https://topia.io/app-prod",
     ],
     INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN,
     INSTANCE_PROTOCOL: process.env.INSTANCE_PROTOCOL,
