@@ -1,0 +1,14 @@
+.spawned-wrapper {
+  display: block;
+  height: 100vh;
+  text-align: center;
+  max-width: 352px;
+  margin: 0 auto;
+  padding-left: 16px;
+  padding-right: 16px;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
