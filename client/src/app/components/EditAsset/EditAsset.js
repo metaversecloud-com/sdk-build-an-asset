@@ -1,8 +1,10 @@
+// File: EditAsset.js
+
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
-import { editLocker } from "../../../redux/actions/locker.js";
+import { editThemeAsset } from "../../../redux/actions/asset.js";
 import { Collapse, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,277 +16,48 @@ import {
 import Gear from "../../pages/Admin/Gear.js";
 import AdminView from "../../pages/Admin/AdminView.js";
 import ItemVariationSelectorModal from "../ItemVariationSelector/ItemVariationSelectorModal.js";
+import { getThemeData, getThemeName } from "../../../redux/themeData2.js";
 
 import "./EditAsset.scss";
-
-const categories = {
-  "Locker Base": [
-    {
-      name: "lockerBase_0.png",
-      hasVariation: true,
-      isRequired: true,
-      variations: [
-        "lockerBase_0.png",
-        "lockerBase_1.png",
-        "lockerBase_2.png",
-        "lockerBase_3.png",
-        "lockerBase_4.png",
-        "lockerBase_5.png",
-      ],
-    },
-    {
-      name: "wallpaper_0.png",
-      hasVariation: true,
-      variations: [
-        "wallpaper_0.png",
-        "wallpaper_1.png",
-        "wallpaper_2.png",
-        "wallpaper_3.png",
-        "wallpaper_4.png",
-        "wallpaper_5.png",
-        "wallpaper_6.png",
-      ],
-    },
-    {
-      name: "border_0.png",
-      hasVariation: true,
-      variations: [
-        "border_0.png",
-        "border_1.png",
-        "border_2.png",
-        "border_3.png",
-        "border_4.png",
-      ],
-    },
-  ],
-  "Top Shelf": [
-    {
-      name: "topShelf_0.png",
-      hasVariation: true,
-      variations: [
-        "topShelf_0.png",
-        "topShelf_1.png",
-        "topShelf_2.png",
-        "topShelf_3.png",
-      ],
-    },
-    {
-      name: "topShelf_4.png",
-      hasVariation: true,
-      variations: ["topShelf_4.png", "topShelf_5.png"],
-    },
-    {
-      name: "topShelf_6.png",
-      hasVariation: true,
-      variations: ["topShelf_6.png", "topShelf_7.png"],
-    },
-    {
-      name: "topShelf_8.png",
-      hasVariation: true,
-      variations: ["topShelf_8.png", "topShelf_9.png"],
-    },
-    {
-      name: "topShelf_10.png",
-      hasVariation: true,
-      variations: ["topShelf_10.png", "topShelf_11.png"],
-    },
-    {
-      name: "topShelf_12.png",
-      hasVariation: true,
-      variations: ["topShelf_12.png", "topShelf_13.png", "topShelf_14.png"],
-    },
-    { name: "topShelf_15.png", hasVariation: false },
-    { name: "topShelf_16.png", hasVariation: false },
-    { name: "topShelf_17.png", hasVariation: false },
-    { name: "topShelf_18.png", hasVariation: false },
-    { name: "topShelf_19.png", hasVariation: false },
-  ],
-  "Bottom Shelf": [
-    {
-      name: "bottomShelf_0.png",
-      hasVariation: true,
-      variations: [
-        "bottomShelf_0.png",
-        "bottomShelf_2.png",
-        "bottomShelf_3.png",
-        "bottomShelf_4.png",
-        "bottomShelf_5.png",
-        "bottomShelf_6.png",
-        "bottomShelf_7.png",
-        "bottomShelf_8.png",
-        "bottomShelf_9.png",
-        "bottomShelf_10.png",
-        "bottomShelf_11.png",
-        "bottomShelf_12.png",
-        "bottomShelf_13.png",
-        "bottomShelf_14.png",
-      ],
-    },
-
-    {
-      name: "bottomShelf_18.png",
-      hasVariation: true,
-      variations: [
-        "bottomShelf_18.png",
-        "bottomShelf_19.png",
-        "bottomShelf_20.png",
-        "bottomShelf_21.png",
-        "bottomShelf_22.png",
-        "bottomShelf_23.png",
-        "bottomShelf_24.png",
-        "bottomShelf_25.png",
-      ],
-    },
-    {
-      name: "bottomShelf_26.png",
-      hasVariation: true,
-      variations: [
-        "bottomShelf_26.png",
-        "bottomShelf_27.png",
-        "bottomShelf_28.png",
-        "bottomShelf_29.png",
-        "bottomShelf_30.png",
-        "bottomShelf_31.png",
-        "bottomShelf_32.png",
-        "bottomShelf_33.png",
-        "bottomShelf_34.png",
-        "bottomShelf_35.png",
-      ],
-    },
-    {
-      name: "bottomShelf_36.png",
-      hasVariation: true,
-      variations: [
-        "bottomShelf_36.png",
-        "bottomShelf_37.png",
-        "bottomShelf_38.png",
-      ],
-    },
-    {
-      name: "bottomShelf_39.png",
-      hasVariation: true,
-      variations: [
-        "bottomShelf_39.png",
-        "bottomShelf_40.png",
-        "bottomShelf_41.png",
-        "bottomShelf_42.png",
-        "bottomShelf_43.png",
-        "bottomShelf_44.png",
-      ],
-    },
-  ],
-  Door: [
-    {
-      name: "door_0.png",
-      hasVariation: true,
-      variations: ["door_0.png", "door_1.png", "door_2.png", "door_3.png"],
-    },
-    {
-      name: "door_4.png",
-      hasVariation: true,
-      variations: ["door_4.png", "door_5.png"],
-    },
-    {
-      name: "door_6.png",
-      hasVariation: true,
-      variations: [
-        "door_6.png",
-        "door_7.png",
-        "door_8.png",
-        "door_9.png",
-        "door_10.png",
-        "door_11.png",
-      ],
-    },
-    { name: "door_12.png", hasVariation: false },
-    { name: "door_13.png", hasVariation: false },
-    { name: "door_14.png", hasVariation: false },
-    { name: "door_15.png", hasVariation: false },
-    { name: "door_16.png", hasVariation: false },
-  ],
-};
-
-const selectionLimits = {
-  "Locker Base": 1,
-  "Top Shelf": Infinity,
-  "Bottom Shelf": Infinity,
-  Door: Infinity,
-};
 
 function EditAsset() {
   const dispatch = useDispatch();
   const BASE_URL = window.location.origin;
 
   const visitor = useSelector((state) => state?.session?.visitor);
+  const themeName = getThemeName();
+  const themeData = getThemeData(themeName);
 
-  const [selected, setSelected] = useState({
-    "Locker Base": [`${BASE_URL}/locker-assets/lockerBase_0.png`],
-    "Top Shelf": [],
-    "Bottom Shelf": [],
-    Door: [],
-  });
-
+  const [selected, setSelected] = useState(themeData.defaultSelected);
   const [loading, setLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
-  const [isButtonSaveLockerDisabled, setIsButtonSaveLockerDisabled] =
+  const [isButtonSaveAssetDisabled, setIsButtonSaveAssetDisabled] =
     useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentItemVariations, setCurrentItemVariations] = useState([]);
   const [currentItem, setCurrentItem] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
-
   const [preview, setPreview] = useState(
-    `${BASE_URL}/locker-assets/defaultClaimedAsset.png`
+    `${BASE_URL}/${themeName}-assets/defaultClaimed${
+      themeName.charAt(0).toUpperCase() + themeName.slice(1)
+    }.png`
   );
+
   const [imageInfo, setImageInfo] = useState({});
-  const isLockerAlreadyTaken = useSelector(
-    (state) => state?.session?.isLockerAlreadyTaken
+  const isAssetAlreadyTaken = useSelector(
+    (state) => state?.session?.isAssetAlreadyTaken
   );
-  const [openCategories, setOpenCategories] = useState({
-    "Locker Base": true,
-    Wallpaper: false,
-    Border: false,
-    "Top Shelf": false,
-    "Bottom Shelf": false,
-    Door: false,
-  });
+  const [openCategories, setOpenCategories] = useState(
+    themeData.defaultOpenCategories
+  );
 
   const toggleCategory = (category) => {
-    setOpenCategories((prev) => {
-      const newCategories = {
-        Wallpaper: false,
-        Border: false,
-        "Top Shelf": false,
-        "Bottom Shelf": false,
-        Door: false,
-      };
-      newCategories[category] = !prev[category];
-      return newCategories;
-    });
-  };
-
-  const handleOpenModalWithVariations = (item, type) => {
-    const variations = item.variations || [];
-    const currentSelection = selected[type].find((selectedImage) => {
-      if (!selectedImage) return false;
-
-      const selectedBaseName = selectedImage
-        .replace(`${BASE_URL}/locker-assets/`, "")
-        .split(".")[0];
-      return item.variations.some((variation) => {
-        const variationBaseName = variation.split(".")[0];
-        return selectedBaseName === variationBaseName;
-      });
-    });
-    const currentSelectionVariation = currentSelection
-      ? currentSelection.replace(`${BASE_URL}/locker-assets/`, "")
-      : null;
-    setCurrentItemVariations(variations);
-    setCurrentItem({ ...item, type });
-    setIsModalOpen(true);
-    setSelectedVariation(currentSelectionVariation);
+    setOpenCategories((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
   };
 
   const isCategorySelected = (category) => {
@@ -296,12 +69,12 @@ function EditAsset() {
       if (!selectedImage) return false;
 
       const selectedBaseName = selectedImage
-        .replace(`${BASE_URL}/locker-assets/`, "")
+        .replace(`${BASE_URL}/${themeName}-assets/`, "")
         .split(".")[0];
       const itemBaseName = imageName.split(".")[0];
       return (
         selectedBaseName === itemBaseName ||
-        categories[type].some((item) => {
+        themeData.categories[type].some((item) => {
           if (item.name.split(".")[0] === itemBaseName && item.hasVariation) {
             return item.variations.some((variation) => {
               const variationBaseName = variation.split(".")[0];
@@ -317,15 +90,19 @@ function EditAsset() {
   useEffect(() => {
     const fetchInitialState = async () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const initialSelection = Object.keys(categories).reduce(
+      const initialSelection = Object.keys(themeData.categories).reduce(
         (acc, category) => {
           const categoryKey1 = `${category.replace(/\s/g, "")}1`;
           const categoryKey2 = `${category.replace(/\s/g, "")}2`;
           acc[category] = [
             urlParams.get(categoryKey1) &&
-              `${BASE_URL}/locker-assets/${urlParams.get(categoryKey1)}.png`,
+              `${BASE_URL}/${themeName}-assets/${urlParams.get(
+                categoryKey1
+              )}.png`,
             urlParams.get(categoryKey2) &&
-              `${BASE_URL}/locker-assets/${urlParams.get(categoryKey2)}.png`,
+              `${BASE_URL}/${themeName}-assets/${urlParams.get(
+                categoryKey2
+              )}.png`,
           ].filter(Boolean);
           return acc;
         },
@@ -344,7 +121,7 @@ function EditAsset() {
 
       mergeImages(imagesToMerge)
         .then(setPreview)
-        .catch((error) => console.error("Erro ao mesclar imagens:", error));
+        .catch((error) => console.error("Error merging images:", error));
     };
 
     try {
@@ -355,25 +132,25 @@ function EditAsset() {
     } finally {
       setLoading(false);
     }
-  }, [dispatch]);
+  }, [dispatch, themeName]);
 
-  const updateLocker = (type, image, item) => {
+  const updateAsset = (type, image, item) => {
     let updatedSelection = { ...selected };
 
     if (image === null) {
-      // Se a imagem for null, remova o item selecionado, exceto para o item marcado como isRequired
       if (item.isRequired) {
-        return; // Não permite desselecionar o item marcado como isRequired
+        return;
       }
       updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
         if (item && item.hasVariation) {
           return !item.variations.some(
             (variation) =>
-              `${BASE_URL}/locker-assets/${variation}` === selectedItem
+              `${BASE_URL}/${themeName}-assets/${variation}` === selectedItem
           );
         }
         return (
-          item && selectedItem !== `${BASE_URL}/locker-assets/${item.name}`
+          item &&
+          selectedItem !== `${BASE_URL}/${themeName}-assets/${item.name}`
         );
       });
     } else {
@@ -381,7 +158,6 @@ function EditAsset() {
         const isSelectedVariation = updatedSelection[type].includes(image);
 
         if (isSelectedVariation) {
-          // Não permite desselecionar o item marcado como isRequired
           if (item.isRequired) {
             return;
           }
@@ -393,7 +169,8 @@ function EditAsset() {
             (selectedItem) => {
               return !item.variations.some(
                 (variation) =>
-                  `${BASE_URL}/locker-assets/${variation}` === selectedItem
+                  `${BASE_URL}/${themeName}-assets/${variation}` ===
+                  selectedItem
               );
             }
           );
@@ -401,11 +178,10 @@ function EditAsset() {
         }
       } else {
         const isSelected = selected[type].includes(image);
-        if (selectionLimits[type] === 1) {
+        if (themeData.selectionLimits[type] === 1) {
           updatedSelection[type] = isSelected ? [] : [image];
         } else {
           if (isSelected) {
-            // Não permite desselecionar o item marcado como isRequired
             if (item.isRequired) {
               return;
             }
@@ -419,28 +195,27 @@ function EditAsset() {
       }
     }
 
-    // Verifica se há um item marcado como isRequired que não está selecionado
-    const requiredItem = categories[type].find((item) => item.isRequired);
+    const requiredItem = themeData.categories[type].find(
+      (item) => item.isRequired
+    );
     if (
       requiredItem &&
       !updatedSelection[type].some((selectedItem) =>
         requiredItem.variations.includes(
-          selectedItem.replace(`${BASE_URL}/locker-assets/`, "")
+          selectedItem.replace(`${BASE_URL}/${themeName}-assets/`, "")
         )
       )
     ) {
-      // Se não houver um item isRequired selecionado, seleciona automaticamente o primeiro item isRequired
       updatedSelection[type].unshift(
-        `${BASE_URL}/locker-assets/${requiredItem.variations[0]}`
+        `${BASE_URL}/${themeName}-assets/${requiredItem.variations[0]}`
       );
     }
 
-    // Garante que o item isRequired do "Locker Base" fique sempre no início do array
-    if (type === "Locker Base") {
+    if (type === Object.keys(themeData.categories)[0]) {
       const requiredItemIndex = updatedSelection[type].findIndex(
         (selectedItem) =>
           requiredItem.variations.includes(
-            selectedItem.replace(`${BASE_URL}/locker-assets/`, "")
+            selectedItem.replace(`${BASE_URL}/${themeName}-assets/`, "")
           )
       );
       if (requiredItemIndex !== -1) {
@@ -484,18 +259,40 @@ function EditAsset() {
     mergeImages(imagesToMerge).then(setPreview);
   };
 
+  const handleOpenModalWithVariations = (item, type) => {
+    const variations = item.variations || [];
+    const currentSelection = selected[type].find((selectedImage) => {
+      if (!selectedImage) return false;
+
+      const selectedBaseName = selectedImage
+        .replace(`${BASE_URL}/${themeName}-assets/`, "")
+        .split(".")[0];
+      return item.variations.some((variation) => {
+        const variationBaseName = variation.split(".")[0];
+        return selectedBaseName === variationBaseName;
+      });
+    });
+    const currentSelectionVariation = currentSelection
+      ? currentSelection.replace(`${BASE_URL}/${themeName}-assets/`, "")
+      : null;
+    setCurrentItemVariations(variations);
+    setCurrentItem({ ...item, type });
+    setIsModalOpen(true);
+    setSelectedVariation(currentSelectionVariation);
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
   const handleSaveToBackend = async () => {
     try {
-      setIsButtonSaveLockerDisabled(true);
-      await dispatch(editLocker(imageInfo));
+      setIsButtonSaveAssetDisabled(true);
+      await dispatch(editThemeAsset(imageInfo, themeName));
     } catch (error) {
-      console.error("Error editing locker:", error);
+      console.error(`Error editing ${themeName}:`, error);
     } finally {
-      setIsButtonSaveLockerDisabled(false);
+      setIsButtonSaveAssetDisabled(false);
     }
   };
 
@@ -511,12 +308,12 @@ function EditAsset() {
     return <AdminView setShowSettings={setShowSettings} />;
   }
 
-  if (isLockerAlreadyTaken) {
+  if (isAssetAlreadyTaken) {
     return (
       <>
         <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
-          <h1>This locker is already taken</h1>
-          <p>Please select another locker!</p>
+          <h1>This {themeName} is already taken</h1>
+          <p>Please select another {themeName}!</p>
         </div>
       </>
     );
@@ -530,10 +327,10 @@ function EditAsset() {
           variations={currentItemVariations}
           onSelect={(selectedVariation) => {
             if (selectedVariation) {
-              const imageUrl = `${BASE_URL}/locker-assets/${selectedVariation}`;
-              updateLocker(currentItem.type, imageUrl, currentItem);
+              const imageUrl = `${BASE_URL}/${themeName}-assets/${selectedVariation}`;
+              updateAsset(currentItem.type, imageUrl, currentItem);
             } else {
-              updateLocker(currentItem.type, null, currentItem);
+              updateAsset(currentItem.type, null, currentItem);
             }
           }}
           onClose={handleCloseModal}
@@ -545,20 +342,22 @@ function EditAsset() {
       <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
         {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
         <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-          Build your Locker!
+          Build your {themeData.name}!
         </h2>
         <img
           src={
-            preview == "data:,"
-              ? `${BASE_URL}/locker-assets/defaultClaimedAsset.png`
+            preview === "data:,"
+              ? `${BASE_URL}/${themeName}-assets/defaultClaimed${
+                  themeName.charAt(0).toUpperCase() + themeName.slice(1)
+                }.png`
               : preview
           }
-          alt="Locker Preview"
+          alt={`${themeData.name} Preview`}
           style={{ marginTop: "30px", marginBottom: "30px" }}
           className="img-preview"
         />
 
-        {Object.keys(categories).map((type) => (
+        {Object.keys(themeData.categories).map((type) => (
           <div key={type}>
             <Button
               color=""
@@ -585,7 +384,7 @@ function EditAsset() {
               style={{ textAlign: "center" }}
             >
               <div style={{ marginBottom: "10px", textAlign: "left" }}>
-                {categories[type].map((item) => (
+                {themeData.categories[type].map((item) => (
                   <div
                     key={item.name}
                     style={{ position: "relative", display: "inline-block" }}
@@ -617,7 +416,7 @@ function EditAsset() {
                       </div>
                     )}
                     <img
-                      src={`${BASE_URL}/locker-assets/${item.name}`}
+                      src={`${BASE_URL}/${themeName}-assets/${item.name}`}
                       alt={item.name}
                       className="img-accessory"
                       style={{
@@ -637,9 +436,9 @@ function EditAsset() {
                           handleOpenModalWithVariations(item, type);
                           return;
                         } else {
-                          updateLocker(
+                          updateAsset(
                             type,
-                            `${BASE_URL}/locker-assets/${item.name}`,
+                            `${BASE_URL}/${themeName}-assets/${item.name}`,
                             item
                           );
                         }
@@ -663,8 +462,7 @@ function EditAsset() {
             <button
               onClick={handleSaveToBackend}
               disabled={
-                !selected["Locker Base"].length > 0 ||
-                isButtonSaveLockerDisabled
+                !selected["Locker Base"].length > 0 || isButtonSaveAssetDisabled
               }
             >
               Save

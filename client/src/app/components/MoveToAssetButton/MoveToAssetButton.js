@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { moveToAsset } from "../../../redux/actions/locker";
+import { moveToAsset } from "../../../redux/actions/asset";
 
 function MoveToAssetButton({ closeIframeAfterMove }) {
   const dispatch = useDispatch();

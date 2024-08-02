@@ -55,4 +55,13 @@ router.put("/locker/clear-all", validationMiddleware, clearAllLockers);
 router.get("/locker/world", validationMiddleware, getWorld);
 router.get("/locker/dropped-asset", validationMiddleware, getDroppedAsset);
 
+// Asset
+router.post("/asset/claim", validationMiddleware, claimLocker);
+router.post("/asset/move-to-asset", validationMiddleware, moveToLocker);
+router.put("/asset/asset/spawn", validationMiddleware, editLocker);
+router.put("/asset/clear", validationMiddleware, clearLocker);
+router.put("/asset/clear-all", validationMiddleware, clearAllLockers);
+router.get("/asset/world", validationMiddleware, getWorld);
+router.get("/asset/dropped-asset", validationMiddleware, getDroppedAsset);
+
 export default router;

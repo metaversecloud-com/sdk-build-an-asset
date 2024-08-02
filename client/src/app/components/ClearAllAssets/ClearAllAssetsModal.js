@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { clearAllLockers } from "../../../redux/actions/locker.js";
+import { clearAllThemeAssets } from "../../../redux/actions/asset.js";
 
 function ClearAllCustomizedAssetsModal({
   handleToggleShowClearAllLockersModal,
@@ -11,7 +11,7 @@ function ClearAllCustomizedAssetsModal({
   const handleClearAllLockers = async () => {
     try {
       setAreButtonsDisabled(true);
-      await dispatch(clearAllLockers());
+      await dispatch(clearAllThemeAssets());
       handleToggleShowClearAllLockersModal();
     } catch (error) {
       console.error(error);

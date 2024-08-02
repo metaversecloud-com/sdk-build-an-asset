@@ -63,6 +63,21 @@ export const editLocker = (imageInfo) => async (dispatch) => {
   }
 };
 
+export const editAsset = (imageInfo) => async (dispatch) => {
+  try {
+    const queryParams = getQueryParams();
+    const url = `/backend/locker/asset/spawn?${queryParams}`;
+    const response = await axios.put(url, { imageInfo });
+
+    if (response.status === 200) {
+      dispatch(setSpawnSuccess(response?.data));
+    }
+  } catch (error) {
+    dispatch(setError("There was an error while spawning the asset"));
+    return false;
+  }
+};
+
 export const claimLocker = (visitor) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();

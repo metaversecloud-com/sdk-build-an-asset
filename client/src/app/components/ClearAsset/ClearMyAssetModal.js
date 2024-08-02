@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { clearLocker } from "../../../redux/actions/locker.js";
+import { clearThemeAsset } from "../../../redux/actions/asset.js";
 
 function ClearMyAssetModal({
   handleToggleShowClearLockerModal,
@@ -12,7 +12,7 @@ function ClearMyAssetModal({
   const handleClearLocker = async () => {
     try {
       setAreButtonsDisabled(true);
-      await dispatch(clearLocker(isClearAssetFromUnclaimedLocker));
+      await dispatch(clearThemeAsset(isClearAssetFromUnclaimedLocker));
     } catch (error) {
       console.error(error);
     } finally {

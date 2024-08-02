@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
-import { getWorld, claimLocker } from "../../../redux/actions/locker";
+import { getWorld, claimThemeAsset } from "../../../redux/actions/asset";
 import Gear from "../Admin/Gear";
 import AdminView from "../Admin/AdminView";
-import SplashImage from "../../../assets/locker/splashImage.png";
+import { getThemeData, getThemeName } from "../../../redux/themeData2";
 import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton";
 import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal";
 import MoveToAssetButton from "../../components/MoveToAssetButton/MoveToAssetButton";
@@ -13,12 +13,15 @@ import "./Home.scss";
 function Home() {
   const dispatch = useDispatch();
 
-  const queryParameters = new URLSearchParams(window.location.search);
-  const profileId = queryParameters.get("profileId");
+  const themeName = getThemeName();
+  const themeData = getThemeData(themeName);
 
   const visitor = useSelector((state) => state?.session?.visitor);
   const world = useSelector((state) => state?.session?.world);
 
+  const profileId = new URLSearchParams(window.location.search).get(
+    "profileId"
+  );
   const userHasLocker = world?.dataObject?.lockers?.[profileId]?.droppedAssetId;
 
   const [loading, setLoading] = useState(false);
@@ -39,7 +42,7 @@ function Home() {
   const handleClaimLocker = async () => {
     try {
       setAreButtonsDisabled(true);
-      await dispatch(claimLocker(visitor));
+      await dispatch(claimThemeAsset(visitor));
     } catch (error) {
       console.error(error);
     } finally {
@@ -63,7 +66,6 @@ function Home() {
     return <AdminView setShowSettings={setShowSettings} />;
   }
 
-  // If user already have a locker
   if (userHasLocker) {
     return (
       <>
@@ -72,13 +74,11 @@ function Home() {
             handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
             isClearAssetFromUnclaimedLocker={true}
           />
-        ) : (
-          ""
-        )}
+        ) : null}
         <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
-          {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
-          <h2 style={{}}>You already have a locker!</h2>
-          <p>To choose this one instead, click "Empty Locker" button below.</p>
+          {visitor?.isAdmin ? Gear({ setShowSettings }) : null}
+          <h2>{themeData.texts.alreadyHave}</h2>
+          <p>{themeData.texts.chooseNew}</p>
 
           <div className="footer-fixed" style={{ backgroundColor: "white" }}>
             <div style={{ margin: "10px 0px" }}>
@@ -99,29 +99,25 @@ function Home() {
 
   return (
     <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
-      {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
+      {visitor?.isAdmin ? Gear({ setShowSettings }) : null}
       <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-        Decorate your Locker
+        {themeData.texts.header}
       </h2>
       <img
-        src={SplashImage}
-        alt="Locker Preview"
+        src={themeData.splashImage}
+        alt={`${themeData.name} Preview`}
         style={{ marginTop: "30px", marginBottom: "30px" }}
         className="img-preview"
       />
 
-      <p style={{ textAlign: "left" }}>
-        Click 'Claim Locker' to claim and decorate your locker. Add items to
-        show off your style and make it your own. You can come back to update it
-        anytime! 🔒✨
-      </p>
+      <p style={{ textAlign: "left" }}>{themeData.texts.description}</p>
 
       <div className="footer-fixed" style={{ backgroundColor: "white" }}>
         <button
           disabled={areButtonsDisabled}
           onClick={() => handleClaimLocker()}
         >
-          Claim Locker
+          {themeData.texts.button}
         </button>
       </div>
     </div>

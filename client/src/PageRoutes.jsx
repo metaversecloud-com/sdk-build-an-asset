@@ -4,7 +4,7 @@ import { history } from "./redux/store";
 
 import { Route, Routes } from "react-router-dom";
 
-import LockerHome from "./app/pages/Home/Home.js";
+import AssetHome from "./app/pages/Home/Home.js";
 import Home from "./snowman-app/pages/Home";
 import SnowmanHome from "./snowman-app/pages/Home";
 import Spawned from "./snowman-app/pages/Spawned/Spawned";
@@ -20,8 +20,10 @@ const PageRoutes = () => {
           element={<Spawned />}
         />
         <Route path="/locker/claimed" element={<ClaimedAsset />} />
+        <Route path="/desk/claimed" element={<ClaimedAsset />} />
         <Route path="/snowman" element={<SnowmanHome />} />
-        <Route path="/locker" element={<LockerHome />} />
+        <Route path="/locker" element={<AssetHome />} />
+        <Route path="/desk" element={<AssetHome />} />
       </Routes>
     </Router>
   );

@@ -28,7 +28,7 @@ app.use(requestID());
 const lockerAssetsPath = path.join(__dirname, "api/app/locker-assets");
 app.use("/locker-assets", express.static(lockerAssetsPath));
 
-app.use("/backend", router);
+app.use("/api", router);
 
 app.get("/", (req, res) => {
   return res.send(`Server is running... ${appVersion}`);
