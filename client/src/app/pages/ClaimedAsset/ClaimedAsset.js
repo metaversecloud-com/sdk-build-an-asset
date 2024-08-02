@@ -18,9 +18,6 @@ function ClaimedAsset() {
   const dispatch = useDispatch();
 
   const themeName = getThemeName();
-  // const defaultUnclaimedAsset = `/assets/${themeName}/unclaimed${capitalize(
-  //   themeName
-  // )}.png`;
   const defaultUnclaimedAsset = `/assets/${themeName}/defaultClaimed${capitalize(
     themeName
   )}.png`;

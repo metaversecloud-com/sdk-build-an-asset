@@ -234,7 +234,7 @@ export const themes = {
       chooseNew: "To choose this one instead, click 'Empty Desk' button below.",
     },
     categories: {
-      "Locker Base": [
+      "Desk Base": [
         {
           name: "lockerBase_0.png",
           hasVariation: true,
@@ -273,7 +273,7 @@ export const themes = {
           ],
         },
       ],
-      "Top Shelf": [
+      Accessories: [
         {
           name: "topShelf_0.png",
           hasVariation: true,
@@ -317,16 +317,16 @@ export const themes = {
       ],
     },
     selectionLimits: {
-      "Locker Base": 1,
-      "Top Shelf": Infinity,
+      "Desk Base": 1,
+      Accessories: Infinity,
     },
     defaultOpenCategories: {
-      "Locker Base": true,
-      "Top Shelf": false,
+      "Desk Base": true,
+      Accessories: false,
     },
     defaultSelected: {
-      "Locker Base": [],
-      "Top Shelf": [],
+      "Desk Base": [],
+      Accessories: [],
     },
   },
 };

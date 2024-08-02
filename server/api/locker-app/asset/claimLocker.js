@@ -15,6 +15,7 @@ export const claimLocker = async (req, res) => {
       visitorId,
       profileId,
       username,
+      themeName,
     } = req.query;
 
     const credentials = {

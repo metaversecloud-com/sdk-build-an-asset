@@ -10,7 +10,7 @@ function ClearMyAssetButton({ handleToggleShowClearAssetModal, fromAdmin }) {
         onClick={() => handleToggleShowClearAssetModal()}
       >
         {fromAdmin ? (
-          <span>Empty this Asset</span>
+          <span>Empty this {themeName}</span>
         ) : (
           <span>Empty {themeName}</span>
         )}

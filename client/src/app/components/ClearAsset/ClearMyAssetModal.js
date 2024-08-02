@@ -28,8 +28,8 @@ function ClearMyAssetModal({
       <div className="topia-modal">
         <h4>Empty {themeName}</h4>
         <p>
-          If you clear your asset, it will be emptied and unclaimed. You can
-          then choose a new asset.
+          If you clear your {themeName}, it will be emptied and unclaimed. You
+          can then choose a new {themeName}.
         </p>
         <div className="actions">
           <button

@@ -19,6 +19,7 @@ import ItemVariationSelectorModal from "../ItemVariationSelector/ItemVariationSe
 import { getThemeData, getThemeName } from "../../../redux/themeData2.js";
 
 import "./EditAsset.scss";
+import { capitalize } from "../../../utils/utils.js";
 
 function EditAsset() {
   const dispatch = useDispatch();
@@ -462,7 +463,8 @@ function EditAsset() {
             <button
               onClick={handleSaveToBackend}
               disabled={
-                !selected["Locker Base"].length > 0 || isButtonSaveAssetDisabled
+                !selected[`${capitalize(themeName)} Base`].length > 0 ||
+                isButtonSaveAssetDisabled
               }
             >
               Save
