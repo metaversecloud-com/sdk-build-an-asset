@@ -1,46 +1,48 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { clearThemeAsset } from "../../../redux/actions/asset.js";
+import { getThemeName } from "../../../redux/themeData2.js";
 
 function ClearMyAssetModal({
-  handleToggleShowClearLockerModal,
-  isClearAssetFromUnclaimedLocker,
+  handleToggleShowClearAssetModal,
+  isClearAssetFromUnclaimedAsset,
 }) {
   const dispatch = useDispatch();
+  const themeName = getThemeName();
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
 
-  const handleClearLocker = async () => {
+  const handleClearAsset = async () => {
     try {
       setAreButtonsDisabled(true);
-      await dispatch(clearThemeAsset(isClearAssetFromUnclaimedLocker));
+      await dispatch(clearThemeAsset(isClearAssetFromUnclaimedAsset));
     } catch (error) {
       console.error(error);
     } finally {
       setAreButtonsDisabled(false);
-      handleToggleShowClearLockerModal();
+      handleToggleShowClearAssetModal();
     }
   };
 
   return (
     <div className="topia-modal-container visible">
       <div className="topia-modal">
-        <h4>Empty Locker</h4>
+        <h4>Empty {themeName}</h4>
         <p>
-          If you clear your locker, it will be emptied and unclaimed. You can
-          then choose a new locker.
+          If you clear your asset, it will be emptied and unclaimed. You can
+          then choose a new asset.
         </p>
         <div className="actions">
           <button
             id="close"
             className="btn-outline"
-            onClick={() => handleToggleShowClearLockerModal()}
+            onClick={() => handleToggleShowClearAssetModal()}
             disabled={areButtonsDisabled}
           >
             No
           </button>
           <button
             className="btn-danger-outline"
-            onClick={() => handleClearLocker()}
+            onClick={() => handleClearAsset()}
             disabled={areButtonsDisabled}
           >
             Yes

@@ -453,7 +453,7 @@ function EditAsset() {
 
         {Object.keys(validationErrors).length > 0 && (
           <p style={{ color: "red" }}>
-            Please select an item from each category to build the locker.
+            Please select an item from each category to build the asset.
           </p>
         )}
 

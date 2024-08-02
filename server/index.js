@@ -26,7 +26,9 @@ app.use(cors());
 app.use(requestID());
 
 const lockerAssetsPath = path.join(__dirname, "api/app/locker-assets");
+const deskAssetsPath = path.join(__dirname, "api/app/desk-assets");
 app.use("/locker-assets", express.static(lockerAssetsPath));
+app.use("/desk-assets", express.static(deskAssetsPath));
 
 app.use("/api", router);
 

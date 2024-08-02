@@ -52,7 +52,7 @@ export const getVisitor = () => async (dispatch) => {
   }
 };
 
-export const editThemeAsset = (imageInfo, themeName) => async (dispatch) => {
+export const editThemeAsset = (imageInfo) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
     const url = `/api/asset/asset/spawn?${queryParams}`;
@@ -62,17 +62,15 @@ export const editThemeAsset = (imageInfo, themeName) => async (dispatch) => {
       dispatch(setSpawnSuccess(response?.data));
     }
   } catch (error) {
-    dispatch(
-      setError(`There was an error while spawning the ${themeName} asset`)
-    );
+    dispatch(setError(`There was an error while spawning the asset`));
     return false;
   }
 };
 
-export const editLocker = (imageInfo) => async (dispatch) => {
+export const editAsset = (imageInfo) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/api/locker/asset/spawn?${queryParams}`;
+    const url = `/api/asset/asset/spawn?${queryParams}`;
     const response = await axios.put(url, { imageInfo });
 
     if (response.status === 200) {
@@ -84,7 +82,7 @@ export const editLocker = (imageInfo) => async (dispatch) => {
   }
 };
 
-export const claimThemeAsset = (visitor, themeName) => async (dispatch) => {
+export const claimThemeAsset = (visitor) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
 
@@ -95,9 +93,12 @@ export const claimThemeAsset = (visitor, themeName) => async (dispatch) => {
       const { username } = visitor;
       const modifiedName = username.replace(/ /g, "%20");
 
+      const themeName = getThemeName();
+
       const redirectPath = `${themeName}/claimed?visitor-name=${modifiedName}`;
 
       const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
+      console.log();
       return dispatch(push(fullPath));
     }
   } catch (error) {
@@ -107,7 +108,7 @@ export const claimThemeAsset = (visitor, themeName) => async (dispatch) => {
 };
 
 export const clearThemeAsset =
-  (isClearAssetFromUnclaimedAsset, themeName) => async (dispatch) => {
+  (isClearAssetFromUnclaimedAsset) => async (dispatch) => {
     try {
       const queryParams = getQueryParams();
       const url = `/api/asset/clear?${queryParams}`;
@@ -120,14 +121,12 @@ export const clearThemeAsset =
         return dispatch(push(`/asset?${queryParams}`));
       }
     } catch (error) {
-      dispatch(
-        setError(`There was an error while clearing the ${themeName} asset`)
-      );
+      dispatch(setError(`There was an error while clearing the asset`));
       return false;
     }
   };
 
-export const clearAllThemeAssets = (themeName) => async (dispatch) => {
+export const clearAllThemeAssets = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
     const url = `/api/asset/clear-all?${queryParams}`;
@@ -138,9 +137,7 @@ export const clearAllThemeAssets = (themeName) => async (dispatch) => {
       return dispatch(push(`/asset?${queryParams}`));
     }
   } catch (error) {
-    dispatch(
-      setError(`There was an error while clearing all ${themeName} assets`)
-    );
+    dispatch(setError(`There was an error while clearing all assets`));
     return false;
   }
 };
@@ -164,7 +161,7 @@ export const spawnFromSpawnedAsset =
 export const moveToAsset = (closeIframeAfterMove) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/api/locker/move-to-asset?${queryParams}`;
+    const url = `/api/asset/move-to-asset?${queryParams}`;
 
     await axios.post(url, { closeIframeAfterMove });
   } catch (error) {
@@ -172,7 +169,7 @@ export const moveToAsset = (closeIframeAfterMove) => async (dispatch) => {
   }
 };
 
-export const getDroppedAsset = async (themeName) => {
+export const getDroppedAsset = async () => {
   try {
     const queryParams = getQueryParams();
     const url = `/api/asset/dropped-asset?${queryParams}`;
@@ -185,7 +182,7 @@ export const getDroppedAsset = async (themeName) => {
   }
 };
 
-export const getWorld = (themeName) => async (dispatch) => {
+export const getWorld = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
     const url = `/api/asset/world?${queryParams}`;

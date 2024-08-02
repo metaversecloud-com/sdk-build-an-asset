@@ -2,21 +2,20 @@ import React, { useState } from "react";
 import backArrow from "../../../assets/icons/backArrow.svg";
 import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal.js";
 import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton.js";
-import ClearAllLockersButton from "../../components/ClearAllAssets/ClearAllAssetsButton.js";
-import ClearAllLockersModal from "../../components/ClearAllAssets/ClearAllAssetsModal.js";
+import ClearAllAssetsButton from "../../components/ClearAllAssets/ClearAllAssetsButton.js";
+import ClearAllAssetsModal from "../../components/ClearAllAssets/ClearAllAssetsModal.js";
 import "./AdminView.scss";
 
 function AdminView({ setShowSettings }) {
-  const [showClearLockerModal, setShowClearLockerModal] = useState(false);
-  const [showClearAllLockersModal, setShowClearAllLockersModal] =
-    useState(false);
+  const [showClearAssetModal, setShowClearAssetModal] = useState(false);
+  const [showClearAllAssetsModal, setShowClearAllAssetsModal] = useState(false);
 
-  function handleToggleShowClearLockerModal() {
-    setShowClearLockerModal(!showClearLockerModal);
+  function handleToggleShowClearAssetModal() {
+    setShowClearAssetModal(!showClearAssetModal);
   }
 
-  function handleToggleShowClearAllLockersModal() {
-    setShowClearAllLockersModal(!showClearAllLockersModal);
+  function handleToggleShowClearAllAssetsModal() {
+    setShowClearAllAssetsModal(!showClearAllAssetsModal);
   }
 
   function getBackArrow() {
@@ -35,20 +34,20 @@ function AdminView({ setShowSettings }) {
 
   return (
     <>
-      {showClearLockerModal ? (
+      {showClearAssetModal ? (
         <ClearMyAssetModal
-          handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
-          isClearAssetFromUnclaimedLocker={false}
+          handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
+          isClearAssetFromUnclaimedAsset={false}
         />
       ) : (
         ""
       )}
-      {showClearAllLockersModal ? (
-        <ClearAllLockersModal
-          handleToggleShowClearAllLockersModal={
-            handleToggleShowClearAllLockersModal
+      {showClearAllAssetsModal ? (
+        <ClearAllAssetsModal
+          handleToggleShowClearAllAssetsModal={
+            handleToggleShowClearAllAssetsModal
           }
-          isClearAssetFromUnclaimedLocker={false}
+          isClearAssetFromUnclaimedAsset={false}
         />
       ) : (
         ""
@@ -61,15 +60,13 @@ function AdminView({ setShowSettings }) {
         <div className="footer-fixed" style={{ color: "#00A76F" }}>
           <div style={{ marginBottom: "10px" }}>
             <ClearMyAssetButton
-              handleToggleShowClearLockerModal={
-                handleToggleShowClearLockerModal
-              }
+              handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
               fromAdmin={true}
             />
           </div>
-          <ClearAllLockersButton
-            handleToggleShowClearAllLockersModal={
-              handleToggleShowClearAllLockersModal
+          <ClearAllAssetsButton
+            handleToggleShowClearAllAssetsModal={
+              handleToggleShowClearAllAssetsModal
             }
           />
         </div>

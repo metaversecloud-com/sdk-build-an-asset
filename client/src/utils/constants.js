@@ -1,6 +1,6 @@
 const themes = {
-  locker: {
-    HOME_TITLE: "Decorate your Locker",
+  asset: {
+    HOME_TITLE: "Decorate your Asset",
   },
   snowman: {
     HOME_TITLE: "Build your Snowman",

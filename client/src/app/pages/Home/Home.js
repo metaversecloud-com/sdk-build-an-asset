@@ -22,11 +22,11 @@ function Home() {
   const profileId = new URLSearchParams(window.location.search).get(
     "profileId"
   );
-  const userHasLocker = world?.dataObject?.lockers?.[profileId]?.droppedAssetId;
+  const userHasAsset = world?.dataObject?.assets?.[profileId]?.droppedAssetId;
 
   const [loading, setLoading] = useState(false);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
-  const [showClearLockerModal, setShowClearLockerModal] = useState(false);
+  const [showClearAssetModal, setShowClearAssetModal] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ function Home() {
     fetchInitialState();
   }, [dispatch]);
 
-  const handleClaimLocker = async () => {
+  const handleClaimAsset = async () => {
     try {
       setAreButtonsDisabled(true);
       await dispatch(claimThemeAsset(visitor));
@@ -50,8 +50,8 @@ function Home() {
     }
   };
 
-  function handleToggleShowClearLockerModal() {
-    setShowClearLockerModal(!showClearLockerModal);
+  function handleToggleShowClearAssetModal() {
+    setShowClearAssetModal(!showClearAssetModal);
   }
 
   if (loading) {
@@ -66,13 +66,13 @@ function Home() {
     return <AdminView setShowSettings={setShowSettings} />;
   }
 
-  if (userHasLocker) {
+  if (userHasAsset) {
     return (
       <>
-        {showClearLockerModal ? (
+        {showClearAssetModal ? (
           <ClearMyAssetModal
-            handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
-            isClearAssetFromUnclaimedLocker={true}
+            handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
+            isClearAssetFromUnclaimedAsset={true}
           />
         ) : null}
         <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
@@ -86,8 +86,8 @@ function Home() {
             </div>
             <div style={{ margin: "10px 0px" }}>
               <ClearMyAssetButton
-                handleToggleShowClearLockerModal={
-                  handleToggleShowClearLockerModal
+                handleToggleShowClearAssetModal={
+                  handleToggleShowClearAssetModal
                 }
               />
             </div>
@@ -115,7 +115,7 @@ function Home() {
       <div className="footer-fixed" style={{ backgroundColor: "white" }}>
         <button
           disabled={areButtonsDisabled}
-          onClick={() => handleClaimLocker()}
+          onClick={() => handleClaimAsset()}
         >
           {themeData.texts.button}
         </button>

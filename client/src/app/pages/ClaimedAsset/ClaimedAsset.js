@@ -11,9 +11,19 @@ import "./ClaimedAsset.scss";
 import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton";
 import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal";
 import MoveToAssetButton from "../../components/MoveToAssetButton/MoveToAssetButton";
+import { getThemeName } from "../../../redux/themeData2";
+import { capitalize } from "../../../utils/utils";
 
 function ClaimedAsset() {
   const dispatch = useDispatch();
+
+  const themeName = getThemeName();
+  // const defaultUnclaimedAsset = `/assets/${themeName}/unclaimed${capitalize(
+  //   themeName
+  // )}.png`;
+  const defaultUnclaimedAsset = `/assets/${themeName}/defaultClaimed${capitalize(
+    themeName
+  )}.png`;
 
   const queryParameters = new URLSearchParams(window.location.search);
   const profileId = queryParameters.get("profileId");
@@ -22,17 +32,17 @@ function ClaimedAsset() {
   const isAssetOwner = profileId === ownerProfileId;
 
   const [loading, setLoading] = useState(false);
-  const [lockerParams, setLockerParams] = useState({});
+  const [assetParams, setAssetParams] = useState({});
   const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
-  const [showClearLockerModal, setShowClearLockerModal] = useState(false);
+  const [showClearAssetModal, setShowClearAssetModal] = useState(false);
 
   const visitor = useSelector((state) => state?.session?.visitor);
   const world = useSelector((state) => state?.session?.world);
   const [showSettings, setShowSettings] = useState(false);
 
-  const s3Url = world?.dataObject?.lockers?.[ownerProfileId]?.s3Url;
+  const s3Url = world?.dataObject?.assets?.[ownerProfileId]?.s3Url;
 
-  const visitorName = lockerParams["visitor-name"]?.replace("%20", " ");
+  const visitorName = assetParams["visitor-name"]?.replace("%20", " ");
 
   useEffect(() => {
     const fetchInitialState = async () => {
@@ -47,7 +57,7 @@ function ClaimedAsset() {
     };
 
     const urlParams = new URLSearchParams(window.location.search);
-    setLockerParams(Object.fromEntries(urlParams.entries()));
+    setAssetParams(Object.fromEntries(urlParams.entries()));
 
     fetchInitialState();
   }, [dispatch]);
@@ -56,8 +66,8 @@ function ClaimedAsset() {
     setShowCustomizeScreen(true);
   };
 
-  function handleToggleShowClearLockerModal() {
-    setShowClearLockerModal(!showClearLockerModal);
+  function handleToggleShowClearAssetModal() {
+    setShowClearAssetModal(!showClearAssetModal);
   }
 
   if (loading) {
@@ -72,17 +82,17 @@ function ClaimedAsset() {
     return <AdminView setShowSettings={setShowSettings} />;
   }
 
-  // Show customize screen if Edit button is clicked, or if this screen was reached from Claim Locker button
-  if (showCustomizeScreen || lockerParams?.edit == "true") {
-    return <EditAsset lockerParams={lockerParams} />;
+  // Show customize screen if Edit button is clicked, or if this screen was reached from Claim Asset button
+  if (showCustomizeScreen || assetParams?.edit == "true") {
+    return <EditAsset assetParams={assetParams} />;
   }
 
   return (
     <>
-      {showClearLockerModal ? (
+      {showClearAssetModal ? (
         <ClearMyAssetModal
-          handleToggleShowClearLockerModal={handleToggleShowClearLockerModal}
-          isClearAssetFromUnclaimedLocker={false}
+          handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
+          isClearAssetFromUnclaimedAsset={false}
         />
       ) : (
         ""
@@ -90,15 +100,15 @@ function ClaimedAsset() {
       <div className="spawned-wrapper">
         {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
         <h2 style={{ marginBottom: "0px", padding: "24px" }}>
-          <b>Locker</b>
+          <b>{capitalize(themeName)}</b>
         </h2>
         <img
-          src={s3Url || "/assets/locker/unclaimedLocker.png"}
-          alt={`Locker of ${visitorName}`}
+          src={s3Url || defaultUnclaimedAsset}
+          alt={`Asset of ${visitorName}`}
           style={{ width: "200px" }}
         />
         <div style={{ marginTop: "20px" }}>
-          <p>This locker belongs to</p>
+          <p>This {themeName} belongs to</p>
           <p>
             <b>{visitorName}</b>!
           </p>
@@ -111,15 +121,15 @@ function ClaimedAsset() {
                   onClick={() => handleEditAsset()}
                   style={{ marginBottom: "10px" }}
                 >
-                  Edit Locker
+                  Edit {themeName}
                 </button>
               </div>
               <div style={{ marginBottom: "10px" }}>
                 <MoveToAssetButton shouldCloseIframe={false} />
               </div>
               <ClearMyAssetButton
-                handleToggleShowClearLockerModal={
-                  handleToggleShowClearLockerModal
+                handleToggleShowClearAssetModal={
+                  handleToggleShowClearAssetModal
                 }
               />
             </div>

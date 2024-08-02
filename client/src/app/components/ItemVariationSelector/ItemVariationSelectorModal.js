@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ItemVariationSelectorModal.scss";
+import { getThemeName } from "../../../redux/themeData2";
 
 function ItemVariationSelectorModal({
   isOpen,
@@ -8,6 +9,7 @@ function ItemVariationSelectorModal({
   onClose,
   selectedVariation,
 }) {
+  const themeName = getThemeName();
   const BASE_URL = window.location.origin;
   const [selectedItem, setSelectedItem] = useState(selectedVariation);
 
@@ -44,7 +46,7 @@ function ItemVariationSelectorModal({
             {variations.map((variation, index) => (
               <img
                 key={index}
-                src={`${BASE_URL}/locker-assets/${variation}`}
+                src={`${BASE_URL}/${themeName}-assets/${variation}`}
                 alt={`Variation ${index}`}
                 onClick={() => handleVariationClick(variation)}
                 className={`variation-item ${

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 
 function ClearAllCustomizedAssetsButton({
-  handleToggleShowClearAllLockersModal,
+  handleToggleShowClearAllAssetsModal,
 }) {
   return (
     <>
       <button
         class="btn-danger"
-        onClick={() => handleToggleShowClearAllLockersModal()}
+        onClick={() => handleToggleShowClearAllAssetsModal()}
       >
-        <span>Empty all Lockers</span>
+        <span>Empty all Assets</span>
       </button>
     </>
   );

@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { moveToAsset } from "../../../redux/actions/asset";
+import { getThemeName } from "../../../redux/themeData2";
 
 function MoveToAssetButton({ closeIframeAfterMove }) {
   const dispatch = useDispatch();
-
+  const themeName = getThemeName();
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
 
-  const handleMoveToMyLocker = async () => {
+  const handleMoveToMyAsset = async () => {
     try {
       setAreButtonsDisabled(true);
       await dispatch(moveToAsset(closeIframeAfterMove));
@@ -23,9 +24,9 @@ function MoveToAssetButton({ closeIframeAfterMove }) {
       <button
         className="btn-outline"
         disabled={areButtonsDisabled}
-        onClick={() => handleMoveToMyLocker()}
+        onClick={() => handleMoveToMyAsset()}
       >
-        Find Locker
+        Find {themeName}
       </button>
     </>
   );

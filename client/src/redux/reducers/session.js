@@ -8,7 +8,7 @@ const initialState = {
   spawnedAsset: null,
   spawnSuccess: true,
   error: null,
-  isLockerAlreadyTaken: false,
+  isAssetAlreadyTaken: false,
 };
 
 const reducers = {
@@ -23,7 +23,7 @@ const reducers = {
     state.visitor = action.payload.visitor;
     state.isAssetSpawnedInWorld = action.payload.isAssetSpawnedInWorld;
     state.spawnedAsset = action.payload.spawnedAsset;
-    state.userLocker = action.payload.userLocker;
+    state.userAsset = action.payload.userAsset;
     state.world = action.payload.world;
   },
   setInPrivateZone: (state, action) => {
@@ -36,7 +36,7 @@ const reducers = {
     state.spawnSuccess = action.payload.spawnSuccess;
     state.isAssetSpawnedInWorld = action.payload.isAssetSpawnedInWorld;
     state.spawnedAsset = action.payload.spawnedAsset;
-    state.isLockerAlreadyTaken = action.payload.isLockerAlreadyTaken;
+    state.isAssetAlreadyTaken = action.payload.isAssetAlreadyTaken;
     state.world = action.payload.world;
   },
   setError: (state, action) => {
