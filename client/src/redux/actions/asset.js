@@ -3,6 +3,7 @@
 import { session } from "../reducers/session";
 import { push } from "redux-first-history";
 import axios from "axios";
+import { getThemeName } from "../../redux/themeData2.js";
 
 if (process.env.LOCALHOST) {
   axios.defaults.baseURL = "http://localhost:3000";
@@ -32,8 +33,9 @@ const getQueryParams = () => {
   const username = queryParameters.get("username");
   const displayName = queryParameters.get("displayName");
   const identityId = queryParameters.get("identityId");
+  const themeName = getThemeName();
 
-  return `visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetId}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}&uniqueName=${uniqueName}&profileId=${profileId}&ownerProfileId=${ownerProfileId}&username=${username}&displayName=${displayName}&identityId=${identityId}`;
+  return `visitorId=${visitorId}&interactiveNonce=${interactiveNonce}&assetId=${assetId}&interactivePublicKey=${interactivePublicKey}&urlSlug=${urlSlug}&uniqueName=${uniqueName}&profileId=${profileId}&ownerProfileId=${ownerProfileId}&username=${username}&displayName=${displayName}&identityId=${identityId}&themeName=${themeName}`;
 };
 
 export const getVisitor = () => async (dispatch) => {
@@ -53,7 +55,7 @@ export const getVisitor = () => async (dispatch) => {
 export const editThemeAsset = (imageInfo, themeName) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/api/asset/asset/spawn?${queryParams}&themeName=${themeName}&themeName=${themeName}`;
+    const url = `/api/asset/asset/spawn?${queryParams}`;
     const response = await axios.put(url, { imageInfo });
 
     if (response.status === 200) {
@@ -86,7 +88,7 @@ export const claimThemeAsset = (visitor, themeName) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
 
-    const url = `/api/asset/claim?${queryParams}&themeName=${themeName}`;
+    const url = `/api/asset/claim?${queryParams}`;
     const response = await axios.post(url);
 
     if (response.status === 200) {
@@ -95,7 +97,7 @@ export const claimThemeAsset = (visitor, themeName) => async (dispatch) => {
 
       const redirectPath = `${themeName}/claimed?visitor-name=${modifiedName}`;
 
-      const fullPath = `/${redirectPath}&${queryParams}&themeName=${themeName}&edit=true`;
+      const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
       return dispatch(push(fullPath));
     }
   } catch (error) {
@@ -108,14 +110,14 @@ export const clearThemeAsset =
   (isClearAssetFromUnclaimedAsset, themeName) => async (dispatch) => {
     try {
       const queryParams = getQueryParams();
-      const url = `/api/asset/clear?${queryParams}&themeName=${themeName}`;
+      const url = `/api/asset/clear?${queryParams}`;
       const response = await axios.put(url, {
         isClearAssetFromUnclaimedAsset,
       });
 
       if (response.status === 200) {
         dispatch(setSpawnSuccess(response?.data));
-        return dispatch(push(`/asset?${queryParams}&themeName=${themeName}`));
+        return dispatch(push(`/asset?${queryParams}`));
       }
     } catch (error) {
       dispatch(
@@ -128,12 +130,12 @@ export const clearThemeAsset =
 export const clearAllThemeAssets = (themeName) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/api/asset/clear-all?${queryParams}&themeName=${themeName}`;
+    const url = `/api/asset/clear-all?${queryParams}`;
     const response = await axios.put(url);
 
     if (response.status === 200) {
       dispatch(setSpawnSuccess(response?.data));
-      return dispatch(push(`/asset?${queryParams}&themeName=${themeName}`));
+      return dispatch(push(`/asset?${queryParams}`));
     }
   } catch (error) {
     dispatch(
@@ -173,7 +175,7 @@ export const moveToAsset = (closeIframeAfterMove) => async (dispatch) => {
 export const getDroppedAsset = async (themeName) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/api/asset/dropped-asset?${queryParams}&themeName=${themeName}`;
+    const url = `/api/asset/dropped-asset?${queryParams}`;
 
     const response = await axios.get(url);
 
@@ -186,7 +188,7 @@ export const getDroppedAsset = async (themeName) => {
 export const getWorld = (themeName) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/api/asset/world?${queryParams}&themeName=${themeName}`;
+    const url = `/api/asset/world?${queryParams}`;
 
     const response = await axios.get(url);
 

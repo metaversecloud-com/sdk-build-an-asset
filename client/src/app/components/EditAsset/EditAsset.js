@@ -288,7 +288,7 @@ function EditAsset() {
   const handleSaveToBackend = async () => {
     try {
       setIsButtonSaveAssetDisabled(true);
-      await dispatch(editThemeAsset(imageInfo, themeName));
+      await dispatch(editThemeAsset(imageInfo));
     } catch (error) {
       console.error(`Error editing ${themeName}:`, error);
     } finally {
