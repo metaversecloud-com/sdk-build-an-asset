@@ -9,6 +9,7 @@ import Home from "./snowman-app/pages/Home";
 import SnowmanHome from "./snowman-app/pages/Home";
 import Spawned from "./snowman-app/pages/Spawned/Spawned";
 import ClaimedAsset from "./app/pages/ClaimedAsset/ClaimedAsset";
+import EditAsset from "./app/components/EditAsset/EditAsset.js";
 
 const PageRoutes = () => {
   return (
@@ -24,6 +25,7 @@ const PageRoutes = () => {
         <Route path="/snowman" element={<SnowmanHome />} />
         <Route path="/locker" element={<AssetHome />} />
         <Route path="/desk" element={<AssetHome />} />
+        <Route path="/snowman/edit" element={<EditAsset />} />
       </Routes>
     </Router>
   );

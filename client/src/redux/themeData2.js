@@ -329,6 +329,48 @@ export const themes = {
       Accessories: [],
     },
   },
+  snowman: {
+    name: "Snowman",
+    splashImage: deskSplashImage,
+    texts: {
+      header: "Build your Snowman!",
+      description:
+        "Click 'Claim Desk' to claim and decorate your desk. Add items to show off your style and make it your own. You can come back to update it anytime!",
+      button: "Claim Desk",
+      alreadyHave: "You already have a Snowman!",
+      chooseNew: "To choose this one instead, click 'Empty Desk' button below.",
+    },
+    categories: {
+      Body: [
+        {
+          name: "body_0.png",
+          hasVariation: true,
+          isRequired: true,
+          variations: ["body_0.png", "body_1.png", "body_2.png"],
+        },
+      ],
+      Accessories: [
+        { name: "accessories_0.png", hasVariation: false },
+        { name: "accessories_1.png", hasVariation: false },
+        { name: "accessories_2.png", hasVariation: false },
+        { name: "accessories_3.png", hasVariation: false },
+        { name: "accessories_4.png", hasVariation: false },
+        { name: "accessories_5.png", hasVariation: false },
+      ],
+    },
+    selectionLimits: {
+      Body: 1,
+      Accessories: Infinity,
+    },
+    defaultOpenCategories: {
+      Body: true,
+      Accessories: false,
+    },
+    defaultSelected: {
+      Body: [],
+      Accessories: [],
+    },
+  },
 };
 
 export const getThemeData = (themeName) => {

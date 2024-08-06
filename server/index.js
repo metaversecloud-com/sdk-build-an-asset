@@ -25,10 +25,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(requestID());
 
-const lockerAssetsPath = path.join(__dirname, "api/app/locker-assets");
-const deskAssetsPath = path.join(__dirname, "api/app/desk-assets");
+const lockerAssetsPath = path.join(__dirname, "images/locker-assets");
+const deskAssetsPath = path.join(__dirname, "images/desk-assets");
+const snowmanAssetsPath = path.join(__dirname, "images/snowman-assets");
 app.use("/locker-assets", express.static(lockerAssetsPath));
 app.use("/desk-assets", express.static(deskAssetsPath));
+app.use("/snowman-assets", express.static(snowmanAssetsPath));
 
 app.use("/api", router);
 

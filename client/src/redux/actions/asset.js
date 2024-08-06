@@ -98,7 +98,6 @@ export const claimThemeAsset = (visitor) => async (dispatch) => {
       const redirectPath = `${themeName}/claimed?visitor-name=${modifiedName}`;
 
       const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
-      console.log();
       return dispatch(push(fullPath));
     }
   } catch (error) {
