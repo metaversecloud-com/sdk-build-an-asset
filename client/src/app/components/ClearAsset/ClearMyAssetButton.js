@@ -1,5 +1,5 @@
 import React from "react";
-import { getThemeName } from "../../../redux/themeData2";
+import { getThemeName } from "../../../themeData2";
 
 function ClearMyAssetButton({ handleToggleShowClearAssetModal, fromAdmin }) {
   const themeName = getThemeName();

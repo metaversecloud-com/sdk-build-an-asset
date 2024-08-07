@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearAllAssets } from "../../../redux/actions/asset.js";
 import { capitalize } from "../../../utils/utils.js";
-import { getThemeName } from "../../../redux/themeData2.js";
+import { getThemeName } from "../../../themeData2.js";
 
 function ClearAllCustomizedAssetsModal({
   handleToggleShowClearAllAssetsModal,

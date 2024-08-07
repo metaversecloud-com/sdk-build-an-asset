@@ -11,8 +11,8 @@ import "./ClaimedAsset.scss";
 import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton";
 import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal";
 import MoveToAssetButton from "../../components/MoveToAssetButton/MoveToAssetButton";
-import { getThemeName } from "../../../redux/themeData2";
 import { capitalize } from "../../../utils/utils";
+import { getThemeName } from "../../../themeData2";
 
 function ClaimedAsset() {
   const dispatch = useDispatch();

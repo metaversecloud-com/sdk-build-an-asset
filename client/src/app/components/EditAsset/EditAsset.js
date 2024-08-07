@@ -16,7 +16,7 @@ import {
 import Gear from "../../pages/Admin/Gear.js";
 import AdminView from "../../pages/Admin/AdminView.js";
 import ItemVariationSelectorModal from "../ItemVariationSelector/ItemVariationSelectorModal.js";
-import { getThemeData, getThemeName } from "../../../redux/themeData2.js";
+import { getThemeData, getThemeName } from "../../../themeData2.js";
 
 import "./EditAsset.scss";
 import { capitalize } from "../../../utils/utils.js";

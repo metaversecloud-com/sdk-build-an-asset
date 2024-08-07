@@ -1,6 +1,6 @@
 // File: themeData2.js
-import lockerSplashImage from "../assets/locker/splashImage.png";
-import deskSplashImage from "../assets/desk/splashImage.png";
+import lockerSplashImage from "./assets/locker/splashImage.png";
+import deskSplashImage from "./assets/desk/splashImage.png";
 
 export const themes = {
   locker: {

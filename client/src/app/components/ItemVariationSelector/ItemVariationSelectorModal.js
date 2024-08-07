@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ItemVariationSelectorModal.scss";
-import { getThemeName } from "../../../redux/themeData2";
+import { getThemeName } from "../../../themeData2";
 
 function ItemVariationSelectorModal({
   isOpen,

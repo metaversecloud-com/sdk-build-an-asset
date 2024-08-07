@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { capitalize } from "../../../utils/utils";
-import { getThemeName } from "../../../redux/themeData2";
+import { getThemeName } from "../../../themeData2";
 
 function ClearAllCustomizedAssetsButton({
   handleToggleShowClearAllAssetsModal,

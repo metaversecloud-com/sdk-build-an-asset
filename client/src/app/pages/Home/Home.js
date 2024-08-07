@@ -4,7 +4,7 @@ import { ClipLoader } from "react-spinners";
 import { getWorld, claimAsset } from "../../../redux/actions/asset";
 import Gear from "../Admin/Gear";
 import AdminView from "../Admin/AdminView";
-import { getThemeData, getThemeName } from "../../../redux/themeData2";
+import { getThemeData, getThemeName } from "../../../themeData2";
 import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton";
 import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal";
 import MoveToAssetButton from "../../components/MoveToAssetButton/MoveToAssetButton";
