@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
-import { getWorld, claimThemeAsset } from "../../../redux/actions/asset";
+import { getWorld, claimAsset } from "../../../redux/actions/asset";
 import Gear from "../Admin/Gear";
 import AdminView from "../Admin/AdminView";
 import { getThemeData, getThemeName } from "../../../redux/themeData2";
@@ -43,7 +43,7 @@ function Home() {
   const handleClaimAsset = async () => {
     try {
       setAreButtonsDisabled(true);
-      await dispatch(claimThemeAsset(visitor));
+      await dispatch(claimAsset(visitor));
     } catch (error) {
       console.error(error);
     } finally {

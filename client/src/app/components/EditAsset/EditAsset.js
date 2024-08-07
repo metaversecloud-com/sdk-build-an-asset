@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
-import { editThemeAsset } from "../../../redux/actions/asset.js";
+import { editAsset } from "../../../redux/actions/asset.js";
 import { Collapse, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -289,7 +289,7 @@ function EditAsset() {
   const handleSaveToBackend = async () => {
     try {
       setIsButtonSaveAssetDisabled(true);
-      await dispatch(editThemeAsset(imageInfo));
+      await dispatch(editAsset(imageInfo));
     } catch (error) {
       console.error(`Error editing ${themeName}:`, error);
     } finally {

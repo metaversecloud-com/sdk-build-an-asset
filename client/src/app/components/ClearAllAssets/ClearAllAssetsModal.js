@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { clearAllThemeAssets } from "../../../redux/actions/asset.js";
+import { clearAllAssets } from "../../../redux/actions/asset.js";
 import { capitalize } from "../../../utils/utils.js";
 import { getThemeName } from "../../../redux/themeData2.js";
 
@@ -14,7 +14,7 @@ function ClearAllCustomizedAssetsModal({
   const handleClearAllAssets = async () => {
     try {
       setAreButtonsDisabled(true);
-      await dispatch(clearAllThemeAssets());
+      await dispatch(clearAllAssets());
       handleToggleShowClearAllAssetsModal();
     } catch (error) {
       console.error(error);

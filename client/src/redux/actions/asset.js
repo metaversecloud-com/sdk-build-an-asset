@@ -52,7 +52,7 @@ export const getVisitor = () => async (dispatch) => {
   }
 };
 
-export const editThemeAsset = (imageInfo) => async (dispatch) => {
+export const editAsset = (imageInfo) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
     const url = `/api/asset/asset/spawn?${queryParams}`;
@@ -67,22 +67,7 @@ export const editThemeAsset = (imageInfo) => async (dispatch) => {
   }
 };
 
-export const editAsset = (imageInfo) => async (dispatch) => {
-  try {
-    const queryParams = getQueryParams();
-    const url = `/api/asset/asset/spawn?${queryParams}`;
-    const response = await axios.put(url, { imageInfo });
-
-    if (response.status === 200) {
-      dispatch(setSpawnSuccess(response?.data));
-    }
-  } catch (error) {
-    dispatch(setError("There was an error while spawning the asset"));
-    return false;
-  }
-};
-
-export const claimThemeAsset = (visitor) => async (dispatch) => {
+export const claimAsset = (visitor) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
 
@@ -106,7 +91,7 @@ export const claimThemeAsset = (visitor) => async (dispatch) => {
   }
 };
 
-export const clearThemeAsset =
+export const clearAssetAsset =
   (isClearAssetFromUnclaimedAsset) => async (dispatch) => {
     try {
       const queryParams = getQueryParams();
@@ -125,7 +110,7 @@ export const clearThemeAsset =
     }
   };
 
-export const clearAllThemeAssets = () => async (dispatch) => {
+export const clearAllAssets = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
     const url = `/api/asset/clear-all?${queryParams}`;
