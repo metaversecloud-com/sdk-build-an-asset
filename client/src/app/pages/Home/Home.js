@@ -22,7 +22,8 @@ function Home() {
   const profileId = new URLSearchParams(window.location.search).get(
     "profileId"
   );
-  const userHasAsset = world?.dataObject?.assets?.[profileId]?.droppedAssetId;
+  const userHasAsset =
+    world?.dataObject?.[`${themeName}s`]?.[profileId]?.droppedAssetId;
 
   const [loading, setLoading] = useState(false);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);

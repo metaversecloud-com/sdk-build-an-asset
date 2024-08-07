@@ -1,7 +1,7 @@
 import { DroppedAsset, Visitor, World } from "../utils/topiaInit.js";
 import { logger } from "../logs/logger.js";
 
-export const moveToLocker = async (req, res) => {
+export const moveToAsset = async (req, res) => {
   try {
     const {
       visitorId,

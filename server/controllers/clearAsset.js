@@ -3,7 +3,7 @@ import { getBaseUrl } from "./requestHandlers.js";
 import { getS3URL } from "../utils/utils.js";
 import { logger } from "../logs/logger.js";
 
-export const clearLocker = async (req, res) => {
+export const clearAsset = async (req, res) => {
   try {
     const {
       assetId,

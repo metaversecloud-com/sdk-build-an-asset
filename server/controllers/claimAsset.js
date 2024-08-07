@@ -3,7 +3,7 @@ import { DroppedAsset, World } from "../utils/topiaInit.js";
 import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 import { logger } from "../logs/logger.js";
 
-export const claimLocker = async (req, res) => {
+export const claimAsset = async (req, res) => {
   try {
     const { baseUrl, defaultUrlForImageHosting } = getBaseUrl(req);
 

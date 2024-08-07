@@ -3,7 +3,7 @@ import { generateS3Url, generateImageInfoParam } from "./imageUtils.js";
 import { DroppedAsset, World, Visitor } from "../utils/topiaInit.js";
 import { logger } from "../logs/logger.js";
 
-export const editLocker = async (req, res) => {
+export const editAsset = async (req, res) => {
   try {
     const { baseUrl } = getBaseUrl(req);
 

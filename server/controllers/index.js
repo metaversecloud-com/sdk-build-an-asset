@@ -7,13 +7,12 @@ export * from "./snowman-app/asset/get.js";
 export * from "./snowman-app/asset/create.js";
 export * from "./snowman-app/asset/deleteAll.js";
 export * from "./snowman-app/asset/pickupAllAssets.js";
-export * from "./snowman-app/asset/moveToAsset.js";
 
-// Locker
-export * from "./editLocker.js";
-export * from "./clearLocker.js";
-export * from "./clearAllLockers.js";
-export * from "./moveToLocker.js";
+// Asset
+export * from "./editAsset.js";
+export * from "./clearAsset.js";
+export * from "./clearAllAssets.js";
+export * from "./moveToAsset.js";
 export * from "./getDroppedAsset.js";
-export * from "./claimLocker.js";
+export * from "./claimAsset.js";
 export * from "./world/getWorld.js";
