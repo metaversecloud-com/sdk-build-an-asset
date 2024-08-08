@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { clearAssetAsset } from "../../../redux/actions/asset.js";
+import { clearAsset } from "../../../redux/actions/asset.js";
 import { getThemeName } from "../../../themeData2.js";
 
 function ClearMyAssetModal({
@@ -14,7 +14,7 @@ function ClearMyAssetModal({
   const handleClearAsset = async () => {
     try {
       setAreButtonsDisabled(true);
-      await dispatch(clearAssetAsset(isClearAssetFromUnclaimedAsset));
+      await dispatch(clearAsset(isClearAssetFromUnclaimedAsset));
     } catch (error) {
       console.error(error);
     } finally {

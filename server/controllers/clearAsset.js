@@ -2,6 +2,7 @@ import { DroppedAsset, World } from "../utils/topiaInit.js";
 import { getBaseUrl } from "./requestHandlers.js";
 import { getS3URL } from "../utils/utils.js";
 import { logger } from "../logs/logger.js";
+import { capitalize } from "../utils/captalize.js";
 
 export const clearAsset = async (req, res) => {
   try {
@@ -24,29 +25,32 @@ export const clearAsset = async (req, res) => {
       visitorId,
     };
 
-    const { isClearAssetFromUnclaimedLocker } = req.body;
+    const { isClearAssetFromUnclaimedAsset } = req.body;
 
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
 
-    let lockerAssetId;
+    let selectedAssetId;
 
-    if (isClearAssetFromUnclaimedLocker) {
-      lockerAssetId = world?.dataObject?.lockers?.[profileId]?.droppedAssetId;
+    if (isClearAssetFromUnclaimedAsset) {
+      selectedAssetId =
+        world?.dataObject?.[themeName]?.[profileId]?.droppedAssetId;
       ownerProfileId = profileId;
     } else {
-      lockerAssetId = assetId;
+      selectedAssetId = assetId;
     }
 
     const { baseUrl } = getBaseUrl(req);
 
-    const droppedAsset = DroppedAsset.create(lockerAssetId, urlSlug, {
+    const droppedAsset = DroppedAsset.create(selectedAssetId, urlSlug, {
       credentials,
     });
 
-    const toplayer = `${getS3URL()}/unclaimedLocker.png`;
+    const toplayer = `${getS3URL()}/${themeName}/unclaimed${capitalize(
+      themeName
+    )}.png`;
 
-    const clickableLink = `${baseUrl}/locker`;
+    const clickableLink = `${baseUrl}/${themeName}`;
 
     // TODO: remove need for update clickType
     await Promise.all([
@@ -54,19 +58,19 @@ export const clearAsset = async (req, res) => {
       droppedAsset?.updateClickType({
         clickType: "link",
         clickableLink,
-        clickableLinkTitle: "Locker",
-        clickableDisplayTextDescription: "Locker",
-        clickableDisplayTextHeadline: "Locker",
+        clickableLinkTitle: themeName,
+        clickableDisplayTextDescription: themeName,
+        clickableDisplayTextHeadline: themeName,
         isOpenLinkInDrawer: true,
       }),
       world.updateDataObject(
         {
-          [`lockers.${ownerProfileId}`]: null,
+          [`${themeName}.${ownerProfileId}`]: null,
         },
         {
           analytics: [
             {
-              analyticName: `locker-unclaims`,
+              analyticName: `${themeName}-unclaims`,
               profileId,
               uniqueKey: profileId,
             },
@@ -82,8 +86,8 @@ export const clearAsset = async (req, res) => {
   } catch (error) {
     logger.error({
       error,
-      message: "❌ Error in clearLocker",
-      functionName: "clearLocker",
+      message: "❌ Error in clearAsset",
+      functionName: "clearAsset",
       req,
     });
     return res

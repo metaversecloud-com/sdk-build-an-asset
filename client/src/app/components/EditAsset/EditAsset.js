@@ -29,7 +29,7 @@ function EditAsset() {
   const themeName = getThemeName();
   const themeData = getThemeData(themeName);
 
-  const [selected, setSelected] = useState(themeData.defaultSelected);
+  const [selected, setSelected] = useState(themeData?.defaultSelected);
   const [loading, setLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});

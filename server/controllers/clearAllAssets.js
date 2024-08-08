@@ -2,6 +2,7 @@ import { World } from "../utils/topiaInit.js";
 import { getBaseUrl } from "./requestHandlers.js";
 import { getS3URL } from "../utils/utils.js";
 import { logger } from "../logs/logger.js";
+import { capitalize } from "../utils/captalize.js";
 
 export const clearAllAssets = async (req, res) => {
   try {
@@ -29,9 +30,11 @@ export const clearAllAssets = async (req, res) => {
     });
 
     // TODO: remove need for update clickType
-    const toplayer = `${getS3URL()}/unclaimedLocker.png`;
+    const toplayer = `${getS3URL()}/${themeName}/unclaimed${capitalize(
+      themeName
+    )}.png`;
 
-    const clickableLink = `${baseUrl}/locker`;
+    const clickableLink = `${baseUrl}/${themeName}`;
     const promises = [];
     spawnedAssets.map(async (asset) => {
       promises.push(asset.updateWebImageLayers("", toplayer));
@@ -39,9 +42,9 @@ export const clearAllAssets = async (req, res) => {
         asset.updateClickType({
           clickType: "link",
           clickableLink,
-          clickableLinkTitle: "Locker",
-          clickableDisplayTextDescription: "Locker",
-          clickableDisplayTextHeadline: "Locker",
+          clickableLinkTitle: themeName,
+          clickableDisplayTextDescription: themeName,
+          clickableDisplayTextHeadline: themeName,
           isOpenLinkInDrawer: true,
         })
       );
@@ -49,8 +52,8 @@ export const clearAllAssets = async (req, res) => {
 
     promises.push(
       world.updateDataObject(
-        { lockers: {} },
-        { analytics: [{ analyticName: `locker-resets` }] }
+        { [themeName]: {} },
+        { analytics: [{ analyticName: `${themeName}-resets` }] }
       )
     );
 
@@ -62,8 +65,8 @@ export const clearAllAssets = async (req, res) => {
   } catch (error) {
     logger.error({
       error,
-      message: "❌ Error in clearAllLockers",
-      functionName: "clearAllLockers",
+      message: "❌ Error in clearAllAssets",
+      functionName: "clearAllAssets",
       req,
     });
     return res.status(500).send({ error, success: false });

@@ -10,6 +10,7 @@ export const getWorld = async (req, res) => {
       interactivePublicKey,
       urlSlug,
       profileId,
+      themeName,
     } = req.query;
 
     const credentials = {
@@ -24,14 +25,15 @@ export const getWorld = async (req, res) => {
 
     await world.fetchDataObject();
 
-    if (!world.dataObject.lockers) world.setDataObject({ lockers: {} });
+    if (!world.dataObject?.[themeName])
+      world.setDataObject({ [themeName]: {} });
 
     visitor
       .updatePublicKeyAnalytics([
         {
           analytics: [
             {
-              analyticName: `locker-starts`,
+              analyticName: `${themeName}-starts`,
               uniqueKey: profileId,
               profileId,
               urlSlug,

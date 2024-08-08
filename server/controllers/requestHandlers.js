@@ -15,7 +15,7 @@ export function getBaseUrl(req) {
   return { baseUrl, defaultUrlForImageHosting };
 }
 
-export function validateImageInfo(imageInfo, res) {
+export function validateImageInfo({ imageInfo, themeName, res }) {
   if (!imageInfo) {
     res.status(400).json({
       msg: "Input data missing. Please fill the the follow field: imageInfo",
@@ -23,7 +23,15 @@ export function validateImageInfo(imageInfo, res) {
     return false;
   }
 
-  const requiredFields = ["Locker Base", "Top Shelf", "Bottom Shelf", "Door"];
+  let requiredFields;
+
+  if (themeName === "locker") {
+    requiredFields = ["Locker Base", "Top Shelf", "Bottom Shelf", "Door"];
+  } else if (themeName === "desk") {
+    requiredFields = ["Desk Base", "Accessories"];
+  } else if (themeName === "snowman") {
+    requiredFields = ["Body", "Head", "Accessories", "Arms"];
+  }
 
   const hasAllRequiredFields = requiredFields.every(
     (field) =>

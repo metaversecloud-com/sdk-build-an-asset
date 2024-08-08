@@ -27,31 +27,30 @@ export const editAsset = async (req, res) => {
       visitorId,
     };
 
-    if (!validateImageInfo(imageInfo, res)) return;
+    if (!validateImageInfo({ imageInfo, themeName, res })) return;
 
     const visitor = Visitor.create(visitorId, urlSlug, credentials);
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
 
-    if (world.dataObject.lockers) {
-      const claimedLockers = Object.entries(world.dataObject.lockers).reduce(
-        (claimedLockers, [ownerProfileId, locker]) => {
-          if (
-            locker &&
-            locker.droppedAssetId === assetId &&
-            ownerProfileId !== profileId
-          ) {
-            return locker;
-          }
-          return claimedLockers;
-        },
-        {}
-      );
+    if (world.dataObject?.[themeName]) {
+      const claimedAssets = Object.entries(
+        world.dataObject?.[themeName]
+      ).reduce((claimedAssets, [ownerProfileId, asset]) => {
+        if (
+          asset &&
+          asset.droppedAssetId === assetId &&
+          ownerProfileId !== profileId
+        ) {
+          return asset;
+        }
+        return claimedAssets;
+      }, {});
 
-      if (Object.keys(claimedLockers).length) {
+      if (Object.keys(claimedAssets).length) {
         return res.json({
-          msg: "This locker is already taken",
-          isLockerAlreadyTaken: true,
+          msg: `This ${themeName} is already taken`,
+          isAssetAlreadyTaken: true,
         });
       }
     }
@@ -61,7 +60,7 @@ export const editAsset = async (req, res) => {
     const host = req.host;
     if (host === "localhost") {
       // Mock image placeholder for localhost, since we don't have S3 Bucket permissions for localhost in AWS
-      await generateS3Url(imageInfo, profileId, themeName);
+      // await generateS3Url(imageInfo, profileId, themeName);
       s3Url =
         "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
     } else {
@@ -71,7 +70,7 @@ export const editAsset = async (req, res) => {
     try {
       await world.updateDataObject(
         {
-          [`lockers.${profileId}`]: { droppedAssetId: assetId, s3Url },
+          [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
         },
         {
           lock: {
@@ -80,14 +79,18 @@ export const editAsset = async (req, res) => {
             )}`,
           },
           analytics: [
-            { analyticName: `locker-updates`, profileId, uniqueKey: profileId },
+            {
+              analyticName: `${themeName}-updates`,
+              profileId,
+              uniqueKey: profileId,
+            },
           ],
         }
       );
     } catch (error) {
-      console.error("Error while updating the locker", error);
+      console.error(`Error while updating the ${themeName}`, error);
       return res.json({
-        msg: "This locker is already taken",
+        msg: `This ${themeName} is already taken`,
       });
     }
 
@@ -100,7 +103,7 @@ export const editAsset = async (req, res) => {
         .json({ error: "Missing imageInfoParam, modifiedName or profileId" });
     }
 
-    const clickableLink = `${baseUrl}/locker/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
+    const clickableLink = `${baseUrl}/${themeName}/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
 
     const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
       credentials,
@@ -113,16 +116,16 @@ export const editAsset = async (req, res) => {
       droppedAsset.updateClickType({
         clickType: "link",
         clickableLink,
-        clickableLinkTitle: "Locker",
-        clickableDisplayTextDescription: "Locker",
-        clickableDisplayTextHeadline: "Locker",
+        clickableLinkTitle: themeName,
+        clickableDisplayTextDescription: themeName,
+        clickableDisplayTextHeadline: themeName,
         isOpenLinkInDrawer: true,
       }),
     ]);
 
     await world
       .triggerParticle({
-        name: process.env.PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER || "Bubbles",
+        name: "Bubbles",
         duration: 3,
         position: {
           x: droppedAsset?.position?.x,
@@ -134,9 +137,9 @@ export const editAsset = async (req, res) => {
 
     visitor
       .fireToast({
-        groupId: "lockerApp",
+        groupId: themeName,
         title: "✅ Success",
-        text: "The locker has been decorated. Your changes have been saved!",
+        text: `The ${themeName} has been decorated. Your changes have been saved!`,
       })
       .then()
       .catch((error) => console.error(JSON.stringify(error)));
@@ -151,8 +154,8 @@ export const editAsset = async (req, res) => {
   } catch (error) {
     logger.error({
       error,
-      message: "❌ Error while editing the locker",
-      functionName: "editLocker",
+      message: "❌ Error while editing the asset",
+      functionName: "editAsset",
       req,
     });
     return res.status(500).send({ error: error?.message, success: false });

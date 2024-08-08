@@ -9,7 +9,7 @@ function ClearAllCustomizedAssetsButton({
   return (
     <>
       <button
-        class="btn-danger"
+        className="btn-danger"
         onClick={() => handleToggleShowClearAllAssetsModal()}
       >
         <span>Empty all {capitalize(themeName)}s</span>

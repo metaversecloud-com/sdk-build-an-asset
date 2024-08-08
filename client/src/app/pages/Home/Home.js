@@ -23,7 +23,9 @@ function Home() {
     "profileId"
   );
   const userHasAsset =
-    world?.dataObject?.[`${themeName}s`]?.[profileId]?.droppedAssetId;
+    world?.dataObject?.[themeName]?.[profileId]?.droppedAssetId;
+
+  console.log("world?.dataObject", world?.dataObject);
 
   const [loading, setLoading] = useState(false);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);

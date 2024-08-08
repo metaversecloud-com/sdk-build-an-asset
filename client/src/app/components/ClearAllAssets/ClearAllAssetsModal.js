@@ -25,7 +25,7 @@ function ClearAllCustomizedAssetsModal({
   };
 
   return (
-    <div id="" class="topia-modal-container visible">
+    <div id="" className="topia-modal-container visible">
       <div className="topia-modal">
         <h4>
           Empty <b>all</b> {capitalize(themeName)}s

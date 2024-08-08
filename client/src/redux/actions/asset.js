@@ -91,9 +91,10 @@ export const claimAsset = (visitor) => async (dispatch) => {
   }
 };
 
-export const clearAssetAsset =
+export const clearAsset =
   (isClearAssetFromUnclaimedAsset) => async (dispatch) => {
     try {
+      const themeName = getThemeName();
       const queryParams = getQueryParams();
       const url = `/api/asset/clear?${queryParams}`;
       const response = await axios.put(url, {
@@ -102,7 +103,7 @@ export const clearAssetAsset =
 
       if (response.status === 200) {
         dispatch(setSpawnSuccess(response?.data));
-        return dispatch(push(`/asset?${queryParams}`));
+        return dispatch(push(`/${themeName}?${queryParams}`));
       }
     } catch (error) {
       dispatch(setError(`There was an error while clearing the asset`));
@@ -112,13 +113,14 @@ export const clearAssetAsset =
 
 export const clearAllAssets = () => async (dispatch) => {
   try {
+    const themeName = getThemeName();
     const queryParams = getQueryParams();
     const url = `/api/asset/clear-all?${queryParams}`;
     const response = await axios.put(url);
 
     if (response.status === 200) {
       dispatch(setSpawnSuccess(response?.data));
-      return dispatch(push(`/asset?${queryParams}`));
+      return dispatch(push(`/${themeName}?${queryParams}`));
     }
   } catch (error) {
     dispatch(setError(`There was an error while clearing all assets`));

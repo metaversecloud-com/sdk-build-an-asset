@@ -21,10 +21,12 @@ const PageRoutes = () => {
           element={<Spawned />}
         />
         <Route path="/locker/claimed" element={<ClaimedAsset />} />
-        <Route path="/desk/claimed" element={<ClaimedAsset />} />
-        <Route path="/snowman" element={<SnowmanHome />} />
         <Route path="/locker" element={<AssetHome />} />
+
         <Route path="/desk" element={<AssetHome />} />
+        <Route path="/desk/claimed" element={<ClaimedAsset />} />
+
+        <Route path="/snowman" element={<SnowmanHome />} />
         <Route path="/snowman/edit" element={<EditAsset />} />
       </Routes>
     </Router>

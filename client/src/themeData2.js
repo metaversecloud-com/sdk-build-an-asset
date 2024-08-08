@@ -374,7 +374,7 @@ export const themes = {
 };
 
 export const getThemeData = (themeName) => {
-  return themes[themeName] || null;
+  return themes?.[themeName] || null;
 };
 
 export const getThemeNames = () => {

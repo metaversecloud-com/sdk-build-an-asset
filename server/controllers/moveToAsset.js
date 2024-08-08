@@ -27,15 +27,15 @@ export const moveToAsset = async (req, res) => {
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
 
-    const userLocker = await DroppedAsset.get(
-      world?.dataObject?.lockers?.[profileId]?.droppedAssetId,
+    const userAsset = await DroppedAsset.get(
+      world?.dataObject?.[themeName]?.[profileId]?.droppedAssetId,
       urlSlug,
       {
         credentials,
       }
     );
 
-    const { x, y } = userLocker?.position;
+    const { x, y } = userAsset?.position;
     await visitor.moveVisitor({
       shouldTeleportVisitor: false,
       x,
