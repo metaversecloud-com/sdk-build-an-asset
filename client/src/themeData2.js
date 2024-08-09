@@ -252,6 +252,23 @@ export const themes = {
           ],
         },
       ],
+      Carpet: [
+        {
+          name: "carpet_0.png",
+          hasVariation: true,
+          isRequired: true,
+          variations: [
+            "carpet_0.png",
+            "carpet_1.png",
+            "carpet_2.png",
+            "carpet_3.png",
+            "carpet_4.png",
+            "carpet_5.png",
+            "carpet_6.png",
+            "carpet_7.png",
+          ],
+        },
+      ],
       Chair: [
         {
           name: "chair_0.png",
@@ -323,18 +340,21 @@ export const themes = {
     },
     selectionLimits: {
       "Desk Base": 1,
+      Carpet: 1,
       Accessories: Infinity,
       Computer: 1,
       Chair: 1,
     },
     defaultOpenCategories: {
       "Desk Base": true,
+      Carpet: true,
       Accessories: false,
       Computer: false,
       Chair: false,
     },
     defaultSelected: {
       "Desk Base": [],
+      Carpet: [],
       Accessories: [],
       Computer: [],
       Chair: [],
