@@ -7,14 +7,13 @@ import {
   getDroppedAssetAndVisitor,
   pickupAllAssets,
   moveToAsset,
-  editLocker,
+  editAsset,
   getWorld,
-  clearLocker,
-  clearAllLockers,
-  moveToLocker,
+  clearAsset,
+  clearAllAssets,
   getDroppedAsset,
-  claimLocker,
-} from "./api/index.js";
+  claimAsset,
+} from "./controllers/index.js";
 import express from "express";
 import { validationMiddleware } from "./middleware/validation.js";
 
@@ -40,19 +39,17 @@ router.post(
   validationMiddleware,
   spawnFromSpawnedAsset
 );
-router.post("/asset/move-to-asset", validationMiddleware, moveToAsset);
 
 router.post("/asset/pickup-all-assets", validationMiddleware, pickupAllAssets);
 router.post("/asset/pickup", validationMiddleware, pickup);
 
-// Locker
-router.post("/locker/claim", validationMiddleware, claimLocker);
-router.post("/locker/move-to-asset", validationMiddleware, moveToLocker);
-router.put("/locker/asset/spawn", validationMiddleware, editLocker);
-router.put("/locker/clear", validationMiddleware, clearLocker);
-router.put("/locker/clear-all", validationMiddleware, clearAllLockers);
-
-router.get("/locker/world", validationMiddleware, getWorld);
-router.get("/locker/dropped-asset", validationMiddleware, getDroppedAsset);
+// Asset
+router.post("/asset/claim", validationMiddleware, claimAsset);
+router.post("/asset/move-to-asset", validationMiddleware, moveToAsset);
+router.put("/asset/asset/spawn", validationMiddleware, editAsset);
+router.put("/asset/clear", validationMiddleware, clearAsset);
+router.put("/asset/clear-all", validationMiddleware, clearAllAssets);
+router.get("/asset/world", validationMiddleware, getWorld);
+router.get("/asset/dropped-asset", validationMiddleware, getDroppedAsset);
 
 export default router;

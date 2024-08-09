@@ -58,5 +58,5 @@ Find the `INTERACTIVE_KEY`, and `INTERACTIVE_SECRET` in the admin settings in ht
 ### Helpful Links
 
 - View it in action: [https://topia.io/snowman-prod](https://topia.io/snowman-prod)
-- View it in action: [https://topia.io/locker-app-production](https://topia.io/locker-app-production)
+- View it in action: [https://topia.io/app-production](https://topia.io/app-production)
 - How to play guide in Notion: [[https://www.notion.so/topiaio/Build-an-Asset-64518134dae840958b1bdd7982c3c423](https://www.notion.so/topiaio/Build-an-Asset-64518134dae840958b1bdd7982c3c423)]

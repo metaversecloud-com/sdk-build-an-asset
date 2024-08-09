@@ -25,10 +25,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(requestID());
 
-const lockerAssetsPath = path.join(__dirname, "api/locker-app/locker-assets");
+const lockerAssetsPath = path.join(__dirname, "images/locker-assets");
+const deskAssetsPath = path.join(__dirname, "images/desk-assets");
+const snowmanAssetsPath = path.join(__dirname, "images/snowman-assets");
 app.use("/locker-assets", express.static(lockerAssetsPath));
+app.use("/desk-assets", express.static(deskAssetsPath));
+app.use("/snowman-assets", express.static(snowmanAssetsPath));
 
-app.use("/backend", router);
+app.use("/api", router);
 
 app.get("/", (req, res) => {
   return res.send(`Server is running... ${appVersion}`);
@@ -41,22 +45,13 @@ app.get("/api/system/health", (req, res) => {
     COMMIT_HASH: process.env.COMMIT_HASH ? process.env.COMMIT_HASH : "NOT SET",
     SHOWCASE_WORLDS_URLS: [
       "https://topia.io/snowman-prod",
-      "https://topia.io/locker-app-prod",
+      "https://topia.io/app-prod",
     ],
     INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN,
     INSTANCE_PROTOCOL: process.env.INSTANCE_PROTOCOL,
     INTERACTIVE_KEY: process.env.INTERACTIVE_KEY,
     IMG_ASSET_ID: process.env.IMG_ASSET_ID,
     S3_BUCKET: process.env.S3_BUCKET,
-    PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER: process.env
-      .PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER
-      ? PARTICLE_EFFECT_NAME_FOR_EDIT_LOCKER
-      : "NOT SET",
-    PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER: process.env
-      .PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER
-      ? PARTICLE_EFFECT_NAME_FOR_CLAIM_LOCKER
-      : "NOT SET",
-
     GOOGLESHEETS_CLIENT_EMAIL: process.env.GOOGLESHEETS_CLIENT_EMAIL
       ? "SET"
       : "NOT SET",
