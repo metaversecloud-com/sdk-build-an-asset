@@ -91,34 +91,44 @@ function EditAsset() {
   useEffect(() => {
     const fetchInitialState = async () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const initialSelection = Object.keys(themeData.categories).reduce(
-        (acc, category) => {
-          const categoryKey1 = `${category.replace(/\s/g, "")}1`;
-          const categoryKey2 = `${category.replace(/\s/g, "")}2`;
-          acc[category] = [
-            urlParams.get(categoryKey1) &&
-              `${BASE_URL}/${themeName}-assets/${urlParams.get(
-                categoryKey1
-              )}.png`,
-            urlParams.get(categoryKey2) &&
-              `${BASE_URL}/${themeName}-assets/${urlParams.get(
-                categoryKey2
-              )}.png`,
-          ].filter(Boolean);
-          return acc;
-        },
-        {}
-      );
+      const initialSelection = themeData.layerOrder.reduce((acc, category) => {
+        const categoryKey1 = `${category.replace(/\s/g, "")}1`;
+        const categoryKey2 = `${category.replace(/\s/g, "")}2`;
+        acc[category] = [
+          urlParams.get(categoryKey1) &&
+            `${BASE_URL}/${themeName}-assets/${urlParams.get(
+              categoryKey1
+            )}.png`,
+          urlParams.get(categoryKey2) &&
+            `${BASE_URL}/${themeName}-assets/${urlParams.get(
+              categoryKey2
+            )}.png`,
+        ].filter(Boolean);
+        return acc;
+      }, {});
 
       setSelected(initialSelection);
 
-      const imagesToMerge = Object.values(initialSelection)
-        .flat()
-        .map((item) => ({
-          src: item,
-          x: 0,
-          y: 0,
-        }));
+      const initialImageInfo = themeData.layerOrder.reduce((info, category) => {
+        info[category] = initialSelection[category]
+          .map((item) => ({
+            imageName: item.split("/").pop().split(".")[0],
+          }))
+          .filter(Boolean);
+        return info;
+      }, {});
+
+      setImageInfo(initialImageInfo);
+
+      const orderedImages = themeData.layerOrder.flatMap((category) =>
+        initialSelection[category] ? initialSelection[category] : []
+      );
+
+      const imagesToMerge = orderedImages.map((image) => ({
+        src: image,
+        x: 0,
+        y: 0,
+      }));
 
       mergeImages(imagesToMerge)
         .then(setPreview)
@@ -244,9 +254,9 @@ function EditAsset() {
 
     setSelected(updatedSelection);
 
-    const updatedImageInfo = Object.keys(updatedSelection).reduce(
-      (info, key) => {
-        info[key] = updatedSelection[key]
+    const updatedImageInfo = themeData.layerOrder.reduce((info, category) => {
+      if (updatedSelection[category]) {
+        info[category] = updatedSelection[category]
           .map((item) => {
             if (item) {
               return {
@@ -256,13 +266,27 @@ function EditAsset() {
             return null;
           })
           .filter(Boolean);
-        return info;
-      },
-      {}
-    );
+      } else {
+        info[category] = [];
+      }
+      return info;
+    }, {});
+
     setImageInfo(updatedImageInfo);
 
-    mergeImagesInOrder(updatedSelection).then(setPreview);
+    // Prepara as imagens para merge na ordem correta
+    const orderedImages = themeData.layerOrder.flatMap((category) =>
+      updatedSelection[category] ? updatedSelection[category] : []
+    );
+
+    const imagesToMerge = orderedImages.map((image) => ({
+      src: image,
+      x: 0,
+      y: 0,
+    }));
+
+    // Realiza o merge das imagens e atualiza o preview
+    mergeImages(imagesToMerge).then(setPreview);
   };
 
   const handleOpenModalWithVariations = (item, type) => {
