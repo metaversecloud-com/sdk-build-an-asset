@@ -46,7 +46,7 @@ function ItemVariationSelectorModal({
             {variations.map((variation, index) => (
               <img
                 key={index}
-                src={`${BASE_URL}/${themeName}-assets/${variation}`}
+                src={`${BASE_URL}/assets/${themeName}/${variation}`}
                 alt={`Variation ${index}`}
                 onClick={() => handleVariationClick(variation)}
                 className={`variation-item ${

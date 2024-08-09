@@ -52,7 +52,7 @@ export const claimAsset = async (req, res) => {
       }
     }
 
-    const s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/lockerBase_0.png`;
+    const s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/claimedAsset.png`;
 
     try {
       await world.updateDataObject(

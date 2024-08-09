@@ -18,9 +18,7 @@ function ClaimedAsset() {
   const dispatch = useDispatch();
 
   const themeName = getThemeName();
-  const defaultUnclaimedAsset = `/assets/${themeName}/defaultClaimed${capitalize(
-    themeName
-  )}.png`;
+  const defaultUnclaimedAsset = `/assets/${themeName}/unclaimedAsset.png`;
 
   const queryParameters = new URLSearchParams(window.location.search);
   const profileId = queryParameters.get("profileId");
@@ -37,7 +35,7 @@ function ClaimedAsset() {
   const world = useSelector((state) => state?.session?.world);
   const [showSettings, setShowSettings] = useState(false);
 
-  const s3Url = world?.dataObject?.assets?.[ownerProfileId]?.s3Url;
+  const s3Url = world?.dataObject?.[themeName]?.[ownerProfileId]?.s3Url;
 
   const visitorName = assetParams["visitor-name"]?.replace("%20", " ");
 

@@ -46,9 +46,7 @@ export const clearAsset = async (req, res) => {
       credentials,
     });
 
-    const toplayer = `${getS3URL()}/${themeName}/unclaimed${capitalize(
-      themeName
-    )}.png`;
+    const toplayer = `${getS3URL()}/${themeName}/unclaimedAsset.png`;
 
     const clickableLink = `${baseUrl}/${themeName}`;
 

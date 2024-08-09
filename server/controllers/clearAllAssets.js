@@ -30,9 +30,7 @@ export const clearAllAssets = async (req, res) => {
     });
 
     // TODO: remove need for update clickType
-    const toplayer = `${getS3URL()}/${themeName}/unclaimed${capitalize(
-      themeName
-    )}.png`;
+    const toplayer = `${getS3URL()}/${themeName}/unclaimedAsset.png`;
 
     const clickableLink = `${baseUrl}/${themeName}`;
     const promises = [];
