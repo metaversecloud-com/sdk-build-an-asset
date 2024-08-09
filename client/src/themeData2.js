@@ -15,6 +15,7 @@ export const themes = {
       chooseNew:
         "To choose this one instead, click 'Empty Locker' button below.",
     },
+    layerOrder: ["Locker Base", "Top Shelf", "Bottom Shelf", "Door"],
     categories: {
       "Locker Base": [
         {
@@ -233,6 +234,13 @@ export const themes = {
       alreadyHave: "You already have a desk!",
       chooseNew: "To choose this one instead, click 'Empty Desk' button below.",
     },
+    layerOrder: [
+      "Ambiance Textures",
+      "Desk Base",
+      "Chair",
+      "Accessories",
+      "Computer",
+    ],
     categories: {
       "Desk Base": [
         {
@@ -252,7 +260,7 @@ export const themes = {
           ],
         },
       ],
-      Carpet: [
+      "Ambiance Textures": [
         {
           name: "carpet_0.png",
           hasVariation: true,
@@ -262,11 +270,13 @@ export const themes = {
             "carpet_1.png",
             "carpet_2.png",
             "carpet_3.png",
-            "carpet_4.png",
-            "carpet_5.png",
-            "carpet_6.png",
-            "carpet_7.png",
           ],
+        },
+        {
+          name: "wall_0.png",
+          hasVariation: true,
+          isRequired: true,
+          variations: ["wall_0.png", "wall_1.png", "wall_2.png", "wall_3.png"],
         },
       ],
       Chair: [
@@ -340,21 +350,21 @@ export const themes = {
     },
     selectionLimits: {
       "Desk Base": 1,
-      Carpet: 1,
+      "Ambiance Textures": 1,
       Accessories: Infinity,
       Computer: 1,
       Chair: 1,
     },
     defaultOpenCategories: {
       "Desk Base": true,
-      Carpet: true,
+      "Ambiance Textures": true,
       Accessories: false,
       Computer: false,
       Chair: false,
     },
     defaultSelected: {
       "Desk Base": [],
-      Carpet: [],
+      "Ambiance Textures": [],
       Accessories: [],
       Computer: [],
       Chair: [],
@@ -371,6 +381,7 @@ export const themes = {
       alreadyHave: "You already have a Snowman!",
       chooseNew: "To choose this one instead, click 'Empty Desk' button below.",
     },
+    layerOrder: ["Body", "Accessories"],
     categories: {
       Body: [
         {

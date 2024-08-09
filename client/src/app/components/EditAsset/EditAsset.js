@@ -135,6 +135,20 @@ function EditAsset() {
     }
   }, [dispatch, themeName]);
 
+  const mergeImagesInOrder = (selectedImages) => {
+    const orderedImages = themeData.layerOrder.flatMap((category) =>
+      selectedImages[category] ? selectedImages[category] : []
+    );
+
+    const imagesToMerge = orderedImages.map((image) => ({
+      src: image,
+      x: 0,
+      y: 0,
+    }));
+
+    return mergeImages(imagesToMerge);
+  };
+
   const updateAsset = (type, image, item) => {
     let updatedSelection = { ...selected };
 
@@ -248,16 +262,7 @@ function EditAsset() {
     );
     setImageInfo(updatedImageInfo);
 
-    const imagesToMerge = Object.values(updatedSelection)
-      .flat()
-      .map((i) => ({
-        src: i,
-        x: 0,
-        y: 0,
-      }))
-      .filter((img) => img.src);
-
-    mergeImages(imagesToMerge).then(setPreview);
+    mergeImagesInOrder(updatedSelection).then(setPreview);
   };
 
   const handleOpenModalWithVariations = (item, type) => {
