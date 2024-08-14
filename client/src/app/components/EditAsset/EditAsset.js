@@ -41,9 +41,7 @@ function EditAsset() {
   const [currentItem, setCurrentItem] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
   const [preview, setPreview] = useState(
-    `${BASE_URL}/${themeName}-assets/defaultClaimed${
-      themeName.charAt(0).toUpperCase() + themeName.slice(1)
-    }.png`
+    `${BASE_URL}/${themeName}-assets/claimedAsset.png`
   );
 
   const [imageInfo, setImageInfo] = useState({});
@@ -377,9 +375,7 @@ function EditAsset() {
         <img
           src={
             preview === "data:,"
-              ? `${BASE_URL}/${themeName}-assets/defaultClaimed${
-                  themeName.charAt(0).toUpperCase() + themeName.slice(1)
-                }.png`
+              ? `${BASE_URL}/${themeName}-assets/claimedAsset.png`
               : preview
           }
           alt={`${themeData.name} Preview`}
@@ -492,7 +488,7 @@ function EditAsset() {
             <button
               onClick={handleSaveToBackend}
               disabled={
-                !selected[`${capitalize(themeName)} Base`].length > 0 ||
+                !selected[themeData.baseCategoryName].length > 0 ||
                 isButtonSaveAssetDisabled
               }
             >

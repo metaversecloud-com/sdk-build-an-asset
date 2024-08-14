@@ -6,6 +6,7 @@ export const themes = {
   locker: {
     name: "Locker",
     splashImage: lockerSplashImage,
+    baseCategoryName: "Locker Base",
     texts: {
       header: "Decorate your Locker",
       description:
@@ -226,6 +227,7 @@ export const themes = {
   desk: {
     name: "Desk",
     splashImage: deskSplashImage,
+    baseCategoryName: "Desk Base",
     texts: {
       header: "Decorate your Desk",
       description:
@@ -373,6 +375,7 @@ export const themes = {
   snowman: {
     name: "Snowman",
     splashImage: deskSplashImage,
+    baseCategoryName: "Body",
     texts: {
       header: "Build your Snowman!",
       description:
