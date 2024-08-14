@@ -6,6 +6,7 @@ export const themes = {
   locker: {
     name: "Locker",
     splashImage: lockerSplashImage,
+    saveButtonText: "Save",
     baseCategoryName: "Locker Base",
     texts: {
       header: "Decorate your Locker",
@@ -227,6 +228,7 @@ export const themes = {
   desk: {
     name: "Desk",
     splashImage: deskSplashImage,
+    saveButtonText: "Save",
     baseCategoryName: "Desk Base",
     texts: {
       header: "Decorate your Desk",
@@ -375,6 +377,7 @@ export const themes = {
   snowman: {
     name: "Snowman",
     splashImage: deskSplashImage,
+    saveButtonText: "Add Snowman",
     baseCategoryName: "Body",
     texts: {
       header: "Build your Snowman!",
@@ -384,7 +387,7 @@ export const themes = {
       alreadyHave: "You already have a Snowman!",
       chooseNew: "To choose this one instead, click 'Empty Desk' button below.",
     },
-    layerOrder: ["Body", "Accessories"],
+    layerOrder: ["Body", "Arms", "Head", "Accessories"],
     categories: {
       Body: [
         {
@@ -393,6 +396,28 @@ export const themes = {
           isRequired: true,
           variations: ["body_0.png", "body_1.png", "body_2.png"],
         },
+      ],
+      Arms: [
+        { name: "arms_0.png", hasVariation: false },
+        { name: "arms_1.png", hasVariation: false },
+        { name: "arms_2.png", hasVariation: false },
+        { name: "arms_3.png", hasVariation: false },
+        { name: "arms_4.png", hasVariation: false },
+        { name: "arms_5.png", hasVariation: false },
+        { name: "arms_6.png", hasVariation: false },
+        { name: "arms_7.png", hasVariation: false },
+        { name: "arms_8.png", hasVariation: false },
+      ],
+      Head: [
+        { name: "head_0.png", hasVariation: false },
+        { name: "head_1.png", hasVariation: false },
+        { name: "head_2.png", hasVariation: false },
+        { name: "head_3.png", hasVariation: false },
+        { name: "head_4.png", hasVariation: false },
+        { name: "head_5.png", hasVariation: false },
+        { name: "head_6.png", hasVariation: false },
+        { name: "head_7.png", hasVariation: false },
+        { name: "head_8.png", hasVariation: false },
       ],
       Accessories: [
         { name: "accessories_0.png", hasVariation: false },
@@ -405,14 +430,20 @@ export const themes = {
     },
     selectionLimits: {
       Body: 1,
-      Accessories: Infinity,
+      Arms: 1,
+      Head: 1,
+      Accessories: 1,
     },
     defaultOpenCategories: {
       Body: true,
+      Arms: false,
+      Head: false,
       Accessories: false,
     },
     defaultSelected: {
       Body: [],
+      Arms: [],
+      Head: [],
       Accessories: [],
     },
   },
@@ -428,6 +459,6 @@ export const getThemeNames = () => {
 
 export const getThemeName = () => {
   const pathname = window.location.pathname;
-  const themeName = pathname.split("/")[1] || "locker";
+  const themeName = pathname.split("/")[1];
   return themeName;
 };

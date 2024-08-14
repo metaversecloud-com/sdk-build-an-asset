@@ -60,11 +60,11 @@ function EditAsset() {
   };
 
   const isCategorySelected = (category) => {
-    return selected[category].length > 0;
+    return selected[category]?.length > 0;
   };
 
   const isSelectedItem = (type, imageName) => {
-    return selected[type].some((selectedImage) => {
+    return selected[type]?.some((selectedImage) => {
       if (!selectedImage) return false;
 
       const selectedBaseName = selectedImage
@@ -178,7 +178,7 @@ function EditAsset() {
       });
     } else {
       if (item.hasVariation) {
-        const isSelectedVariation = updatedSelection[type].includes(image);
+        const isSelectedVariation = updatedSelection[type]?.includes(image);
 
         if (isSelectedVariation) {
           if (item.isRequired) {
@@ -200,6 +200,7 @@ function EditAsset() {
           updatedSelection[type].push(image);
         }
       } else {
+        console.log("selected[type]", selected[type], selected, type);
         const isSelected = selected[type].includes(image);
         if (themeData.selectionLimits[type] === 1) {
           updatedSelection[type] = isSelected ? [] : [image];
@@ -492,7 +493,7 @@ function EditAsset() {
                 isButtonSaveAssetDisabled
               }
             >
-              Save
+              {themeData.saveButtonText}
             </button>
           </div>
         </div>
