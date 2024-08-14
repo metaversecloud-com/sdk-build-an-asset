@@ -264,7 +264,7 @@ export const themes = {
         {
           name: "carpet_0.png",
           hasVariation: true,
-          isRequired: true,
+          isRequired: false,
           variations: [
             "carpet_0.png",
             "carpet_1.png",
@@ -275,7 +275,7 @@ export const themes = {
         {
           name: "wall_0.png",
           hasVariation: true,
-          isRequired: true,
+          isRequired: false,
           variations: ["wall_0.png", "wall_1.png", "wall_2.png", "wall_3.png"],
         },
       ],
@@ -350,10 +350,10 @@ export const themes = {
     },
     selectionLimits: {
       "Desk Base": 1,
-      "Ambiance Textures": 1,
+      "Ambiance Textures": Infinity,
       Accessories: Infinity,
-      Computer: 1,
-      Chair: 1,
+      Computer: Infinity,
+      Chair: Infinity,
     },
     defaultOpenCategories: {
       "Desk Base": true,
