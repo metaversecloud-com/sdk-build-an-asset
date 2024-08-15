@@ -27,6 +27,7 @@ const PageRoutes = () => {
         <Route path="/desk/claimed" element={<ClaimedAsset />} />
 
         <Route path="/snowman" element={<SnowmanHome />} />
+        <Route path="/snowman2" element={<Home />} />
         <Route path="/snowman/edit" element={<EditAsset />} />
       </Routes>
     </Router>

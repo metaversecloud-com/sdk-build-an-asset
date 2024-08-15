@@ -51,7 +51,7 @@ export const getVisitor = () => async (dispatch) => {
 export const spawnAsset = (completeImageName) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/asset/spawn?${queryParams}`;
+    const url = `/api/asset/spawn?${queryParams}`;
     const response = await axios.post(url, { completeImageName });
 
     if (response.status === 200) {

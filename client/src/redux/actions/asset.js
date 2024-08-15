@@ -55,8 +55,16 @@ export const getVisitor = () => async (dispatch) => {
 export const editAsset = (imageInfo) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/api/asset/asset/spawn?${queryParams}`;
-    const response = await axios.put(url, { imageInfo });
+    const themeName = getThemeName();
+
+    let response;
+    if (themeName === "snowman") {
+      const url = `/api/asset/spawn-snowman?${queryParams}`;
+      response = await axios.put(url, { imageInfo });
+    } else {
+      const url = `/api/asset/asset/spawn?${queryParams}`;
+      response = await axios.put(url, { imageInfo });
+    }
 
     if (response.status === 200) {
       dispatch(setSpawnSuccess(response?.data));

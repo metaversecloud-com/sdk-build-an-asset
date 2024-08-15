@@ -13,6 +13,7 @@ import {
   clearAllAssets,
   getDroppedAsset,
   claimAsset,
+  spawnSnowman,
 } from "./controllers/index.js";
 import express from "express";
 import { validationMiddleware } from "./middleware/validation.js";
@@ -51,5 +52,6 @@ router.put("/asset/clear", validationMiddleware, clearAsset);
 router.put("/asset/clear-all", validationMiddleware, clearAllAssets);
 router.get("/asset/world", validationMiddleware, getWorld);
 router.get("/asset/dropped-asset", validationMiddleware, getDroppedAsset);
+router.put("/asset/spawn-snowman", validationMiddleware, spawnSnowman);
 
 export default router;

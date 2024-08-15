@@ -15,4 +15,5 @@ export * from "./clearAllAssets.js";
 export * from "./moveToAsset.js";
 export * from "./getDroppedAsset.js";
 export * from "./claimAsset.js";
+export * from "./spawnSnowman.js";
 export * from "./world/getWorld.js";
