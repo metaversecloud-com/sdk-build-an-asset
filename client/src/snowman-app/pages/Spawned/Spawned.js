@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getDroppedAssetAndVisitor,
-  getIsMyAssetSpawned,
-  moveToAsset,
-} from "../../../redux/actions/session";
+import { moveToAsset } from "../../../redux/actions/session";
+
+import { getDroppedAssetAndVisitor } from "../../../redux/actions/getDroppedAssetAndVisitor";
 
 import { pickupAsset } from "../../../redux/actions/pickupAsset";
 
@@ -42,10 +40,6 @@ function Spawned() {
 
   const handlePickupAsset = async () => {
     await dispatch(pickupAsset());
-  };
-
-  const handleEditSnowman = () => {
-    setShowCustomizeScreen(true);
   };
 
   const handleMoveToSnowman = async () => {

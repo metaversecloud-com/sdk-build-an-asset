@@ -9,6 +9,7 @@ export const getDroppedAssetAndVisitor = async (req, res) => {
       assetId,
       interactivePublicKey,
       urlSlug,
+      themeName,
     } = req.query;
 
     const credentials = {
@@ -35,7 +36,7 @@ export const getDroppedAssetAndVisitor = async (req, res) => {
 
     let spawnedAsset = null;
     const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: `assetSystem-${visitor?.profileId}`,
+      uniqueName: `${themeName}System-${visitor?.profileId}`,
     });
 
     if (spawnedAssets && spawnedAssets.length) {

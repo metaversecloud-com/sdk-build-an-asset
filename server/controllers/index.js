@@ -1,6 +1,6 @@
 export * from "../utils/topiaInit.js";
 export * from "./snowman-app/world/index.js";
-export * from "./snowman-app/asset/spawnFromSpawnedAsset.js";
+// export * from "./snowman-app/asset/spawnFromSpawnedAsset.js";
 
 // Asset
 export * from "./editAsset.js";
