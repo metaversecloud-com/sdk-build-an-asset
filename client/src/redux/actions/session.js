@@ -253,21 +253,3 @@ export const nameAsset = (name) => async (dispatch) => {
     }
   }
 };
-
-export const deleteAll = () => async (dispatch) => {
-  try {
-    const queryParams = getQueryParams();
-    const url = `/api/asset?${queryParams}`;
-
-    const response = await axios.delete(url);
-    if (response.status === 200) {
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.error("error", error);
-    if (error.response && error.response.data) {
-    } else {
-    }
-  }
-};

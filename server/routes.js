@@ -1,9 +1,8 @@
 import {
   getVisitor,
-  spawn,
   spawnFromSpawnedAsset,
   pickup,
-  get,
+  getAsset,
   getDroppedAssetAndVisitor,
   pickupAllAssets,
   moveToAsset,
@@ -26,7 +25,7 @@ router.get("/", (req, res) => {
 
 router.get("/visitor", getVisitor);
 
-router.get("/asset", validationMiddleware, get);
+router.get("/asset", validationMiddleware, getAsset);
 
 router.get(
   "/dropped-asset-and-visitor",
@@ -34,7 +33,6 @@ router.get(
   getDroppedAssetAndVisitor
 );
 
-router.post("/asset/spawn", validationMiddleware, spawn);
 router.post(
   "/asset/spawn-from-spawned-asset",
   validationMiddleware,
