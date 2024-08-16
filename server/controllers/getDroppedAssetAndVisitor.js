@@ -1,5 +1,5 @@
-import { Visitor, DroppedAsset, World } from "../../../utils/topiaInit.js";
-import { logger } from "../../../logs/logger.js";
+import { Visitor, DroppedAsset, World } from "../utils/topiaInit.js";
+import { logger } from "../logs/logger.js";
 
 export const getDroppedAssetAndVisitor = async (req, res) => {
   try {

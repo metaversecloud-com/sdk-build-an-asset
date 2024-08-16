@@ -1,5 +1,5 @@
-import { DroppedAsset, Visitor } from "../../../utils/topiaInit.js";
-import { logger } from "../../../logs/logger.js";
+import { DroppedAsset, Visitor } from "../utils/topiaInit.js";
+import { logger } from "../logs/logger.js";
 
 let BASE_URL;
 

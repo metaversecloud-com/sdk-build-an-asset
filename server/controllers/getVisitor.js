@@ -1,4 +1,4 @@
-import { Visitor } from "../../../utils/topiaInit.js";
+import { Visitor } from "../utils/topiaInit.js";
 export const getVisitor = async (req, res) => {
   try {
     const {
