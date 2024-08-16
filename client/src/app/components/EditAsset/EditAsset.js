@@ -25,7 +25,7 @@ function EditAsset() {
 
   const visitor = useSelector((state) => state?.session?.visitor);
   const themeName = getThemeName();
-  const themeData = getThemeData(themeName);
+  const themeData = getThemeData();
 
   const [selected, setSelected] = useState(themeData?.defaultSelected);
   const [loading, setLoading] = useState(false);

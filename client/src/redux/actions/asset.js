@@ -59,7 +59,7 @@ export const editAsset = (imageInfo) => async (dispatch) => {
 
     let response;
     if (themeName === "snowman") {
-      const url = `/api/asset/spawn-snowman?${queryParams}`;
+      const url = `/api/asset/?spawn-random-location${queryParams}`;
       response = await axios.put(url, { imageInfo });
     } else {
       const url = `/api/asset/asset/spawn?${queryParams}`;

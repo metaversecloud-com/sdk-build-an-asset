@@ -11,7 +11,7 @@ import {
   clearAllAssets,
   getDroppedAsset,
   claimAsset,
-  spawnSnowman,
+  spawnAssetInRandomLocation,
 } from "./controllers/index.js";
 import express from "express";
 import { validationMiddleware } from "./middleware/validation.js";
@@ -32,12 +32,6 @@ router.get(
   getDroppedAssetAndVisitor
 );
 
-// router.post(
-//   "/asset/spawn-from-spawned-asset",
-//   validationMiddleware,
-//   spawnFromSpawnedAsset
-// );
-
 router.post("/asset/pickup-all-assets", validationMiddleware, pickupAllAssets);
 router.post("/asset/pickup", validationMiddleware, pickup);
 
@@ -49,6 +43,10 @@ router.put("/asset/clear", validationMiddleware, clearAsset);
 router.put("/asset/clear-all", validationMiddleware, clearAllAssets);
 router.get("/asset/world", validationMiddleware, getWorld);
 router.get("/asset/dropped-asset", validationMiddleware, getDroppedAsset);
-router.put("/asset/spawn-snowman", validationMiddleware, spawnSnowman);
+router.put(
+  "/asset/spawn-random-location",
+  validationMiddleware,
+  spawnAssetInRandomLocation
+);
 
 export default router;

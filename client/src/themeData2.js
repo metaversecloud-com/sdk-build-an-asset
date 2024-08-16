@@ -8,6 +8,7 @@ export const themes = {
     splashImage: lockerSplashImage,
     saveButtonText: "Save",
     baseCategoryName: "Locker Base",
+    spawnAssetInRandomLocation: false,
     texts: {
       header: "Decorate your Locker",
       description:
@@ -230,6 +231,7 @@ export const themes = {
     splashImage: deskSplashImage,
     saveButtonText: "Save",
     baseCategoryName: "Desk Base",
+    spawnAssetInRandomLocation: false,
     texts: {
       header: "Decorate your Desk",
       description:
@@ -379,6 +381,7 @@ export const themes = {
     splashImage: deskSplashImage,
     saveButtonText: "Add Snowman",
     baseCategoryName: "Body",
+    spawnAssetInRandomLocation: true,
     texts: {
       header: "Build your Snowman!",
       description:
@@ -449,7 +452,9 @@ export const themes = {
   },
 };
 
-export const getThemeData = (themeName) => {
+export const getThemeData = () => {
+  const pathname = window.location.pathname;
+  const themeName = pathname.split("/")[1];
   return themes?.[themeName] || null;
 };
 

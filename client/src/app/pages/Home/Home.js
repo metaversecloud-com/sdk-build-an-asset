@@ -15,7 +15,7 @@ function Home() {
   const dispatch = useDispatch();
 
   const themeName = getThemeName();
-  const themeData = getThemeData(themeName);
+  const themeData = getThemeData();
 
   const visitor = useSelector((state) => state?.session?.visitor);
   const world = useSelector((state) => state?.session?.world);

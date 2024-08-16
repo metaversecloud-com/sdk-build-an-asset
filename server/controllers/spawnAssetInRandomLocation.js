@@ -4,7 +4,7 @@ import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 
 let BASE_URL;
 
-export const spawnSnowman = async (req, res) => {
+export const spawnAssetInRandomLocation = async (req, res) => {
   try {
     const protocol = process.env.INSTANCE_PROTOCOL;
     const host = req.host;

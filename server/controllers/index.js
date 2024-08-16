@@ -7,7 +7,7 @@ export * from "./clearAllAssets.js";
 export * from "./moveToAsset.js";
 export * from "./getDroppedAsset.js";
 export * from "./claimAsset.js";
-export * from "./spawnSnowman.js";
+export * from "./spawnAssetInRandomLocation.js";
 export * from "./spawnFromSpawnedAsset.js";
 export * from "./pickup.js";
 export * from "./pickupAllAssets.js";
