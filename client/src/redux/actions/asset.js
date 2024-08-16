@@ -2,12 +2,8 @@
 
 import { session } from "../reducers/session";
 import { push } from "redux-first-history";
-import axios from "axios";
 import { getThemeName } from "../../themeData2.js";
-
-if (process.env.LOCALHOST) {
-  axios.defaults.baseURL = "http://localhost:3000";
-}
+import axios from "axios";
 
 export const {
   setVisitor,
@@ -19,6 +15,10 @@ export const {
   setSpawnSuccess,
   setError,
 } = session.actions;
+
+if (process.env.LOCALHOST) {
+  axios.defaults.baseURL = "http://localhost:3000";
+}
 
 const getQueryParams = () => {
   const queryParameters = new URLSearchParams(window.location.search);

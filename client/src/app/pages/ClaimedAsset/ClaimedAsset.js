@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
-import { getWorld } from "../../../redux/actions/asset";
+import { getWorld } from "../../../redux/actions/getWorld";
 import EditAsset from "../../components/EditAsset/EditAsset";
 import AdminView from "../Admin/AdminView";
 import Gear from "../Admin/Gear";

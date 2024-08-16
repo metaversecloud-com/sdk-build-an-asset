@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { clearAllAssets } from "../../../redux/actions/asset.js";
+import { clearAllAssets } from "../../../redux/actions/clearAllAssets.js";
 import { capitalize } from "../../../utils/utils.js";
 import { getThemeName } from "../../../themeData2.js";
 

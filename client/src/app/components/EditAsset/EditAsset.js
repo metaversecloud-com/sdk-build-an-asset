@@ -4,14 +4,13 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import mergeImages from "merge-images";
 import { ClipLoader } from "react-spinners";
-import { editAsset } from "../../../redux/actions/asset.js";
+import { editAsset } from "../../../redux/actions/editAsset.js";
 import { Collapse, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
   faChevronUp,
   faCheck,
-  faChevronLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import Gear from "../../pages/Admin/Gear.js";
 import AdminView from "../../pages/Admin/AdminView.js";
@@ -19,7 +18,6 @@ import ItemVariationSelectorModal from "../ItemVariationSelector/ItemVariationSe
 import { getThemeData, getThemeName } from "../../../themeData2.js";
 
 import "./EditAsset.scss";
-import { capitalize } from "../../../utils/utils.js";
 
 function EditAsset() {
   const dispatch = useDispatch();

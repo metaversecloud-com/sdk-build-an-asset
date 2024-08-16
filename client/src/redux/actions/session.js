@@ -35,7 +35,7 @@ export const getVisitor = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
 
-    const response = await axios.get(`/backend/visitor?${queryParams}`);
+    const response = await axios.get(`/api/visitor?${queryParams}`);
 
     if (response.status === 200) {
       dispatch(setVisitor(response.data.visitor));
@@ -70,7 +70,7 @@ export const spawnFromSpawnedAsset =
   (completeImageName) => async (dispatch) => {
     try {
       const queryParams = getQueryParams();
-      const url = `/backend/asset/spawn-from-spawned-asset?${queryParams}`;
+      const url = `/api/asset/spawn-from-spawned-asset?${queryParams}`;
       const response = await axios.post(url, { completeImageName });
 
       if (response.status === 200) {
@@ -88,7 +88,7 @@ export const spawnFromSpawnedAsset =
 export const getIsMyAssetSpawned = (completeImageName) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/asset/is-my-asset-spawned?${queryParams}`;
+    const url = `/api/asset/is-my-asset-spawned?${queryParams}`;
     const response = await axios.get(url, { completeImageName });
 
     if (response.status === 200) {
@@ -106,7 +106,7 @@ export const getIsMyAssetSpawned = (completeImageName) => async (dispatch) => {
 export const pickupAsset = (isSpawnedDroppedAsset) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/asset/pickup?${queryParams}&isSpawnedDroppedAsset=${isSpawnedDroppedAsset}`;
+    const url = `/api/asset/pickup?${queryParams}&isSpawnedDroppedAsset=${isSpawnedDroppedAsset}`;
     const response = await axios.post(url);
 
     if (response.status === 200) {
@@ -124,7 +124,7 @@ export const pickupAsset = (isSpawnedDroppedAsset) => async (dispatch) => {
 export const pickUpAllAssets = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/asset/pickup-all-assets?${queryParams}`;
+    const url = `/api/asset/pickup-all-assets?${queryParams}`;
     const response = await axios.post(url);
   } catch (error) {
     dispatch(setError("There was an error while picking up all assets"));
@@ -138,7 +138,7 @@ export const pickUpAllAssets = () => async (dispatch) => {
 export const moveToAsset = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/asset/move-to-asset?${queryParams}`;
+    const url = `/api/asset/move-to-asset?${queryParams}`;
 
     const response = await axios.post(url);
   } catch (error) {
@@ -152,7 +152,7 @@ export const moveToAsset = () => async (dispatch) => {
 export const getDroppedAsset = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/dropped-asset?${queryParams}`;
+    const url = `/api/dropped-asset?${queryParams}`;
 
     const response = await axios.get(url);
 
@@ -170,7 +170,7 @@ export const getDroppedAsset = () => async (dispatch) => {
 export const getDroppedAssetAndVisitor = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/dropped-asset-and-visitor?${queryParams}`;
+    const url = `/api/dropped-asset-and-visitor?${queryParams}`;
 
     const response = await axios.get(url);
 
@@ -188,7 +188,7 @@ export const getDroppedAssetAndVisitor = () => async (dispatch) => {
 export const getAsset = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/asset?${queryParams}`;
+    const url = `/api/asset?${queryParams}`;
 
     const response = await axios.get(url);
     const asset = response?.data?.asset;
@@ -213,7 +213,7 @@ export const getAsset = () => async (dispatch) => {
 export const createAsset = (assetType, name) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/asset?${queryParams}`;
+    const url = `/api/asset?${queryParams}`;
 
     const response = await axios.post(url, { assetType, name });
     const asset = response?.data?.asset;
@@ -235,7 +235,7 @@ export const createAsset = (assetType, name) => async (dispatch) => {
 export const nameAsset = (name) => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/asset/name?${queryParams}`;
+    const url = `/api/asset/name?${queryParams}`;
 
     const response = await axios.post(url, { name });
     const asset = response?.data?.asset;
@@ -257,7 +257,7 @@ export const nameAsset = (name) => async (dispatch) => {
 export const deleteAll = () => async (dispatch) => {
   try {
     const queryParams = getQueryParams();
-    const url = `/backend/asset?${queryParams}`;
+    const url = `/api/asset?${queryParams}`;
 
     const response = await axios.delete(url);
     if (response.status === 200) {

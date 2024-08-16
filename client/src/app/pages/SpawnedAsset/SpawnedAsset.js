@@ -2,13 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  pickupAsset,
   getDroppedAssetAndVisitor,
-  getIsMyAssetSpawned,
   moveToAsset,
 } from "../../../redux/actions/session";
-
-import { pickupAsset } from "../../../redux/actions/pickupAsset";
-
 import "./Spawned.scss";
 
 function Spawned() {
@@ -62,7 +59,7 @@ function Spawned() {
   return (
     <div className="spawned-wrapper">
       <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-        <b>Snowman1</b>
+        <b>Snowman</b>
       </h2>
       <img src={imgPath} alt={`Snowman of ${visitorName}`} />
       <div style={{ marginTop: "20px" }}>
@@ -77,6 +74,7 @@ function Spawned() {
       ) : (
         ""
       )}
+
       {isAssetOwner ? (
         <div style={{ width: "320px" }}>
           <button

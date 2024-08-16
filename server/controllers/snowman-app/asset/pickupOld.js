@@ -1,7 +1,7 @@
 import { Visitor, World } from "../../../utils/topiaInit.js";
 import { logger } from "../../../logs/logger.js";
 
-export const pickup = async (req, res) => {
+export const pickupOld = async (req, res) => {
   try {
     const {
       assetId,

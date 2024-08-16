@@ -116,7 +116,7 @@ async function updateImageAsset({
 
   const modifiedName = username.replace(/ /g, "%20");
 
-  const clickableLink = `${BASE_URL}/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
+  const clickableLink = `${BASE_URL}/snowman/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
 
   await droppedAsset?.updateClickType({
     clickType: "link",

@@ -17,7 +17,7 @@ const PageRoutes = () => {
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route
-          path="/spawned/img-name/:imgName/visitor-name/:visitorName"
+          path="/snowman/spawned/img-name/:imgName/visitor-name/:visitorName"
           element={<Spawned />}
         />
         <Route path="/locker/claimed" element={<ClaimedAsset />} />

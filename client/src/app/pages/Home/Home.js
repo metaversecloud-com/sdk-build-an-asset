@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
-import { getWorld, claimAsset } from "../../../redux/actions/asset";
+import { getWorld } from "../../../redux/actions/getWorld";
+import { claimAsset } from "../../../redux/actions/claimAsset";
 import Gear from "../Admin/Gear";
 import AdminView from "../Admin/AdminView";
 import { getThemeData, getThemeName } from "../../../themeData2";

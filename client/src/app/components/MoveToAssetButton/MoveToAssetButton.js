@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { moveToAsset } from "../../../redux/actions/asset";
+import { moveToAsset } from "../../../redux/actions/moveToAsset";
 import { getThemeName } from "../../../themeData2";
 
 function MoveToAssetButton({ closeIframeAfterMove }) {

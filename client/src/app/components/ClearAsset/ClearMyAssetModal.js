@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { clearAsset } from "../../../redux/actions/asset.js";
+import { clearAsset } from "../../../redux/actions/clearAsset.js";
 import { getThemeName } from "../../../themeData2.js";
 
 function ClearMyAssetModal({
