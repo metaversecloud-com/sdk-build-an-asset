@@ -1,8 +1,9 @@
 import React from "react";
-import { getThemeName } from "../../../themeData2";
+import { getThemeData, getThemeName } from "../../../themeData2";
 
 function ClearMyAssetButton({ handleToggleShowClearAssetModal, fromAdmin }) {
   const themeName = getThemeName();
+  const themeData = getThemeData();
   return (
     <>
       <button
@@ -10,9 +11,9 @@ function ClearMyAssetButton({ handleToggleShowClearAssetModal, fromAdmin }) {
         onClick={() => handleToggleShowClearAssetModal()}
       >
         {fromAdmin ? (
-          <span>Empty this {themeName}</span>
+          <span>{themeData.texts.clearAssetButtonAdmin}</span>
         ) : (
-          <span>Empty {themeName}</span>
+          <span>{themeData.texts.clearAssetButtonGeneral}</span>
         )}
       </button>
     </>

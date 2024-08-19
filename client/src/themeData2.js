@@ -9,6 +9,10 @@ export const themes = {
     saveButtonText: "Save",
     baseCategoryName: "Locker Base",
     spawnAssetInRandomLocation: false,
+    clearButtonType: "empty",
+    showClearAssetButton: true,
+    showFindAssetButton: true,
+    showEditAssetButton: true,
     texts: {
       header: "Decorate your Locker",
       description:
@@ -17,6 +21,8 @@ export const themes = {
       alreadyHave: "You already have a locker!",
       chooseNew:
         "To choose this one instead, click 'Empty Locker' button below.",
+      clearAssetButtonGeneral: "Empty Locker",
+      clearAssetButtonAdmin: "Empty this Locker",
     },
     layerOrder: ["Locker Base", "Top Shelf", "Bottom Shelf", "Door"],
     categories: {
@@ -232,6 +238,10 @@ export const themes = {
     saveButtonText: "Save",
     baseCategoryName: "Desk Base",
     spawnAssetInRandomLocation: false,
+    clearButtonType: "empty",
+    showClearAssetButton: true,
+    showFindAssetButton: true,
+    showEditAssetButton: true,
     texts: {
       header: "Decorate your Desk",
       description:
@@ -239,6 +249,8 @@ export const themes = {
       button: "Claim Desk",
       alreadyHave: "You already have a desk!",
       chooseNew: "To choose this one instead, click 'Empty Desk' button below.",
+      clearAssetButtonGeneral: "Empty Desk",
+      clearAssetButtonAdmin: "Empty this Desk",
     },
     layerOrder: [
       "Ambiance Textures",
@@ -382,6 +394,10 @@ export const themes = {
     saveButtonText: "Add Snowman",
     baseCategoryName: "Body",
     spawnAssetInRandomLocation: true,
+    clearButtonType: "pickup",
+    showClearAssetButton: true,
+    showFindAssetButton: false,
+    showEditAssetButton: false,
     texts: {
       header: "Build your Snowman!!!",
       description:
@@ -389,6 +405,8 @@ export const themes = {
       button: "Claim Desk",
       alreadyHave: "You already have a Snowman!",
       chooseNew: "To choose this one instead, click 'Empty Desk' button below.",
+      clearAssetButtonGeneral: "Pickup Snowman",
+      clearAssetButtonAdmin: "Pickup this Snowman",
     },
     layerOrder: ["Body", "Arms", "Head", "Accessories"],
     categories: {

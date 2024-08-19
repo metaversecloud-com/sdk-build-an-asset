@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
 import { getWorld } from "../../../redux/actions/getWorld";
+import { pickupAsset } from "../../../redux/actions/pickupAsset";
 import EditAsset from "../../components/EditAsset/EditAsset";
 import AdminView from "../Admin/AdminView";
 import Gear from "../Admin/Gear";
@@ -12,12 +13,13 @@ import ClearMyAssetButton from "../../components/ClearAsset/ClearMyAssetButton";
 import ClearMyAssetModal from "../../components/ClearAsset/ClearMyAssetModal";
 import MoveToAssetButton from "../../components/MoveToAssetButton/MoveToAssetButton";
 import { capitalize } from "../../../utils/utils";
-import { getThemeName } from "../../../themeData2";
+import { getThemeData, getThemeName } from "../../../themeData2";
 
 function ClaimedAsset() {
   const dispatch = useDispatch();
 
   const themeName = getThemeName();
+  const themeData = getThemeData();
   const defaultUnclaimedAsset = `/assets/${themeName}/unclaimedAsset.png`;
 
   const queryParameters = new URLSearchParams(window.location.search);
@@ -36,8 +38,6 @@ function ClaimedAsset() {
   const [showSettings, setShowSettings] = useState(false);
 
   const s3Url = world?.dataObject?.[themeName]?.[ownerProfileId]?.s3Url;
-
-  console.log("s3Url", s3Url, themeName, world?.dataObject?.[themeName]);
 
   const visitorName = assetParams["visitor-name"]?.replace("%20", " ");
 
@@ -65,6 +65,14 @@ function ClaimedAsset() {
 
   function handleToggleShowClearAssetModal() {
     setShowClearAssetModal(!showClearAssetModal);
+  }
+
+  function handleToggleShowClearAssetModal() {
+    if (themeData.clearButtonType === "pickup") {
+      dispatch(pickupAsset());
+    } else if (themeData.clearButtonType === "empty") {
+      setShowClearAssetModal(!showClearAssetModal);
+    }
   }
 
   if (loading) {
@@ -113,22 +121,28 @@ function ClaimedAsset() {
         {isAssetOwner ? (
           <>
             <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-              <div style={{ width: "320px" }}>
-                <button
-                  onClick={() => handleEditAsset()}
-                  style={{ marginBottom: "10px" }}
-                >
-                  Edit {themeName}
-                </button>
-              </div>
-              <div style={{ marginBottom: "10px" }}>
-                <MoveToAssetButton shouldCloseIframe={false} />
-              </div>
-              <ClearMyAssetButton
-                handleToggleShowClearAssetModal={
-                  handleToggleShowClearAssetModal
-                }
-              />
+              {themeData.showFindAssetButton && (
+                <div style={{ width: "320px" }}>
+                  <button
+                    onClick={() => handleEditAsset()}
+                    style={{ marginBottom: "10px" }}
+                  >
+                    Edit {themeName}
+                  </button>
+                </div>
+              )}
+              {themeData.showFindAssetButton && (
+                <div style={{ marginBottom: "10px" }}>
+                  <MoveToAssetButton shouldCloseIframe={false} />
+                </div>
+              )}
+              {themeData.showClearAssetButton && (
+                <ClearMyAssetButton
+                  handleToggleShowClearAssetModal={
+                    handleToggleShowClearAssetModal
+                  }
+                />
+              )}
             </div>
           </>
         ) : (
