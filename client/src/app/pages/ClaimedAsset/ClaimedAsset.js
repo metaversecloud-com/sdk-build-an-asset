@@ -37,6 +37,8 @@ function ClaimedAsset() {
 
   const s3Url = world?.dataObject?.[themeName]?.[ownerProfileId]?.s3Url;
 
+  console.log("s3Url", s3Url, themeName, world?.dataObject?.[themeName]);
+
   const visitorName = assetParams["visitor-name"]?.replace("%20", " ");
 
   useEffect(() => {

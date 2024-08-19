@@ -11,7 +11,6 @@ export const editAsset = (imageInfo) => async (dispatch) => {
     const themeData = getThemeData();
 
     let response;
-    console.log("themeData", themeData);
     if (themeData?.spawnAssetInRandomLocation) {
       const url = `/api/asset/spawn-random-location?${queryParams}`;
       response = await axios.put(url, { imageInfo });

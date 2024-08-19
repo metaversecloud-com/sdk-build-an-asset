@@ -25,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(requestID());
 
+const themeDataPath = path.join(__dirname, "./themeData.js");
 const lockerAssetsPath = path.join(__dirname, "images/locker-assets");
 const deskAssetsPath = path.join(__dirname, "images/desk-assets");
 const snowmanAssetsPath = path.join(__dirname, "images/snowman-assets");

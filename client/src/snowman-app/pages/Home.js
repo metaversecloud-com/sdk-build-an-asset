@@ -264,7 +264,7 @@ function Home() {
     <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
       {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
       <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-        Build Your Snowman!
+        Build Your Snowman!!!
       </h2>
       <img
         src={preview}

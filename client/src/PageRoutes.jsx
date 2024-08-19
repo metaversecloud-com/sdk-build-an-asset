@@ -16,10 +16,10 @@ const PageRoutes = () => {
     <Router history={history}>
       <Routes>
         <Route path="/home" element={<Home />} />
-        <Route
+        {/* <Route
           path="/snowman/spawned/img-name/:imgName/visitor-name/:visitorName"
           element={<Spawned />}
-        />
+        /> */}
         <Route path="/locker/claimed" element={<ClaimedAsset />} />
         <Route path="/locker" element={<AssetHome />} />
 
@@ -27,6 +27,8 @@ const PageRoutes = () => {
         <Route path="/desk/claimed" element={<ClaimedAsset />} />
 
         <Route path="/snowman" element={<SnowmanHome />} />
+        <Route path="/snowman/claimed" element={<ClaimedAsset />} />
+
         <Route path="/snowman2" element={<Home />} />
         <Route path="/snowman/edit" element={<EditAsset />} />
       </Routes>

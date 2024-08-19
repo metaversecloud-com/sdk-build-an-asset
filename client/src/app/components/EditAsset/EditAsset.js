@@ -369,7 +369,7 @@ function EditAsset() {
       <div className={`wrapper ${visitor?.isAdmin ? "mt-90" : ""}`}>
         {visitor?.isAdmin ? Gear({ setShowSettings }) : <></>}
         <h2 style={{ marginBottom: "0px", paddingBottom: "0px" }}>
-          Build your {themeData.name}!
+          Build your... {themeData.name}!
         </h2>
         <img
           src={

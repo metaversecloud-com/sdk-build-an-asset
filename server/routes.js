@@ -39,6 +39,7 @@ router.post("/asset/pickup", validationMiddleware, pickup);
 router.post("/asset/claim", validationMiddleware, claimAsset);
 router.post("/asset/move-to-asset", validationMiddleware, moveToAsset);
 router.put("/asset/asset/spawn", validationMiddleware, editAsset);
+router.put("/asset/spawn", validationMiddleware, editAsset);
 router.put("/asset/clear", validationMiddleware, clearAsset);
 router.put("/asset/clear-all", validationMiddleware, clearAllAssets);
 router.get("/asset/world", validationMiddleware, getWorld);

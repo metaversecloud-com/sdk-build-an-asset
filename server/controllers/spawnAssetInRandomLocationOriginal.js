@@ -1,8 +1,6 @@
 import { DroppedAsset, Visitor, Asset, World } from "../utils/topiaInit.js";
 import { logger } from "../logs/logger.js";
 import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
-import { generateS3Url, generateImageInfoParam } from "./imageUtils.js";
-import { getBaseUrl, validateImageInfo } from "./requestHandlers.js";
 
 let BASE_URL;
 
@@ -29,6 +27,16 @@ export const spawnAssetInRandomLocation = async (req, res) => {
       themeName,
     } = req.query;
 
+    const { imageInfo } = req.body;
+
+    if (!imageInfo) {
+      return res.status(400).json({
+        msg: "Input data missing. Please provide the imageInfo in the request body.",
+      });
+    }
+
+    const completeImageName = calculateCompleteImageName(imageInfo);
+
     const credentials = {
       assetId,
       interactiveNonce,
@@ -36,14 +44,6 @@ export const spawnAssetInRandomLocation = async (req, res) => {
       visitorId,
       profileId,
     };
-
-    let { imageInfo } = req.body;
-
-    if (!imageInfo) {
-      return res.status(400).json({
-        msg: "Input data missing. Please provide the imageInfo in the request body.",
-      });
-    }
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
 
@@ -59,44 +59,6 @@ export const spawnAssetInRandomLocation = async (req, res) => {
     ]);
 
     const world = await World.create(urlSlug, { credentials });
-
-    let s3Url;
-
-    if (host === "localhost") {
-      s3Url = "https://sdk-build-an-asset.s3.amazonaws.com/snowman/body_0.png";
-    } else {
-      s3Url = await generateS3Url(imageInfo, profileId, themeName);
-    }
-
-    try {
-      await world.updateDataObject(
-        {
-          [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
-        },
-        {
-          lock: {
-            lockId: `${assetId}-${new Date(
-              Math.round(new Date().getTime() / 10000) * 10000
-            )}`,
-          },
-          analytics: [
-            {
-              analyticName: `${themeName}-updates`,
-              profileId,
-              uniqueKey: profileId,
-            },
-          ],
-        }
-      );
-    } catch (error) {
-      console.error(`Error while updating the ${themeName}`, error);
-      return res.json({
-        msg: `This ${themeName} is already taken`,
-      });
-    }
-
-    const completeImageName = calculateCompleteImageName(imageInfo);
-
     const background = (
       await world.fetchDroppedAssetsWithUniqueName({
         uniqueName: `snowman-background`,
@@ -118,9 +80,6 @@ export const spawnAssetInRandomLocation = async (req, res) => {
       completeImageName,
       uniqueName,
       spawnPosition,
-      s3Url,
-      imageInfo,
-      themeName,
     });
 
     return res.json({
@@ -183,11 +142,10 @@ async function dropImageAsset({
   completeImageName,
   uniqueName: parentUniqueName,
   spawnPosition,
-  s3Url,
-  imageInfo,
-  themeName,
 }) {
   const { interactivePublicKey, profileId, assetId } = credentials;
+
+  const { bottomLayer, toplayer } = getAssetImgUrl(completeImageName);
 
   const { moveTo, username } = visitor;
   const { x, y } = moveTo;
@@ -232,17 +190,8 @@ async function dropImageAsset({
     .catch((error) => console.error(JSON.stringify(error)));
 
   const modifiedName = username.replace(/ /g, "%20");
-  const imageInfoParam = generateImageInfoParam(imageInfo);
 
-  if (!imageInfoParam || !modifiedName || !profileId) {
-    return res
-      .status(400)
-      .json({ error: "Missing imageInfoParam, modifiedName or profileId" });
-  }
-
-  const { baseUrl } = getBaseUrl(req);
-
-  const clickableLink = `${baseUrl}/${themeName}/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
+  const clickableLink = `${BASE_URL}/snowman/spawned/img-name/${completeImageName}/visitor-name/${modifiedName}`;
 
   await assetSpawnedDroppedAsset?.updateClickType({
     clickType: "link",
@@ -258,9 +207,15 @@ async function dropImageAsset({
     interactivePublicKey: process.env.INTERACTIVE_KEY,
   });
 
-  await assetSpawnedDroppedAsset?.updateWebImageLayers("", s3Url);
+  await assetSpawnedDroppedAsset?.updateWebImageLayers(bottomLayer, toplayer);
 
   return assetSpawnedDroppedAsset;
+}
+
+function getAssetImgUrl(completeImageName) {
+  const bottomLayer = null;
+  const toplayer = `${BASE_URL}/assets/snowman/output/${completeImageName}`;
+  return { bottomLayer, toplayer };
 }
 
 function getRandomPosition(position) {
