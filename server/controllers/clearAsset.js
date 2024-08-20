@@ -2,7 +2,6 @@ import { DroppedAsset, World } from "../utils/topiaInit.js";
 import { getBaseUrl } from "./requestHandlers.js";
 import { getS3URL } from "../utils/utils.js";
 import { logger } from "../logs/logger.js";
-import { capitalize } from "../utils/captalize.js";
 
 export const clearAsset = async (req, res) => {
   try {

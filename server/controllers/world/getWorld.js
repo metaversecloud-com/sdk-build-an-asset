@@ -25,8 +25,13 @@ export const getWorld = async (req, res) => {
 
     await world.fetchDataObject();
 
-    if (!world.dataObject?.[themeName])
-      world.setDataObject({ [themeName]: {} });
+    if (!world.dataObject) {
+      await orld.setDataObject({ [themeName]: {} });
+    }
+
+    if (world.dataObject && !world.dataObject?.[themeName]) {
+      await world.updateDataObject({ [themeName]: {} });
+    }
 
     visitor
       .updatePublicKeyAnalytics([
