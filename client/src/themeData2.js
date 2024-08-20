@@ -399,7 +399,7 @@ export const themes = {
     showFindAssetButton: false,
     showEditAssetButton: false,
     texts: {
-      header: "Build your Snowman!!!",
+      header: "Build your Snowman!",
       description:
         "Click 'Claim Desk' to claim and decorate your desk. Add items to show off your style and make it your own. You can come back to update it anytime!",
       button: "Claim Desk",

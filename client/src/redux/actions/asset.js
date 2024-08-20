@@ -62,7 +62,7 @@ export const editAsset = (imageInfo) => async (dispatch) => {
       const url = `/api/asset/?spawn-random-location${queryParams}`;
       response = await axios.put(url, { imageInfo });
     } else {
-      const url = `/api/asset/asset/spawn?${queryParams}`;
+      const url = `/api/asset/spawn?${queryParams}`;
       response = await axios.put(url, { imageInfo });
     }
 
