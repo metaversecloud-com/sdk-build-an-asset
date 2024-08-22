@@ -25,8 +25,8 @@ export const getWorld = async (req, res) => {
 
     await world.fetchDataObject();
 
-    if (!world.dataObject) {
-      await orld.setDataObject({ [themeName]: {} });
+    if (Object.keys(world?.dataObject).length === 0) {
+      await world.setDataObject({ [themeName]: {} });
     }
 
     if (world.dataObject && !world.dataObject?.[themeName]) {
