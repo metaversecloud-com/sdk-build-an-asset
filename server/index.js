@@ -39,6 +39,11 @@ app.get("/", (req, res) => {
   return res.send(`Server is running... ${appVersion}`);
 });
 
+app.get("/error", (req, res) => {
+  console.error("Test Error");
+  return res.status(500).send(`Error route for testing...`);
+});
+
 app.get("/api/system/health", (req, res) => {
   return res.json({
     NODE_ENV: process.env.NODE_ENV,
