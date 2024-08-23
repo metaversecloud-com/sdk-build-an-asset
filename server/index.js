@@ -44,6 +44,11 @@ app.get("/error", (req, res) => {
   return res.status(500).send(`Error route for testing...`);
 });
 
+app.get("/crash", (req, res) => {
+  console.error("Crash simulation for testing");
+  process.exit(1);
+});
+
 app.get("/api/system/health", (req, res) => {
   return res.json({
     NODE_ENV: process.env.NODE_ENV,
