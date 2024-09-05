@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { DroppedAsset, World, errorHandler, getBaseUrl, getCredentials } from "../../utils/index.js";
-import { WorldDataObject } from "../../types/WorldDataObject.js";
-import { addNewRowToGoogleSheets } from "../../utils/addNewRowToGoogleSheets.js";
+import { DroppedAsset, World, errorHandler, getBaseUrl, getCredentials } from "../utils/index.js";
+import { WorldDataObject } from "../types/WorldDataObject.js";
+import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 
 export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
   try {

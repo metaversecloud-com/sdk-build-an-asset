@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { dropImageAsset, DroppedAsset, errorHandler, generateS3Url, getCredentials, World } from "../../utils/index.js";
+import { dropImageAsset, DroppedAsset, errorHandler, generateS3Url, getCredentials, World } from "../utils/index.js";
 
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
+    console.log("🚀 ~ file: handleDropAsset.ts:7 ~ req.query:", req.query);
     const credentials = getCredentials(req.query);
     const { assetId, profileId, themeName, urlSlug } = credentials;
 

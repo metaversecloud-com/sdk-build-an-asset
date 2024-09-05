@@ -9,8 +9,8 @@ import {
   getBaseUrl,
   getCredentials,
   validateImageInfo,
-} from "../../utils/index.js";
-import { WorldDataObject } from "../../types/WorldDataObject.js";
+} from "../utils/index.js";
+import { WorldDataObject } from "../types/WorldDataObject.js";
 
 export const handleEditDroppedAsset = async (req: Request, res: Response) => {
   try {

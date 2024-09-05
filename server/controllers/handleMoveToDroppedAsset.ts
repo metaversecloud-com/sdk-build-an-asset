@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { DroppedAsset, Visitor, World, errorHandler, getCredentials } from "../../utils/index.js";
-import { WorldDataObject } from "../../types/WorldDataObject.js";
+import { DroppedAsset, Visitor, World, errorHandler, getCredentials } from "../utils/index.js";
+import { WorldDataObject } from "../types/WorldDataObject.js";
 
 export const handleMoveToDroppedAsset = async (req: Request, res: Response) => {
   try {

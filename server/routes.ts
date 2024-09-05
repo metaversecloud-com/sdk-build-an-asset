@@ -6,7 +6,6 @@ import {
   handleDropAsset,
   handleEditDroppedAsset,
   handleGetDroppedAsset,
-  handleGetGameState,
   handleGetWorldAndVisitor,
   handleMoveToDroppedAsset,
   handlePickupAllDroppedAssets,
@@ -38,9 +37,6 @@ router.get("/system/health", (req, res) => {
 });
 
 router.get("/world-and-visitor", handleGetWorldAndVisitor);
-
-// router.get("/dropped-asset-and-visitor", handleGetGameState);
-router.get("/game-state", handleGetGameState);
 
 // Dropped Assets
 router.get("/dropped-assets", handleGetDroppedAsset);

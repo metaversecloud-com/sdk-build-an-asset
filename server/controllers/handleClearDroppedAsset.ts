@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { DroppedAsset, Visitor, World, errorHandler, getBaseUrl, getCredentials } from "../../utils/index.js";
-import { WorldDataObject } from "../../types/WorldDataObject.js";
-import { getS3URL } from "../../utils/images/getS3URL.js";
+import { DroppedAsset, Visitor, World, errorHandler, getBaseUrl, getCredentials } from "../utils/index.js";
+import { WorldDataObject } from "../types/WorldDataObject.js";
+import { getS3URL } from "../utils/images/getS3URL.js";
 
 export const handleClearDroppedAsset = async (req: Request, res: Response) => {
   try {

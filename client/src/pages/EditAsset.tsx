@@ -139,7 +139,6 @@ export const EditAsset = () => {
           updatedSelection[type].push(image);
         }
       } else {
-        console.log("selected[type]", selected[type], selected, type);
         const isSelected = selected[type].includes(image);
         if (themeData.selectionLimits[type] === 1) {
           updatedSelection[type] = isSelected ? [] : [image];

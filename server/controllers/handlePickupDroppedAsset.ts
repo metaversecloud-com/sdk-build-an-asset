@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Visitor, World, errorHandler, getCredentials } from "../../utils/index.js";
+import { Visitor, World, errorHandler, getCredentials } from "../utils/index.js";
 
 export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
   try {

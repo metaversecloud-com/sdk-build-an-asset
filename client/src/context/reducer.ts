@@ -31,21 +31,12 @@ const globalReducer = (state: InitialState, action: ActionType) => {
     case SET_SPAWN_SUCCESS:
       return {
         ...state,
-        spawnSuccess: payload.spawnSuccess,
-        isAssetSpawnedInWorld: payload.isAssetSpawnedInWorld,
-        spawnedAsset: payload.spawnedAsset,
-        isAssetAlreadyTaken: payload.isAssetAlreadyTaken,
-        world: payload.world,
+        ...payload,
       };
     case SET_VISITOR_AND_WORLD:
       return {
         ...state,
-        droppedAsset: payload.droppedAsset,
-        isAssetSpawnedInWorld: payload.isAssetSpawnedInWorld,
-        spawnedAsset: payload.spawnedAsset,
-        userAsset: payload.userAsset,
-        visitor: payload.visitor,
-        world: payload.world,
+        ...payload,
       };
 
     default: {

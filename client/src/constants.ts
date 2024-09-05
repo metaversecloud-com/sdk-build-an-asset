@@ -34,50 +34,12 @@ type ThemeType = {
   };
   selectionLimits: {
     [key: string]: number;
-    // "Locker Base"?: number;
-    // "Desk Base"?: number;
-    // "Top Shelf"?: number;
-    // "Bottom Shelf"?: number;
-    // "Door"?: number;
-    // "Ambiance Textures"?: number;
-    // "Accessories"?: number;
-    // "Computer"?: number;
-    // "Chair"?: number;
-    // "Body"?: number;
-    // "Arms"?: number;
-    // "Head"?: number;
   };
   defaultOpenCategories: {
     [key: string]: boolean;
-    // "Locker Base"?: boolean;
-    // "Wallpaper"?: boolean;
-    // "Border"?: boolean;
-    // "Top Shelf"?: boolean;
-    // "Bottom Shelf"?: boolean;
-    // "Door"?: boolean;
-    // "Desk Base"?: boolean;
-    // "Ambiance Textures"?: boolean;
-    // "Accessories"?: boolean;
-    // "Computer"?: boolean;
-    // "Chair"?: boolean;
-    // "Body"?: boolean;
-    // "Arms"?: boolean;
-    // "Head"?: boolean;
   };
   defaultSelected: {
     [key: string]: string[];
-    // "Locker Base"?: string[];
-    // "Top Shelf"?: string[];
-    // "Bottom Shelf"?: string[];
-    // "Door"?: string[];
-    // "Desk Base"?: string[];
-    // "Ambiance Textures"?: string[];
-    // "Accessories"?: string[];
-    // "Computer"?: string[];
-    // "Chair"?: string[];
-    // "Body"?: string[];
-    // "Arms"?: string[];
-    // "Head"?: string[];
   };
 };
 
