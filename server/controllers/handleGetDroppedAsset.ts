@@ -10,7 +10,7 @@ export const handleGetDroppedAsset = async (req: Request, res: Response) => {
   } catch (error) {
     errorHandler({
       error,
-      functionName: "getDroppedAssetDetails",
+      functionName: "handleGetDroppedAsset",
       message: "Error getting dropped asset instance and data object",
       req,
       res,

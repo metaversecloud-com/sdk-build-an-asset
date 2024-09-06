@@ -20,46 +20,9 @@ export const dropImageAsset = async ({
     const { assetId, displayName, interactivePublicKey, identityId, profileId, themeName, urlSlug, username } =
       credentials;
 
-    const spawnedAssetUniqueName = `snowmanSystem-${profileId}`;
+    const spawnedAssetUniqueName = `${themeName}System-${profileId}`;
 
     const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", { credentials });
-
-    const droppedAsset = await DroppedAsset.drop(asset, {
-      position: spawnPosition,
-      uniqueName: spawnedAssetUniqueName,
-      urlSlug,
-      isInteractive: true,
-      interactivePublicKey,
-    });
-
-    await droppedAsset?.updateDataObject(
-      {
-        profileId,
-        completeImageName,
-        parentAssetId: assetId,
-      },
-      {
-        analytics: [
-          {
-            analyticName: `snowman-builds`,
-            uniqueKey: profileId,
-            profileId,
-          },
-        ],
-      },
-    );
-
-    addNewRowToGoogleSheets([
-      {
-        appName: "Build an Asset",
-        displayName,
-        event: "snowman-starts",
-        identityId,
-        urlSlug,
-      },
-    ])
-      .then()
-      .catch((error) => console.error(JSON.stringify(error)));
 
     const modifiedName = username.replace(/ /g, "%20");
     const imageInfoParam = generateImageInfoParam(imageInfo);
@@ -72,22 +35,49 @@ export const dropImageAsset = async ({
 
     const clickableLink = `${baseUrl}/${themeName}/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
 
-    await droppedAsset?.updateClickType({
-      // @ts-ignore
+    const droppedAsset = await DroppedAsset.drop(asset, {
       clickType: "link",
       clickableLink,
-      clickableLinkTitle: "Snowman",
-      clickableDisplayTextDescription: "Snowman",
-      clickableDisplayTextHeadline: "Snowman",
+      clickableLinkTitle: themeName,
+      clickableDisplayTextDescription: themeName,
+      clickableDisplayTextHeadline: themeName,
       isOpenLinkInDrawer: true,
-    });
-
-    await droppedAsset?.setInteractiveSettings({
       isInteractive: true,
-      interactivePublicKey: process.env.INTERACTIVE_KEY || "",
+      interactivePublicKey,
+      layer1: s3Url,
+      position: spawnPosition,
+      uniqueName: spawnedAssetUniqueName,
+      urlSlug,
     });
 
-    await droppedAsset?.updateWebImageLayers("", s3Url);
+    await droppedAsset?.updateDataObject(
+      {
+        profileId,
+        completeImageName,
+        parentAssetId: assetId,
+      },
+      {
+        analytics: [
+          {
+            analyticName: `${themeName}-builds`,
+            uniqueKey: profileId,
+            profileId,
+          },
+        ],
+      },
+    );
+
+    addNewRowToGoogleSheets([
+      {
+        appName: "Build an Asset",
+        displayName,
+        event: `${themeName}-starts`,
+        identityId,
+        urlSlug,
+      },
+    ])
+      .then()
+      .catch((error) => console.error(JSON.stringify(error)));
 
     return droppedAsset;
   } catch (error) {

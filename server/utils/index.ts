@@ -1,4 +1,3 @@
-export * from "./droppedAssets/index.js";
 export * from "./images/index.js";
 export * from "./addNewRowToGoogleSheets.js";
 export * from "./cleanReturnPayload.js";

@@ -9,12 +9,15 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
     const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
 
     let { ownerProfileId } = req.query;
+    console.log("🚀 ~ file: handleClearDroppedAsset.ts:12 ~ ownerProfileId:", ownerProfileId);
 
     const { isClearAssetFromUnclaimedAsset } = req.body;
 
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
     const dataObject = world.dataObject as WorldDataObject;
+
+    console.log("🚀 ~ file: handleClearDroppedAsset.ts:75 ~ world:", world.dataObject);
 
     let selectedAssetId;
 
@@ -31,25 +34,13 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
       credentials,
     });
 
-    const toplayer = `${getS3URL()}/${themeName}/unclaimedAsset.png`;
-
-    const clickableLink = `${baseUrl}/${themeName}`;
-
     const visitor = await Visitor.create(visitorId, urlSlug, {
       credentials,
     });
 
     await Promise.all([
-      droppedAsset?.updateWebImageLayers("", toplayer),
-      droppedAsset?.updateClickType({
-        // @ts-ignore
-        clickType: "link",
-        clickableLink,
-        clickableLinkTitle: themeName,
-        clickableDisplayTextDescription: themeName,
-        clickableDisplayTextHeadline: themeName,
-        isOpenLinkInDrawer: true,
-      }),
+      droppedAsset?.updateWebImageLayers("", `${getS3URL()}/${themeName}/unclaimedAsset.png`),
+      droppedAsset?.updateClickType({ clickableLink: `${baseUrl}/${themeName}` }),
       world.updateDataObject(
         {
           [`${themeName}.${ownerProfileId}`]: null,
@@ -64,9 +55,11 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
           ],
         },
       ),
+      world.fetchDataObject(),
       visitor.reloadIframe(assetId),
     ]);
 
+    console.log("🚀 ~ file: handleClearDroppedAsset.ts:75 ~ world:", world.dataObject);
     return res.json({
       success: true,
       world,

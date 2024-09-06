@@ -5,7 +5,7 @@ import { VisitorInterface } from "@rtsdk/topia";
 export const handlePickupAllDroppedAssets = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
+    const { profileId, themeName, urlSlug, visitorId } = credentials;
 
     const visitor: VisitorInterface = await Visitor.get(visitorId, urlSlug, {
       credentials,

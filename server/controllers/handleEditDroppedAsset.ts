@@ -46,10 +46,9 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     }
 
     let s3Url;
-
     if (host === "localhost") {
       // Mock image placeholder for localhost, since we don't have S3 Bucket permissions for localhost in AWS
-      s3Url = "https://sdk-locker.s3.amazonaws.com/C0iRvAs9P3XHIApmtEFu-1706040195259.png";
+      s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/body_0.png`;
     } else {
       s3Url = await generateS3Url(imageInfo, profileId, themeName);
     }
@@ -94,18 +93,11 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     await Promise.all([
       droppedAsset.fetchDroppedAssetById(),
       droppedAsset.updateWebImageLayers("", s3Url),
-      droppedAsset.updateClickType({
-        // @ts-ignore
-        clickType: "link",
-        clickableLink,
-        clickableLinkTitle: themeName,
-        clickableDisplayTextDescription: themeName,
-        clickableDisplayTextHeadline: themeName,
-        isOpenLinkInDrawer: true,
-      }),
+      droppedAsset.updateClickType({ clickableLink }),
+      world.fetchDataObject(),
     ]);
 
-    await world.triggerParticle({
+    world.triggerParticle({
       name: "Bubbles",
       duration: 3,
       position: {

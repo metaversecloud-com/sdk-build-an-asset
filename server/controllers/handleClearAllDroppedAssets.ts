@@ -15,27 +15,15 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
       uniqueName: `${themeName}System-0`,
     });
 
-    const toplayer = `${getS3URL()}/${themeName}/unclaimedAsset.png`;
-
-    const clickableLink = `${baseUrl}/${themeName}`;
     const promises = [];
     spawnedAssets.map(async (asset) => {
-      promises.push(asset.updateWebImageLayers("", toplayer));
-      promises.push(
-        asset.updateClickType({
-          // @ts-ignore
-          clickType: "link",
-          clickableLink,
-          clickableLinkTitle: themeName,
-          clickableDisplayTextDescription: themeName,
-          clickableDisplayTextHeadline: themeName,
-          isOpenLinkInDrawer: true,
-        }),
-      );
+      promises.push(asset.updateWebImageLayers("", `${getS3URL()}/${themeName}/unclaimedAsset.png`));
+      promises.push(asset.updateClickType({ clickableLink: `${baseUrl}/${themeName}` }));
     });
 
     promises.push(
       world.updateDataObject({ [themeName]: {} }, { analytics: [{ analyticName: `${themeName}-resets` }] }),
+      world.fetchDataObject(),
     );
 
     const visitor = await Visitor.create(visitorId, urlSlug, {

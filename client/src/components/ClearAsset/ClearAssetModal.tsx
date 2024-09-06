@@ -5,7 +5,7 @@ import { GlobalDispatchContext } from "@context/GlobalContext";
 import { SET_ERROR, SET_SPAWN_SUCCESS } from "@/context/types.js";
 
 // utils
-import { backendAPI, getThemeData, getThemeName } from "@/utils";
+import { backendAPI, capitalize, getThemeData, getThemeName } from "@/utils";
 
 export const ClearAssetModal = ({
   handleToggleShowClearAssetModal,
@@ -51,8 +51,8 @@ export const ClearAssetModal = ({
   return (
     <div className="modal-container">
       <div className="modal">
-        <h4>Clear {themeName}</h4>
-        <p>{clearAssetDescription}.</p>
+        <h4>Clear {capitalize(themeName)}</h4>
+        <p>{clearAssetDescription}</p>
         <div className="actions">
           <button
             id="close"
@@ -62,7 +62,7 @@ export const ClearAssetModal = ({
           >
             No
           </button>
-          <button className="btn  btn-danger-outline" onClick={() => handleClearAsset()} disabled={areButtonsDisabled}>
+          <button className="btn btn-danger-outline" onClick={() => handleClearAsset()} disabled={areButtonsDisabled}>
             Yes
           </button>
         </div>

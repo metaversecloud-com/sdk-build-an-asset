@@ -85,12 +85,12 @@ export const ClaimedAsset = () => {
           isAssetOwner && (
             <>
               {themeData.showEditAssetButton && (
-                <button className="btn" onClick={() => handleEditAsset()} style={{ marginBottom: "10px" }}>
+                <button className="btn mb-2" onClick={() => handleEditAsset()}>
                   Edit {themeName}
                 </button>
               )}
               {themeData.showFindAssetButton && (
-                <div style={{ marginBottom: "10px" }}>
+                <div className="mb-2">
                   <MoveToAssetButton />
                 </div>
               )}

@@ -1,5 +1,5 @@
 export const getS3URL = () => {
-  if (import.meta.env.DEV) {
+  if (import.meta.env.VITE_ENV === "development") {
     const BASE_URL = window.location.origin;
     return `${BASE_URL}/assets`;
   }

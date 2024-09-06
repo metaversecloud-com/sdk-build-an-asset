@@ -3,7 +3,6 @@ import { dropImageAsset, DroppedAsset, errorHandler, generateS3Url, getCredentia
 
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
-    console.log("🚀 ~ file: handleDropAsset.ts:7 ~ req.query:", req.query);
     const credentials = getCredentials(req.query);
     const { assetId, profileId, themeName, urlSlug } = credentials;
 
@@ -14,9 +13,8 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     const world = await World.create(urlSlug, { credentials });
 
     let s3Url;
-
     if (req.hostname === "localhost") {
-      s3Url = `https://sdk-build-an-asset.s3.amazonaws.com/${themeName}/body_0.png`;
+      s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/body_0.png`;
     } else {
       s3Url = await generateS3Url(imageInfo, profileId, themeName);
     }

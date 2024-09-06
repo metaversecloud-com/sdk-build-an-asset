@@ -85,15 +85,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
     await Promise.all([
       droppedAsset.fetchDroppedAssetById(),
       droppedAsset.updateWebImageLayers("", s3Url),
-      droppedAsset.updateClickType({
-        // @ts-ignore
-        clickType: "link",
-        clickableLink,
-        clickableLinkTitle: themeName,
-        clickableDisplayTextDescription: themeName,
-        clickableDisplayTextHeadline: themeName,
-        isOpenLinkInDrawer: true,
-      }),
+      droppedAsset.updateClickType({ clickableLink }),
     ]);
 
     world.triggerParticle({

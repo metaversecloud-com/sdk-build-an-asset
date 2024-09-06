@@ -19,6 +19,7 @@ export const Home = () => {
   const themeData = getThemeData();
 
   const profileId = new URLSearchParams(window.location.search).get("profileId") || "";
+  console.log("🚀 ~ file: Home.tsx:23 ~ world.dataObject:", world.dataObject);
   const userHasAsset = world.dataObject?.[themeName]?.[profileId]?.droppedAssetId;
 
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
@@ -51,38 +52,36 @@ export const Home = () => {
       headerText={themeData.texts.header}
       previewImageURL={themeData.splashImage}
       footerContent={
-        <button className="btn" disabled={areButtonsDisabled} onClick={() => handleClaimAsset()}>
-          {themeData.texts.button}
-        </button>
+        userHasAsset ? (
+          <>
+            <div className="mb-2">
+              <MoveToAssetButton closeIframeAfterMove={true} />
+            </div>
+            <ClearAssetButton handleToggleShowClearAssetModal={handleToggleShowClearAssetModal} />
+          </>
+        ) : (
+          <button className="btn" disabled={areButtonsDisabled} onClick={() => handleClaimAsset()}>
+            {themeData.texts.button}
+          </button>
+        )
       }
     >
-      {userHasAsset ? (
-        <>
-          {showClearAssetModal && (
-            <ClearAssetModal
-              handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
-              isClearAssetFromUnclaimedAsset={true}
-            />
-          )}
+      <div className="m-6">
+        {userHasAsset ? (
           <>
-            <h2>{themeData.texts.alreadyHave}</h2>
+            {showClearAssetModal && (
+              <ClearAssetModal
+                handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
+                isClearAssetFromUnclaimedAsset={true}
+              />
+            )}
+            <h3>{themeData.texts.alreadyHave}</h3>
             <p>{themeData.texts.chooseNew}</p>
-
-            <div className="footer-fixed" style={{ backgroundColor: "white" }}>
-              <div style={{ margin: "10px 0px" }}>
-                <MoveToAssetButton closeIframeAfterMove={true} />
-              </div>
-              <div style={{ margin: "10px 0px" }}>
-                <ClearAssetButton handleToggleShowClearAssetModal={handleToggleShowClearAssetModal} />
-              </div>
-            </div>
           </>
-        </>
-      ) : (
-        <div style={{ margin: "20px" }}>
+        ) : (
           <p>{themeData.texts.description}</p>
-        </div>
-      )}
+        )}
+      </div>
     </PageContainer>
   );
 };

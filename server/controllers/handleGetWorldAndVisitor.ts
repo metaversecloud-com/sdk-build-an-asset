@@ -20,17 +20,14 @@ export const handleGetWorldAndVisitor = async (req: Request, res: Response) => {
       await world.updateDataObject({ [themeName]: {} });
     }
 
-    visitor
-      .updatePublicKeyAnalytics([
-        {
-          analyticName: `${themeName}-starts`,
-          uniqueKey: profileId,
-          profileId,
-          urlSlug,
-        },
-      ])
-      .then()
-      .catch((error) => console.error(JSON.stringify(error)));
+    visitor.updatePublicKeyAnalytics([
+      {
+        analyticName: `${themeName}-starts`,
+        uniqueKey: profileId,
+        profileId,
+        urlSlug,
+      },
+    ]);
 
     return res.json({ world, visitor });
   } catch (error) {

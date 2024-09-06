@@ -11,20 +11,15 @@ export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
     });
     await visitor.closeIframe(assetId);
 
-    const world = await World.create(urlSlug, { credentials });
-
-    world.updateDataObject(
-      {},
+    visitor.updatePublicKeyAnalytics([
       {
-        analytics: [
-          {
-            analyticName: `${themeName}-pickupUserAsset`,
-            uniqueKey: profileId,
-            profileId,
-          },
-        ],
+        analyticName: `${themeName}-pickupUserAsset`,
+        uniqueKey: profileId,
+        profileId,
       },
-    );
+    ]);
+
+    const world = await World.create(urlSlug, { credentials });
 
     const droppedAssets = await world.fetchDroppedAssetsWithUniqueName({
       uniqueName: `${themeName}System-${visitor?.profileId}`,

@@ -7,7 +7,6 @@ import { ImageInfo } from "../../types/index.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// todo: move imageInfo to types
 const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
   let images = [];
 
@@ -46,7 +45,7 @@ const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
   return validatePNG(buffer);
 };
 
-export const generateS3Url = async (imageInfo: { [category: string]: {} }, profileId: string, themeName: string) => {
+export const generateS3Url = async (imageInfo: ImageInfo, profileId: string, themeName: string) => {
   const baseDir = path.resolve(__dirname, `../images/${themeName}-assets`);
   const mergedImageBuffer = await combineImages(imageInfo, baseDir);
   const imageFullName = `${profileId}-${Date.now()}.png`;
