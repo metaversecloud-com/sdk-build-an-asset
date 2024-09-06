@@ -20,6 +20,7 @@ export const EditAsset = () => {
   const themeName = getThemeName();
   const themeData = getThemeData();
   const S3URL = `${getS3URL()}/${themeName}`;
+  console.log("🚀 ~ file: EditAsset.tsx:24 ~ S3URL:", S3URL);
 
   const [selected, setSelected] = useState(themeData?.defaultSelected);
 
@@ -96,8 +97,9 @@ export const EditAsset = () => {
         x: 0,
         y: 0,
       }));
+      console.log("🚀 ~ file: EditAsset.tsx:99 ~ imagesToMerge:", imagesToMerge);
 
-      mergeImages(imagesToMerge)
+      mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
         .then((result) => {
           return setPreview(result);
         })
@@ -204,10 +206,13 @@ export const EditAsset = () => {
       x: 0,
       y: 0,
     }));
+    console.log("🚀 ~ file: EditAsset.tsx:208 ~ imagesToMerge:", imagesToMerge);
 
-    mergeImages(imagesToMerge).then((result) => {
-      return setPreview(result);
-    });
+    mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
+      .then((result) => {
+        return setPreview(result);
+      })
+      .catch((error) => console.error(error));
   };
 
   const handleOpenModalWithVariations = (item: CategoryType, type: string) => {

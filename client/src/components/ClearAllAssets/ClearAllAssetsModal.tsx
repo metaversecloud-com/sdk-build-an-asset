@@ -16,9 +16,9 @@ export const ClearAllAssetsModal = ({
 }) => {
   const dispatch = useContext(GlobalDispatchContext);
 
-  const { clearButtonType, namePlural } = getThemeData();
-
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
+
+  const { clearButtonType, namePlural } = getThemeData();
   const actionType = clearButtonType === "pickup" ? "Pickup" : "Clear";
 
   const handleClearAllAssets = () => {
