@@ -1,11 +1,7 @@
 import Jimp from "jimp";
 import path from "path";
-import { fileURLToPath } from "url";
 import { uploadToS3 } from "./index.js";
 import { ImageInfo } from "../../types/index.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
   let images = [];
@@ -46,10 +42,10 @@ const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
 };
 
 export const generateS3Url = async (imageInfo: ImageInfo, profileId: string, themeName: string) => {
-  const baseDir = path.resolve(__dirname, `../images/${themeName}-assets`);
+  const baseDir = `https://${process.env.S3_BUCKET || "sdk-build-an-asset"}.s3.amazonaws.com/${themeName}`;
   const mergedImageBuffer = await combineImages(imageInfo, baseDir);
   const imageFullName = `${profileId}-${Date.now()}.png`;
-  return uploadToS3(mergedImageBuffer, imageFullName);
+  return uploadToS3(mergedImageBuffer, imageFullName, themeName);
 };
 
 function validatePNG(buffer: Buffer) {

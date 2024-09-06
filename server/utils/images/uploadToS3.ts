@@ -1,10 +1,11 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-export async function uploadToS3(buffer: Buffer, fileName: string) {
+export async function uploadToS3(buffer: Buffer, fileName: string, themeName: string) {
   const client = new S3Client({ region: "us-east-1" });
 
+  const Bucket = `${process.env.S3_BUCKET}/${themeName}/userUploads`;
   const putObjectCommand = new PutObjectCommand({
-    Bucket: process.env.S3_BUCKET,
+    Bucket,
     Key: fileName,
     Body: buffer,
     ContentType: "image/png",

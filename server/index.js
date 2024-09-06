@@ -25,14 +25,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(requestID());
 
-const themeDataPath = path.join(__dirname, "./themeData.js");
-const lockerAssetsPath = path.join(__dirname, "images/locker-assets");
-const deskAssetsPath = path.join(__dirname, "images/desk-assets");
-const snowmanAssetsPath = path.join(__dirname, "images/snowman-assets");
-app.use("/locker-assets", express.static(lockerAssetsPath));
-app.use("/desk-assets", express.static(deskAssetsPath));
-app.use("/snowman-assets", express.static(snowmanAssetsPath));
-
 app.use("/api", router);
 
 app.get("/", (req, res) => {
@@ -54,24 +46,15 @@ app.get("/api/system/health", (req, res) => {
     NODE_ENV: process.env.NODE_ENV,
     DEPLOYMENT_DATE: SERVER_START_DATE,
     COMMIT_HASH: process.env.COMMIT_HASH ? process.env.COMMIT_HASH : "NOT SET",
-    SHOWCASE_WORLDS_URLS: [
-      "https://topia.io/snowman-prod",
-      "https://topia.io/app-prod",
-    ],
+    SHOWCASE_WORLDS_URLS: ["https://topia.io/snowman-prod", "https://topia.io/app-prod"],
     INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN,
     INSTANCE_PROTOCOL: process.env.INSTANCE_PROTOCOL,
     INTERACTIVE_KEY: process.env.INTERACTIVE_KEY,
     IMG_ASSET_ID: process.env.IMG_ASSET_ID,
     S3_BUCKET: process.env.S3_BUCKET,
-    GOOGLESHEETS_CLIENT_EMAIL: process.env.GOOGLESHEETS_CLIENT_EMAIL
-      ? "SET"
-      : "NOT SET",
-    GOOGLESHEETS_SHEET_ID: process.env.GOOGLESHEETS_SHEET_ID
-      ? "SET"
-      : "NOT SET",
-    GOOGLESHEETS_PRIVATE_KEY: process.env.GOOGLESHEETS_PRIVATE_KEY
-      ? "SET"
-      : "NOT SET",
+    GOOGLESHEETS_CLIENT_EMAIL: process.env.GOOGLESHEETS_CLIENT_EMAIL ? "SET" : "NOT SET",
+    GOOGLESHEETS_SHEET_ID: process.env.GOOGLESHEETS_SHEET_ID ? "SET" : "NOT SET",
+    GOOGLESHEETS_PRIVATE_KEY: process.env.GOOGLESHEETS_PRIVATE_KEY ? "SET" : "NOT SET",
   });
 });
 
@@ -88,10 +71,7 @@ app.listen(PORT, () => {
 
 export function getVersion() {
   try {
-    const packageJsonContent = fs.readFileSync(
-      path.join(__dirname, "../package.json"),
-      "utf8"
-    );
+    const packageJsonContent = fs.readFileSync(path.join(__dirname, "../package.json"), "utf8");
     const packageJson = JSON.parse(packageJsonContent);
     const version = packageJson.version;
     return version;
