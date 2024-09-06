@@ -21,6 +21,7 @@ const setupBackendAPI = async (interactiveParams: InteractiveParams) => {
       config.params["identityId"] = interactiveParams.identityId;
       config.params["interactiveNonce"] = interactiveParams.interactiveNonce;
       config.params["interactivePublicKey"] = interactiveParams.interactivePublicKey;
+      config.params["ownerProfileId"] = interactiveParams.ownerProfileId;
       config.params["profileId"] = interactiveParams.profileId;
       config.params["sceneDropId"] = interactiveParams.sceneDropId;
       config.params["themeName"] = interactiveParams.themeName;

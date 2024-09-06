@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // context
 import { GlobalDispatchContext } from "@context/GlobalContext";
@@ -15,6 +16,8 @@ export const ClearAssetModal = ({
   isClearAssetFromUnclaimedAsset: boolean;
 }) => {
   const dispatch = useContext(GlobalDispatchContext);
+  const navigate = useNavigate();
+
   const themeName = getThemeName();
   const { clearButtonType, texts } = getThemeData();
   const { clearAssetDescription } = texts;
@@ -34,6 +37,8 @@ export const ClearAssetModal = ({
           type: SET_SPAWN_SUCCESS,
           payload: response.data,
         });
+        const queryParams = new URLSearchParams(window.location.search);
+        navigate(`/locker?${queryParams}`);
       })
       .catch((error) => {
         console.error(error);

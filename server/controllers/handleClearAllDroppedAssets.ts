@@ -18,7 +18,7 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
     const promises = [];
     spawnedAssets.map(async (asset) => {
       promises.push(asset.updateWebImageLayers("", `${getS3URL()}/${themeName}/unclaimedAsset.png`));
-      promises.push(asset.updateClickType({ clickableLink: `${baseUrl}/${themeName}` }));
+      promises.push(asset.updateClickType({ clickableLink: `${baseUrl}/${themeName}`, clickableLinkTitle: themeName }));
     });
 
     promises.push(
@@ -35,7 +35,7 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
 
     return res.json({
       success: true,
-      world,
+      worldDataObject: world.dataObject,
     });
   } catch (error) {
     errorHandler({

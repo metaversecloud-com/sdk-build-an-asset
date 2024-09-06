@@ -6,12 +6,10 @@ import GlobalState from "./GlobalState";
 const initialState: InitialState = {
   hasInteractiveParams: false,
   hasSetupBackend: false,
-  interactiveParams: {
-    profileId: "",
-  },
+  interactiveParams: {},
   isAssetAlreadyTaken: false,
-  visitor: { isAdmin: false, username: "" },
-  world: { dataObject: {} },
+  visitorIsAdmin: false,
+  worldDataObject: {},
 };
 
 const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

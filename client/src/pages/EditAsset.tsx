@@ -15,7 +15,7 @@ import { backendAPI, getS3URL, getThemeData, getThemeName } from "@/utils";
 
 export const EditAsset = () => {
   const dispatch = useContext(GlobalDispatchContext);
-  const { visitor } = useContext(GlobalStateContext);
+  const { visitorIsAdmin } = useContext(GlobalStateContext);
 
   const themeName = getThemeName();
   const themeData = getThemeData();
@@ -281,7 +281,7 @@ export const EditAsset = () => {
         isLoading={isLoading}
         headerText={`Build your ${themeData.name}!`}
         previewImageURL={preview === "data:," ? `${S3URL}/claimedAsset.png` : preview}
-        showClearAssetBtn={visitor.isAdmin}
+        showClearAssetBtn={visitorIsAdmin}
         footerContent={
           <button
             onClick={handleSaveToBackend}

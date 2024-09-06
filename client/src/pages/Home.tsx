@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // components
 import { ClearAssetButton, ClearAssetModal, PageContainer } from "@/components";
@@ -13,14 +14,16 @@ import MoveToAssetButton from "@/components/MoveToAssetButton";
 
 export const Home = () => {
   const dispatch = useContext(GlobalDispatchContext);
-  const { world } = useContext(GlobalStateContext);
+  const { worldDataObject } = useContext(GlobalStateContext);
+  const navigate = useNavigate();
 
   const themeName = getThemeName();
   const themeData = getThemeData();
 
-  const profileId = new URLSearchParams(window.location.search).get("profileId") || "";
-  console.log("🚀 ~ file: Home.tsx:23 ~ world.dataObject:", world.dataObject);
-  const userHasAsset = world.dataObject?.[themeName]?.[profileId]?.droppedAssetId;
+  const queryParams = new URLSearchParams(window.location.search);
+  const profileId = queryParams.get("profileId");
+  const username = queryParams.get("username") || "";
+  const userAssetId = worldDataObject?.[themeName]?.[profileId as string]?.droppedAssetId;
 
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [showClearAssetModal, setShowClearAssetModal] = useState(false);
@@ -30,6 +33,12 @@ export const Home = () => {
 
     backendAPI
       .post("/dropped-assets/claim")
+      .then(() => {
+        const modifiedName = username.replace(/ /g, "%20");
+        const redirectPath = `locker/claimed?visitor-name=${modifiedName}`;
+        const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
+        navigate(fullPath);
+      })
       .catch((error) => {
         console.error(error);
         dispatch!({
@@ -52,7 +61,7 @@ export const Home = () => {
       headerText={themeData.texts.header}
       previewImageURL={themeData.splashImage}
       footerContent={
-        userHasAsset ? (
+        userAssetId ? (
           <>
             <div className="mb-2">
               <MoveToAssetButton closeIframeAfterMove={true} />
@@ -60,14 +69,14 @@ export const Home = () => {
             <ClearAssetButton handleToggleShowClearAssetModal={handleToggleShowClearAssetModal} />
           </>
         ) : (
-          <button className="btn" disabled={areButtonsDisabled} onClick={() => handleClaimAsset()}>
+          <button className="btn" disabled={areButtonsDisabled} onClick={handleClaimAsset}>
             {themeData.texts.button}
           </button>
         )
       }
     >
       <div className="m-6">
-        {userHasAsset ? (
+        {userAssetId ? (
           <>
             {showClearAssetModal && (
               <ClearAssetModal

@@ -49,7 +49,7 @@ export const handlePickupAllDroppedAssets = async (req: Request, res: Response) 
       .then()
       .catch((error) => console.error(JSON.stringify(error)));
 
-    return res.json({ success: true, world });
+    return res.json({ success: true, worldDataObject: world.dataObject });
   } catch (error) {
     errorHandler({
       error,

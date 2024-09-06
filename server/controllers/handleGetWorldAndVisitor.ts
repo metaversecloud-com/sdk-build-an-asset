@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Visitor, World, errorHandler, getCredentials } from "../utils/index.js";
 import { WorldDataObject } from "../types/WorldDataObject.js";
+import { VisitorInterface } from "@rtsdk/topia";
 
 export const handleGetWorldAndVisitor = async (req: Request, res: Response) => {
   try {
@@ -8,10 +9,10 @@ export const handleGetWorldAndVisitor = async (req: Request, res: Response) => {
     const { profileId, themeName, urlSlug, visitorId } = credentials;
 
     const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
+    const { isAdmin } = visitor as VisitorInterface;
+
     const world = await World.create(urlSlug, { credentials });
-
     await world.fetchDataObject();
-
     const dataObject = world.dataObject as WorldDataObject;
 
     if (!dataObject || Object.keys(dataObject).length === 0) {
@@ -29,7 +30,7 @@ export const handleGetWorldAndVisitor = async (req: Request, res: Response) => {
       },
     ]);
 
-    return res.json({ world, visitor });
+    return res.json({ visitorIsAdmin: isAdmin, worldDataObject: world.dataObject });
   } catch (error) {
     errorHandler({
       error,

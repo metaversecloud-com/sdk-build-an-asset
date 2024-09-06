@@ -1,25 +1,21 @@
 import { Request, Response } from "express";
-import { DroppedAsset, Visitor, World, errorHandler, getBaseUrl, getCredentials } from "../utils/index.js";
+import { DroppedAsset, World, errorHandler, getBaseUrl, getCredentials } from "../utils/index.js";
 import { WorldDataObject } from "../types/WorldDataObject.js";
 import { getS3URL } from "../utils/images/getS3URL.js";
 
 export const handleClearDroppedAsset = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
+    const { assetId, profileId, themeName, urlSlug } = credentials;
 
     let { ownerProfileId } = req.query;
-    console.log("🚀 ~ file: handleClearDroppedAsset.ts:12 ~ ownerProfileId:", ownerProfileId);
+    let selectedAssetId = assetId;
 
     const { isClearAssetFromUnclaimedAsset } = req.body;
 
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
     const dataObject = world.dataObject as WorldDataObject;
-
-    console.log("🚀 ~ file: handleClearDroppedAsset.ts:75 ~ world:", world.dataObject);
-
-    let selectedAssetId;
 
     if (isClearAssetFromUnclaimedAsset) {
       selectedAssetId = dataObject?.[themeName]?.[profileId]?.droppedAssetId;
@@ -34,13 +30,9 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
       credentials,
     });
 
-    const visitor = await Visitor.create(visitorId, urlSlug, {
-      credentials,
-    });
-
     await Promise.all([
       droppedAsset?.updateWebImageLayers("", `${getS3URL()}/${themeName}/unclaimedAsset.png`),
-      droppedAsset?.updateClickType({ clickableLink: `${baseUrl}/${themeName}` }),
+      droppedAsset?.updateClickType({ clickableLink: `${baseUrl}/${themeName}`, clickableLinkTitle: themeName }),
       world.updateDataObject(
         {
           [`${themeName}.${ownerProfileId}`]: null,
@@ -55,14 +47,12 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
           ],
         },
       ),
-      world.fetchDataObject(),
-      visitor.reloadIframe(assetId),
     ]);
 
-    console.log("🚀 ~ file: handleClearDroppedAsset.ts:75 ~ world:", world.dataObject);
+    await world.fetchDataObject();
     return res.json({
       success: true,
-      world,
+      worldDataObject: world.dataObject,
     });
   } catch (error) {
     errorHandler({

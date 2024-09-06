@@ -14,15 +14,15 @@ import MoveToAssetButton from "@/components/MoveToAssetButton";
 
 export const ClaimedAsset = () => {
   const dispatch = useContext(GlobalDispatchContext);
-  const { visitor, world } = useContext(GlobalStateContext);
+  const { visitorIsAdmin, worldDataObject } = useContext(GlobalStateContext);
 
   const themeName = getThemeName();
   const themeData = getThemeData();
   const defaultUnclaimedAsset = `/assets/${themeName}/unclaimedAsset.png`;
 
-  const queryParameters = new URLSearchParams(window.location.search);
-  const profileId = queryParameters.get("profileId");
-  const ownerProfileId = queryParameters.get("ownerProfileId") || "";
+  const queryParams = new URLSearchParams(window.location.search);
+  const profileId = queryParams.get("profileId");
+  const ownerProfileId = queryParams.get("ownerProfileId") || "";
   const isAssetOwner = profileId === ownerProfileId;
 
   const [isLoading, setLoading] = useState(false);
@@ -30,12 +30,12 @@ export const ClaimedAsset = () => {
   const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
   const [showClearAssetModal, setShowClearAssetModal] = useState(false);
 
-  const s3Url = world.dataObject?.[themeName]?.[ownerProfileId]?.s3Url;
+  const s3Url = worldDataObject?.[themeName]?.[ownerProfileId]?.s3Url;
 
   const visitorName = assetParams["visitor-name"]?.replace("%20", " ");
 
   useEffect(() => {
-    setAssetParams(Object.fromEntries(queryParameters.entries()));
+    setAssetParams(Object.fromEntries(queryParams.entries()));
   }, []);
 
   const handleEditAsset = async () => {
@@ -68,19 +68,17 @@ export const ClaimedAsset = () => {
 
   return (
     <>
-      {showClearAssetModal ? (
+      {showClearAssetModal && (
         <ClearAssetModal
           handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
           isClearAssetFromUnclaimedAsset={false}
         />
-      ) : (
-        ""
       )}
       <PageContainer
         isLoading={isLoading}
         headerText={capitalize(themeName)}
         previewImageURL={s3Url || defaultUnclaimedAsset}
-        showClearAssetBtn={isAssetOwner || visitor.isAdmin}
+        showClearAssetBtn={isAssetOwner || visitorIsAdmin}
         footerContent={
           isAssetOwner && (
             <>

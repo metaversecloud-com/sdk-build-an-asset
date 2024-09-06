@@ -24,7 +24,7 @@ export const PageContainer = ({
   showClearAssetBtn?: boolean;
   footerContent: ReactNode;
 }) => {
-  const { isAssetAlreadyTaken, visitor } = useContext(GlobalStateContext);
+  const { isAssetAlreadyTaken, visitorIsAdmin } = useContext(GlobalStateContext);
   const [showSettings, setShowSettings] = useState(false);
 
   const themeName = getThemeName();
@@ -46,7 +46,7 @@ export const PageContainer = ({
 
   return (
     <div className="container-with-footer">
-      {visitor?.isAdmin && (
+      {visitorIsAdmin && (
         <div className="p-6">
           <AdminIconButton setShowSettings={() => setShowSettings(!showSettings)} showSettings={showSettings} />
         </div>

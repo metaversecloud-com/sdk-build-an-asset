@@ -33,8 +33,23 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
 
     const s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/claimedAsset.png`;
 
-    try {
-      await world.updateDataObject(
+    const modifiedName = username.replace(/ /g, "%20");
+
+    if (!modifiedName || !profileId) {
+      return res.status(400).json({ error: "modifiedName or profileId" });
+    }
+
+    const clickableLink = `${baseUrl}/${themeName}/claimed?visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
+
+    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
+      credentials,
+    });
+
+    await Promise.all([
+      droppedAsset.fetchDroppedAssetById(),
+      droppedAsset.updateWebImageLayers("", s3Url),
+      droppedAsset.updateClickType({ clickableLink, clickableLinkTitle: themeName }),
+      world.updateDataObject(
         {
           [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
         },
@@ -51,42 +66,21 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
             lockId: `${assetId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
           },
         },
-      );
-      addNewRowToGoogleSheets([
-        {
-          appName: "Build an Asset",
-          displayName,
-          event: `${themeName}-starts`,
-          identityId,
-          urlSlug,
-        },
-      ])
-        .then()
-        .catch((error) => console.error(JSON.stringify(error)));
-    } catch (error) {
-      return res.json({
-        msg: `This ${themeName} is already taken`,
-        isAssetAlreadyTaken: true,
-      });
-    }
-
-    const modifiedName = username.replace(/ /g, "%20");
-
-    if (!modifiedName || !profileId) {
-      return res.status(400).json({ error: "modifiedName or profileId" });
-    }
-
-    const clickableLink = `${baseUrl}/${themeName}/claimed?visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
-
-    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
-      credentials,
-    });
-
-    await Promise.all([
-      droppedAsset.fetchDroppedAssetById(),
-      droppedAsset.updateWebImageLayers("", s3Url),
-      droppedAsset.updateClickType({ clickableLink }),
+      ),
+      world.fetchDataObject(),
     ]);
+
+    addNewRowToGoogleSheets([
+      {
+        appName: "Build an Asset",
+        displayName,
+        event: `${themeName}-starts`,
+        identityId,
+        urlSlug,
+      },
+    ])
+      .then()
+      .catch((error) => console.error(JSON.stringify(error)));
 
     world.triggerParticle({
       name: "firework2_magenta",
@@ -97,7 +91,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
       },
     });
 
-    return res.json({ droppedAsset, success: true });
+    return res.json({ droppedAsset, success: true, worldDataObject: world.dataObject });
   } catch (error) {
     errorHandler({
       error,

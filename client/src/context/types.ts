@@ -26,10 +26,8 @@ export interface InitialState {
   hasSetupBackend: boolean;
   interactiveParams: object;
   isAssetAlreadyTaken: boolean;
-  visitor: { isAdmin: boolean; username: string };
-  world: {
-    dataObject: { [themeName: string]: { [ownerProfileId: string]: { droppedAssetId: string; s3Url: string } } };
-  };
+  visitorIsAdmin: boolean;
+  worldDataObject: { [themeName: string]: { [ownerProfileId: string]: { droppedAssetId: string; s3Url: string } } };
 }
 
 export type ActionType = {
@@ -44,7 +42,7 @@ export type ActionType = {
     spawnedAsset?: object;
     userAsset?: object;
     isAssetAlreadyTaken?: boolean;
-    visitor?: object;
-    world?: object;
+    visitorIsAdmin?: boolean;
+    worldDataObject?: object;
   };
 };

@@ -14,34 +14,9 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
 
     let s3Url;
     if (req.hostname === "localhost") {
-      s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/body_0.png`;
+      s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/claimedAsset.png`;
     } else {
       s3Url = await generateS3Url(imageInfo, profileId, themeName);
-    }
-
-    try {
-      await world.updateDataObject(
-        {
-          [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
-        },
-        {
-          lock: {
-            lockId: `${assetId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
-          },
-          analytics: [
-            {
-              analyticName: `${themeName}-updates`,
-              profileId,
-              uniqueKey: profileId,
-            },
-          ],
-        },
-      );
-    } catch (error) {
-      console.error(`Error while updating the ${themeName}`, error);
-      return res.json({
-        msg: `This ${themeName} is already taken`,
-      });
     }
 
     // calculate image name
@@ -74,7 +49,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
         uniqueName: `${themeName}System-${profileId}`,
       });
 
-      if (spawnedAssets && spawnedAssets.length) {
+      if (spawnedAssets && spawnedAssets.length > 0) {
         await Promise.all(spawnedAssets.map((spawnedAsset) => spawnedAsset.deleteDroppedAsset()));
       }
     } catch (error) {
@@ -90,6 +65,24 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       s3Url,
       spawnPosition,
     });
+
+    world.updateDataObject(
+      {
+        [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
+      },
+      {
+        lock: {
+          lockId: `${assetId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
+        },
+        analytics: [
+          {
+            analyticName: `${themeName}-updates`,
+            profileId,
+            uniqueKey: profileId,
+          },
+        ],
+      },
+    );
 
     return res.json({
       spawnSuccess: true,

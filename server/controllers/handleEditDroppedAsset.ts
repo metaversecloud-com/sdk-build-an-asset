@@ -48,7 +48,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     let s3Url;
     if (host === "localhost") {
       // Mock image placeholder for localhost, since we don't have S3 Bucket permissions for localhost in AWS
-      s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/body_0.png`;
+      s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/claimedAsset.png`;
     } else {
       s3Url = await generateS3Url(imageInfo, profileId, themeName);
     }
@@ -93,7 +93,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     await Promise.all([
       droppedAsset.fetchDroppedAssetById(),
       droppedAsset.updateWebImageLayers("", s3Url),
-      droppedAsset.updateClickType({ clickableLink }),
+      droppedAsset.updateClickType({ clickableLink, clickableLinkTitle: themeName }),
       world.fetchDataObject(),
     ]);
 
@@ -118,7 +118,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       isAssetSpawnedInWorld: true,
       imageInfo: imageInfo,
       spawnedAsset: droppedAsset,
-      world,
+      worldDataObject: world.dataObject,
     });
   } catch (error) {
     errorHandler({
