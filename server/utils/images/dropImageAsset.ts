@@ -1,5 +1,12 @@
 import { Credentials, ImageInfo } from "../../types/index.js";
-import { Asset, DroppedAsset, addNewRowToGoogleSheets, generateImageInfoParam, getBaseUrl } from "../index.js";
+import {
+  Asset,
+  DroppedAsset,
+  addNewRowToGoogleSheets,
+  errorHandler,
+  generateImageInfoParam,
+  getBaseUrl,
+} from "../index.js";
 
 export const dropImageAsset = async ({
   completeImageName,
@@ -22,7 +29,9 @@ export const dropImageAsset = async ({
 
     const spawnedAssetUniqueName = `${themeName}System-${profileId}`;
 
-    const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", { credentials });
+    const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
+      credentials: { interactivePublicKey, profileId, urlSlug },
+    });
 
     const modifiedName = username.replace(/ /g, "%20");
     const imageInfoParam = generateImageInfoParam(imageInfo);
@@ -81,6 +90,10 @@ export const dropImageAsset = async ({
 
     return droppedAsset;
   } catch (error) {
-    return error;
+    return errorHandler({
+      error,
+      functionName: "dropImageAsset",
+      message: "Error dropping asset",
+    });
   }
 };

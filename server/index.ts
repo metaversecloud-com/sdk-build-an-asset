@@ -28,12 +28,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/api", router);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use("/locker-assets", express.static(path.join(__dirname, "images/locker-assets")));
-app.use("/desk-assets", express.static(path.join(__dirname, "images/desk-assets")));
-app.use("/snowman-assets", express.static(path.join(__dirname, "images/snowman-assets")));
-
 if (process.env.NODE_ENV === "development") {
   const corsOptions = {
     origin: ["http://localhost:3000", "http://localhost:5173"],

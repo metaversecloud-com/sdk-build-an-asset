@@ -5,7 +5,7 @@ export function getBaseUrl(host: string) {
 
   if (host === "localhost") {
     baseUrl = `http://localhost:3001`;
-    defaultUrlForImageHosting = "https://locker0-dev-topia.topia-rtsdk.com";
+    defaultUrlForImageHosting = "https://basset0-dev-topia.topia-rtsdk.com";
   } else {
     baseUrl = `${protocol}://${host}`;
     defaultUrlForImageHosting = baseUrl;

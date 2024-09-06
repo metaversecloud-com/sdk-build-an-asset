@@ -35,7 +35,7 @@ export const Home = () => {
       .post("/dropped-assets/claim")
       .then(() => {
         const modifiedName = username.replace(/ /g, "%20");
-        const redirectPath = `locker/claimed?visitor-name=${modifiedName}`;
+        const redirectPath = `${themeName}/claimed?visitor-name=${modifiedName}`;
         const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
         navigate(fullPath);
       })

@@ -38,7 +38,7 @@ export const ClearAssetModal = ({
           payload: response.data,
         });
         const queryParams = new URLSearchParams(window.location.search);
-        navigate(`/locker?${queryParams}`);
+        navigate(`/${themeName}?${queryParams}`);
       })
       .catch((error) => {
         console.error(error);
