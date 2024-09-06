@@ -8,6 +8,7 @@ import {
   generateS3Url,
   getBaseUrl,
   getCredentials,
+  isDroppedAssetClaimed,
   validateImageInfo,
 } from "../utils/index.js";
 import { WorldDataObject } from "../types/WorldDataObject.js";
@@ -29,20 +30,8 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     await world.fetchDataObject();
     const dataObject = world.dataObject as WorldDataObject;
 
-    if (dataObject[themeName]) {
-      const claimedAssets = Object.entries(dataObject[themeName]).reduce((claimedAssets, [ownerProfileId, asset]) => {
-        if (asset && asset.droppedAssetId === assetId && ownerProfileId !== profileId) {
-          return asset;
-        }
-        return claimedAssets;
-      }, {});
-
-      if (Object.keys(claimedAssets).length) {
-        return res.json({
-          msg: `This ${themeName} is already taken`,
-          isAssetAlreadyTaken: true,
-        });
-      }
+    if (isDroppedAssetClaimed({ assetId, dataObject, profileId, themeName })) {
+      return res.json({ isAssetAlreadyTaken: true });
     }
 
     let s3Url;

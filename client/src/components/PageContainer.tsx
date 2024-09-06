@@ -33,17 +33,6 @@ export const PageContainer = ({
 
   if (isLoading) return <Loading />;
 
-  if (isAssetAlreadyTaken) {
-    return (
-      <>
-        <div>
-          <h1>This {themeName} is already taken</h1>
-          <p>Please select another {themeName}!</p>
-        </div>
-      </>
-    );
-  }
-
   return (
     <div className="container-with-footer">
       {visitorIsAdmin && (
@@ -63,7 +52,14 @@ export const PageContainer = ({
               className="img-previewImageURL m-auto"
             />
           )}
-          {children}
+          {isAssetAlreadyTaken ? (
+            <div className="p-6 text-center">
+              <h1>This {themeName} is already taken</h1>
+              <p>Please select another {themeName}!</p>
+            </div>
+          ) : (
+            children
+          )}
         </>
       )}
       <div className="footer-fixed">

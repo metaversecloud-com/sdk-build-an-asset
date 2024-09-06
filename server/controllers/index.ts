@@ -3,8 +3,6 @@ export * from "./handleClearAllDroppedAssets.js";
 export * from "./handleClearDroppedAsset.js";
 export * from "./handleDropAsset.js";
 export * from "./handleEditDroppedAsset.js";
-export * from "./handleGetDroppedAsset.js";
 export * from "./handleGetWorldAndVisitor.js";
 export * from "./handleMoveToDroppedAsset.js";
-export * from "./handlePickupAllDroppedAssets.js";
 export * from "./handlePickupDroppedAsset.js";

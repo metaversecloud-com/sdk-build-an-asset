@@ -15,17 +15,17 @@ export const ClearAllAssetsModal = ({
   handleToggleShowClearAllAssetsModal: () => void;
 }) => {
   const dispatch = useContext(GlobalDispatchContext);
-  const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
+
   const { clearButtonType, namePlural } = getThemeData();
+
+  const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const actionType = clearButtonType === "pickup" ? "Pickup" : "Clear";
 
   const handleClearAllAssets = () => {
     setAreButtonsDisabled(true);
 
-    const url = clearButtonType === "pickup" ? `/dropped-assets/pickup-all` : `/dropped-assets/clear-all`;
-
     backendAPI
-      .post(url)
+      .post(`/dropped-assets/clear-all`, { shouldDelete: clearButtonType === "pickup" })
       .then((response) => {
         dispatch!({
           type: SET_SPAWN_SUCCESS,

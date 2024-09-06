@@ -1,42 +1,56 @@
 import { Request, Response } from "express";
-import { Visitor, World, errorHandler, getBaseUrl, getCredentials } from "../utils/index.js";
-import { getS3URL } from "../utils/images/getS3URL.js";
+import {
+  Visitor,
+  World,
+  clearAllDroppedAssets,
+  errorHandler,
+  getCredentials,
+  pickupAllDroppedAssets,
+} from "../utils/index.js";
+import { VisitorInterface } from "@rtsdk/topia";
 
 export const handleClearAllDroppedAssets = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, themeName, urlSlug, visitorId } = credentials;
+    const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
 
-    const { baseUrl } = getBaseUrl(req.hostname);
+    const { shouldDelete } = req.body;
+
+    const visitor = await Visitor.get(visitorId, urlSlug, {
+      credentials,
+    });
+    const { isAdmin } = visitor as VisitorInterface;
+    if (!isAdmin) throw "Only admins have enough permissions to pick up all assets";
 
     const world = await World.create(urlSlug, { credentials });
 
-    let spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
-      uniqueName: `${themeName}System-0`,
+    const droppedAssets = await world.fetchDroppedAssetsWithUniqueName({
+      isPartial: shouldDelete,
+      uniqueName: `${themeName}System-`,
     });
 
-    const promises = [];
-    spawnedAssets.map(async (asset) => {
-      promises.push(asset.updateWebImageLayers("", `${getS3URL()}/${themeName}/unclaimedAsset.png`));
-      promises.push(asset.updateClickType({ clickableLink: `${baseUrl}/${themeName}`, clickableLinkTitle: themeName }));
-    });
+    if (shouldDelete) {
+      pickupAllDroppedAssets({ credentials, droppedAssets });
+    } else {
+      clearAllDroppedAssets({ droppedAssets, hostname: req.hostname, themeName });
+    }
 
-    promises.push(
-      world.updateDataObject({ [themeName]: {} }, { analytics: [{ analyticName: `${themeName}-resets` }] }),
-      world.fetchDataObject(),
+    world.updateDataObject(
+      { [themeName]: {} },
+      {
+        analytics: [
+          {
+            analyticName: `${themeName}-${shouldDelete ? "pickupAllAssets" : "resets"}`,
+            uniqueKey: profileId,
+            profileId,
+          },
+        ],
+      },
     );
 
-    const visitor = await Visitor.create(visitorId, urlSlug, {
-      credentials,
-    });
-    promises.push(visitor.reloadIframe(assetId));
+    visitor.closeIframe(assetId);
 
-    await Promise.allSettled(promises);
-
-    return res.json({
-      success: true,
-      worldDataObject: world.dataObject,
-    });
+    return res.json({ success: true, worldDataObject: world.dataObject });
   } catch (error) {
     errorHandler({
       error,

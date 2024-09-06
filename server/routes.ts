@@ -5,10 +5,8 @@ import {
   handleClearDroppedAsset,
   handleDropAsset,
   handleEditDroppedAsset,
-  handleGetDroppedAsset,
   handleGetWorldAndVisitor,
   handleMoveToDroppedAsset,
-  handlePickupAllDroppedAssets,
   handlePickupDroppedAsset,
 } from "./controllers/index.js";
 import { getVersion } from "./utils/getVersion.js";
@@ -39,7 +37,6 @@ router.get("/system/health", (req, res) => {
 router.get("/world-and-visitor", handleGetWorldAndVisitor);
 
 // Dropped Assets
-router.get("/dropped-assets", handleGetDroppedAsset);
 router.post("/dropped-assets/claim", handleClaimDroppedAsset);
 router.post("/dropped-assets/clear", handleClearDroppedAsset);
 router.post("/dropped-assets/clear-all", handleClearAllDroppedAssets);
@@ -47,6 +44,5 @@ router.post("/dropped-assets/drop", handleDropAsset);
 router.post("/dropped-assets/edit", handleEditDroppedAsset);
 router.post("/dropped-assets/move-to", handleMoveToDroppedAsset);
 router.post("/dropped-assets/pickup", handlePickupDroppedAsset);
-router.post("/dropped-assets/pickup-all", handlePickupAllDroppedAssets);
 
 export default router;

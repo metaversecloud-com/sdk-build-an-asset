@@ -1,5 +1,12 @@
 import { Request, Response } from "express";
-import { DroppedAsset, World, errorHandler, getBaseUrl, getCredentials } from "../utils/index.js";
+import {
+  DroppedAsset,
+  World,
+  errorHandler,
+  getBaseUrl,
+  getCredentials,
+  isDroppedAssetClaimed,
+} from "../utils/index.js";
 import { WorldDataObject } from "../types/WorldDataObject.js";
 import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 
@@ -14,21 +21,9 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
     await world.fetchDataObject();
     const dataObject = world.dataObject as WorldDataObject;
 
-    // Check if this asset is taken
-    if (dataObject?.[themeName]) {
-      const claimedAssets = Object.entries(dataObject?.[themeName]).reduce((claimedAssets, [ownerProfileId, asset]) => {
-        if (asset && asset.droppedAssetId === assetId && ownerProfileId !== profileId) {
-          return asset;
-        }
-        return claimedAssets;
-      }, {});
-
-      if (Object.keys(claimedAssets).length) {
-        return res.json({
-          msg: `This ${themeName} is already taken`,
-          isAssetAlreadyTaken: true,
-        });
-      }
+    // Check if this dropped asset is taken
+    if (isDroppedAssetClaimed({ assetId, dataObject, profileId, themeName })) {
+      return res.json({ isAssetAlreadyTaken: true });
     }
 
     const s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/claimedAsset.png`;

@@ -5,11 +5,14 @@ export const ClearAllAssetsButton = ({
 }: {
   handleToggleShowClearAllAssetsModal: () => void;
 }) => {
-  const { namePlural } = getThemeData();
+  const { clearButtonType, namePlural } = getThemeData();
+  const actionType = clearButtonType === "pickup" ? "Pickup" : "Clear";
   return (
     <>
       <button className="btn btn-danger" onClick={() => handleToggleShowClearAllAssetsModal()}>
-        <span>Empty all {capitalize(namePlural)}</span>
+        <span>
+          {actionType} all {capitalize(namePlural)}
+        </span>
       </button>
     </>
   );
