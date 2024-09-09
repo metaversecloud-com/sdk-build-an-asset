@@ -42,16 +42,17 @@ const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
 const uploadToS3 = async (buffer: Buffer, fileName: string, themeName: string) => {
   const client = new S3Client({ region: "us-east-1" });
 
+  const pathToImage = `${themeName}/userUploads/${fileName}`;
   const putObjectCommand = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET,
-    Key: `${themeName}/userUploads/${fileName}`,
+    Key: pathToImage,
     Body: buffer,
     ContentType: "image/png",
   });
 
   await client.send(putObjectCommand);
 
-  return `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${fileName}`;
+  return `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${pathToImage}`;
 };
 
 export const generateS3Url = async (imageInfo: ImageInfo, profileId: string, themeName: string, host: string) => {
