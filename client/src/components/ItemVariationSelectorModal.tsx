@@ -17,7 +17,6 @@ export const ItemVariationSelectorModal = ({
   const themeName = getThemeName();
   const S3URL = `${getS3URL()}/${themeName}`;
 
-  console.log("🚀 ~ file: ItemVariationSelectorModal.tsx:20 ~ S3URL:", S3URL);
   const [selectedItem, setSelectedItem] = useState(selectedVariation);
 
   useEffect(() => {

@@ -20,11 +20,8 @@ export const EditAsset = () => {
   const themeName = getThemeName();
   const themeData = getThemeData();
   const S3URL = `${getS3URL()}/${themeName}`;
-  // const BASE_URL = window.location.origin;
-  console.log("🚀 ~ file: EditAsset.tsx:24 ~ S3URL:", S3URL);
-  // const baseUrl = `${BASE_URL}/assets/${themeName}`;
-  const baseUrl = S3URL;
-  console.log("🚀 ~ file: EditAsset.tsx:26 ~ baseUrl:", baseUrl);
+  const BASE_URL = window.location.origin;
+  const baseUrl = `${BASE_URL}/assets/${themeName}`;
 
   const [selected, setSelected] = useState(themeData?.defaultSelected);
 
@@ -177,7 +174,6 @@ export const EditAsset = () => {
       y: 0,
     }));
 
-    console.log("🚀 ~ file: EditAsset.tsx:179 ~ imagesToMerge:", imagesToMerge);
     mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
       .then((result) => {
         return setPreview(result);
