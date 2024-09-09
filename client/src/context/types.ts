@@ -1,8 +1,7 @@
 export const SET_HAS_SETUP_BACKEND = "SET_HAS_SETUP_BACKEND";
 export const SET_INTERACTIVE_PARAMS = "SET_INTERACTIVE_PARAMS";
 export const SET_ERROR = "SET_ERROR";
-export const SET_SPAWN_SUCCESS = "SET_SPAWN_SUCCESS";
-export const SET_VISITOR_AND_WORLD = "SET_VISITOR_AND_WORLD";
+export const SET_GAME_STATE = "SET_GAME_STATE";
 
 export type InteractiveParams = {
   assetId: string;
@@ -22,6 +21,7 @@ export type InteractiveParams = {
 };
 
 export interface InitialState {
+  error: string;
   hasInteractiveParams: boolean;
   hasSetupBackend: boolean;
   interactiveParams: object;
@@ -33,10 +33,10 @@ export interface InitialState {
 export type ActionType = {
   type: string;
   payload: {
-    interactiveParams?: InteractiveParams;
     error?: string;
-    hasSetupBackend?: boolean;
     droppedAsset?: object;
+    hasSetupBackend?: boolean;
+    interactiveParams?: InteractiveParams;
     isAssetAlreadyTaken?: boolean;
     visitorIsAdmin?: boolean;
     worldDataObject?: object;

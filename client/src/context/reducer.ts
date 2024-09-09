@@ -4,8 +4,7 @@ import {
   SET_HAS_SETUP_BACKEND,
   SET_INTERACTIVE_PARAMS,
   SET_ERROR,
-  SET_SPAWN_SUCCESS,
-  SET_VISITOR_AND_WORLD,
+  SET_GAME_STATE,
 } from "./types";
 
 const globalReducer = (state: InitialState, action: ActionType) => {
@@ -28,12 +27,7 @@ const globalReducer = (state: InitialState, action: ActionType) => {
         ...state,
         error: payload.error,
       };
-    case SET_SPAWN_SUCCESS:
-      return {
-        ...state,
-        ...payload,
-      };
-    case SET_VISITOR_AND_WORLD:
+    case SET_GAME_STATE:
       return {
         ...state,
         ...payload,

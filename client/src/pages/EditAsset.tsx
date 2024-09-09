@@ -8,7 +8,7 @@ import { PageContainer, ItemVariationSelectorModal } from "@/components/index.js
 
 // context
 import { GlobalDispatchContext, GlobalStateContext } from "@context/GlobalContext";
-import { SET_ERROR, SET_SPAWN_SUCCESS } from "@/context/types.js";
+import { SET_ERROR, SET_GAME_STATE } from "@/context/types.js";
 
 // utils
 import { backendAPI, getS3URL, getThemeData, getThemeName } from "@/utils";
@@ -26,7 +26,6 @@ export const EditAsset = () => {
   const [selected, setSelected] = useState(themeData?.defaultSelected);
 
   const [isLoading, setLoading] = useState(false);
-  // const [validationErrors, setValidationErrors] = useState({});
   const [isButtonSaveAssetDisabled, setIsButtonSaveAssetDisabled] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,61 +59,27 @@ export const EditAsset = () => {
   };
 
   useEffect(() => {
-    const fetchInitialState = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const initialSelection = themeData.layerOrder.reduce((acc: { [key: string]: string[] }, category: string) => {
-        const categoryKey1 = `${category.replace(/\s/g, "")}1`;
-        const categoryKey2 = `${category.replace(/\s/g, "")}2`;
+    setLoading(true);
+    fetchInitialState()
+      .catch((error) => console.error(error))
+      .finally(() => setLoading(false));
+  }, []);
 
-        acc[category] = [
-          urlParams.get(categoryKey1) && `${baseUrl}/${urlParams.get(categoryKey1)}.png`,
-          urlParams.get(categoryKey2) && `${baseUrl}/${urlParams.get(categoryKey2)}.png`,
-        ].filter(Boolean);
-        return acc;
-      }, {});
+  const fetchInitialState = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialSelection = themeData.layerOrder.reduce((info: { [category: string]: string[] }, category: string) => {
+      const categoryKey1 = `${category.replace(/\s/g, "")}1`;
+      const categoryKey2 = `${category.replace(/\s/g, "")}2`;
 
-      setSelected(initialSelection);
+      info[category] = [
+        urlParams.get(categoryKey1) && `${baseUrl}/${urlParams.get(categoryKey1)}.png`,
+        urlParams.get(categoryKey2) && `${baseUrl}/${urlParams.get(categoryKey2)}.png`,
+      ].filter(Boolean);
+      return info;
+    }, {});
 
-      const initialImageInfo = themeData.layerOrder.reduce(
-        (info: { [category: string]: { imageName: string } }, category: string) => {
-          info[category] = initialSelection[category]
-            .map((item: string) => ({
-              imageName: item?.split("/")?.pop()?.split(".")?.[0] || "",
-            }))
-            .filter(Boolean);
-          return info;
-        },
-        {},
-      );
-
-      setImageInfo(initialImageInfo);
-
-      const orderedImages = themeData.layerOrder.flatMap((category: string) =>
-        initialSelection[category] ? initialSelection[category] : [],
-      );
-
-      const imagesToMerge = orderedImages.map((image) => ({
-        src: image,
-        x: 0,
-        y: 0,
-      }));
-
-      mergeImages(imagesToMerge)
-        .then((result) => {
-          return setPreview(result);
-        })
-        .catch((error) => console.error("Error merging images:", error));
-    };
-
-    try {
-      setLoading(true);
-      fetchInitialState();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch, themeName]);
+    getPreview(initialSelection);
+  };
 
   const updateAsset = (type: string, image: string, item: CategoryType) => {
     const updatedSelection = { ...selected };
@@ -175,11 +140,15 @@ export const EditAsset = () => {
       }
     }
 
-    setSelected(updatedSelection);
+    getPreview(updatedSelection);
+  };
+
+  const getPreview = (selection: { [x: string]: string[] }) => {
+    setSelected(selection);
 
     const updatedImageInfo = themeData.layerOrder.reduce((info: { [category: string]: object }, category: string) => {
-      if (updatedSelection[category]) {
-        info[category] = updatedSelection[category]
+      if (selection[category]) {
+        info[category] = selection[category]
           .map((item) => {
             if (item) {
               return {
@@ -197,9 +166,7 @@ export const EditAsset = () => {
 
     setImageInfo(updatedImageInfo);
 
-    const orderedImages = themeData.layerOrder.flatMap((category) =>
-      updatedSelection[category] ? updatedSelection[category] : [],
-    );
+    const orderedImages = themeData.layerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
 
     const imagesToMerge = orderedImages.map((image) => ({
       src: image,
@@ -245,7 +212,7 @@ export const EditAsset = () => {
       .post(url, { imageInfo })
       .then((response) => {
         dispatch!({
-          type: SET_SPAWN_SUCCESS,
+          type: SET_GAME_STATE,
           payload: response.data,
         });
       })
@@ -253,7 +220,7 @@ export const EditAsset = () => {
         console.error(error);
         dispatch!({
           type: SET_ERROR,
-          payload: { error: "There was an error while clearing all assets" },
+          payload: { error: "There was an error while dropping or updating an asset" },
         });
       })
       .finally(() => {
@@ -377,12 +344,6 @@ export const EditAsset = () => {
             </section>
           </div>
         ))}
-
-        {/* {Object.keys(validationErrors).length > 0 && (
-          <p style={{ color: "red" }}>
-            Please select an item from each category to build the asset.
-          </p>
-        )} */}
       </PageContainer>
     </>
   );

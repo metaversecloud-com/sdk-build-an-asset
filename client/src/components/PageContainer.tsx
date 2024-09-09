@@ -24,7 +24,7 @@ export const PageContainer = ({
   showClearAssetBtn?: boolean;
   footerContent: ReactNode;
 }) => {
-  const { isAssetAlreadyTaken, visitorIsAdmin } = useContext(GlobalStateContext);
+  const { error, isAssetAlreadyTaken, visitorIsAdmin } = useContext(GlobalStateContext);
   const [showSettings, setShowSettings] = useState(false);
 
   const themeName = getThemeName();
@@ -60,6 +60,7 @@ export const PageContainer = ({
           ) : (
             children
           )}
+          {error && <p className="p3 pt-10 text-center text-error">{error}</p>}
         </>
       )}
       <div className="footer-fixed">

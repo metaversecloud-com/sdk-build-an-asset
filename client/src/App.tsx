@@ -14,7 +14,7 @@ import {
   SET_ERROR,
   SET_HAS_SETUP_BACKEND,
   SET_INTERACTIVE_PARAMS,
-  SET_VISITOR_AND_WORLD,
+  SET_GAME_STATE,
 } from "@/context/types";
 
 // utils
@@ -112,7 +112,7 @@ const App = () => {
       .get("/world-and-visitor")
       .then((response) => {
         dispatch!({
-          type: SET_VISITOR_AND_WORLD,
+          type: SET_GAME_STATE,
           payload: response.data,
         });
       })

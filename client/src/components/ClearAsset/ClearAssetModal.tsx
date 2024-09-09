@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 // context
 import { GlobalDispatchContext } from "@context/GlobalContext";
-import { SET_ERROR, SET_SPAWN_SUCCESS } from "@/context/types.js";
+import { SET_ERROR, SET_GAME_STATE } from "@/context/types.js";
 
 // utils
 import { backendAPI, capitalize, getThemeData, getThemeName } from "@/utils";
@@ -34,7 +34,7 @@ export const ClearAssetModal = ({
       })
       .then((response) => {
         dispatch!({
-          type: SET_SPAWN_SUCCESS,
+          type: SET_GAME_STATE,
           payload: response.data,
         });
         const queryParams = new URLSearchParams(window.location.search);

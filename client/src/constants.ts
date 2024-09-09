@@ -1,4 +1,15 @@
+import { InitialState } from "./context/types";
 import { getS3URL } from "./utils";
+
+export const initialState: InitialState = {
+  error: "",
+  hasInteractiveParams: false,
+  hasSetupBackend: false,
+  interactiveParams: {},
+  isAssetAlreadyTaken: false,
+  visitorIsAdmin: false,
+  worldDataObject: {},
+};
 
 export type CategoryType = {
   name: string;

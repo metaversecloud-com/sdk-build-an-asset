@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 
 // context
 import { GlobalDispatchContext } from "@context/GlobalContext";
-import { SET_ERROR, SET_SPAWN_SUCCESS } from "@/context/types.js";
+import { SET_ERROR, SET_GAME_STATE } from "@/context/types.js";
 
 // utils
 import { getThemeData } from "@/utils/themes.js";
@@ -28,7 +28,7 @@ export const ClearAllAssetsModal = ({
       .post(`/dropped-assets/clear-all`, { shouldDelete: clearButtonType === "pickup" })
       .then((response) => {
         dispatch!({
-          type: SET_SPAWN_SUCCESS,
+          type: SET_GAME_STATE,
           payload: response.data,
         });
       })

@@ -72,7 +72,6 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
 
     return res.json({
       success: true,
-      completeImageName,
       droppedAsset,
     });
   } catch (error) {
