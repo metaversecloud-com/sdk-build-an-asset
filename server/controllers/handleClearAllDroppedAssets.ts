@@ -50,7 +50,7 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
 
     visitor.closeIframe(assetId);
 
-    return res.json({ success: true, worldDataObject: world.dataObject });
+    return res.json({ worldDataObject: world.dataObject });
   } catch (error) {
     errorHandler({
       error,

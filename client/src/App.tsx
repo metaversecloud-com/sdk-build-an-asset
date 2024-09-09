@@ -90,19 +90,14 @@ const App = () => {
     [dispatch],
   );
 
-  const setHasSetupBackend = useCallback(
-    (success: boolean) => {
-      dispatch!({
-        type: SET_HAS_SETUP_BACKEND,
-        payload: { hasSetupBackend: success },
-      });
-    },
-    [dispatch],
-  );
-
   const setupBackend = () => {
     setupBackendAPI(interactiveParams)
-      .then(() => setHasSetupBackend(true))
+      .then(() =>
+        dispatch!({
+          type: SET_HAS_SETUP_BACKEND,
+          payload: { hasSetupBackend: true },
+        }),
+      )
       .catch(() => navigate("*"))
       .finally(() => setHasInitBackendAPI(true));
   };

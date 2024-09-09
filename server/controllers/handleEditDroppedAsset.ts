@@ -96,7 +96,6 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     });
 
     return res.json({
-      success: true,
       imageInfo,
       droppedAsset,
       worldDataObject: world.dataObject,

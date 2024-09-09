@@ -51,7 +51,6 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
 
     await world.fetchDataObject();
     return res.json({
-      success: true,
       worldDataObject: world.dataObject,
     });
   } catch (error) {

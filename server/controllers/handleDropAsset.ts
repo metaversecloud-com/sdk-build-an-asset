@@ -29,7 +29,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
     const { moveTo } = visitor as VisitorInterface;
     const position = {
-      x: moveTo?.x || 0 + 100,
+      x: (moveTo?.x || 0) + 60,
       y: moveTo?.y || 0,
     };
 
@@ -71,7 +71,6 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     );
 
     return res.json({
-      success: true,
       droppedAsset,
     });
   } catch (error) {

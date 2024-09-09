@@ -31,7 +31,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
     const modifiedName = username.replace(/ /g, "%20");
 
     if (!modifiedName || !profileId) {
-      return res.status(400).json({ error: "modifiedName or profileId" });
+      throw "Missing  modifiedName or profileId";
     }
 
     const clickableLink = `${baseUrl}/${themeName}/claimed?visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
@@ -86,7 +86,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
       },
     });
 
-    return res.json({ droppedAsset, success: true, worldDataObject: world.dataObject });
+    return res.json({ droppedAsset, worldDataObject: world.dataObject });
   } catch (error) {
     errorHandler({
       error,
