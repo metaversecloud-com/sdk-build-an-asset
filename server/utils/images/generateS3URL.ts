@@ -1,8 +1,6 @@
 import Jimp from "jimp";
-import path from "path";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { ImageInfo } from "../../types/index.js";
-import { Request } from "express";
 
 const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
   let images = [];
@@ -63,7 +61,7 @@ export const generateS3Url = async (imageInfo: ImageInfo, profileId: string, the
   if (host === "localhost") return `${baseDir}/claimedAsset.png`;
 
   const mergedImageBuffer = await combineImages(imageInfo, baseDir);
-  const imageFullName = `${profileId}-${Date.now()}.png`;
+  const imageFullName = `${profileId}.png`;
   return uploadToS3(mergedImageBuffer, imageFullName, themeName);
 };
 

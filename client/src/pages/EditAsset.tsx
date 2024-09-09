@@ -98,7 +98,6 @@ export const EditAsset = () => {
         x: 0,
         y: 0,
       }));
-      console.log("🚀 ~ file: EditAsset.tsx:99 ~ imagesToMerge:", imagesToMerge);
 
       mergeImages(imagesToMerge)
         .then((result) => {
@@ -207,7 +206,6 @@ export const EditAsset = () => {
       x: 0,
       y: 0,
     }));
-    console.log("🚀 ~ file: EditAsset.tsx:208 ~ imagesToMerge:", imagesToMerge);
 
     mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
       .then((result) => {
@@ -241,7 +239,7 @@ export const EditAsset = () => {
   const handleSaveToBackend = () => {
     setIsButtonSaveAssetDisabled(true);
 
-    const url = themeData.spawnAssetInRandomLocation ? "/dropped-assets/drop" : "/dropped-assets/edit";
+    const url = themeData.dropAssetInRandomLocation ? "/dropped-assets/drop" : "/dropped-assets/edit";
 
     backendAPI
       .post(url, { imageInfo })

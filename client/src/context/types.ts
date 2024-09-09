@@ -36,11 +36,7 @@ export type ActionType = {
     interactiveParams?: InteractiveParams;
     error?: string;
     hasSetupBackend?: boolean;
-    spawnSuccess?: boolean;
-    isAssetSpawnedInWorld?: boolean;
     droppedAsset?: object;
-    spawnedAsset?: object;
-    userAsset?: object;
     isAssetAlreadyTaken?: boolean;
     visitorIsAdmin?: boolean;
     worldDataObject?: object;

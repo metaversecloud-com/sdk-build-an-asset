@@ -96,11 +96,9 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     });
 
     return res.json({
-      spawnSuccess: true,
       success: true,
-      isAssetSpawnedInWorld: true,
-      imageInfo: imageInfo,
-      spawnedAsset: droppedAsset,
+      imageInfo,
+      droppedAsset,
       worldDataObject: world.dataObject,
     });
   } catch (error) {

@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import { dropImageAsset, DroppedAsset, errorHandler, generateS3Url, getCredentials, World } from "../utils/index.js";
+import { dropImageAsset, errorHandler, generateS3Url, getCredentials, Visitor, World } from "../utils/index.js";
+import { VisitorInterface } from "@rtsdk/topia";
 
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, profileId, themeName, urlSlug } = credentials;
+    const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
 
     const { imageInfo } = req.body;
 
@@ -24,37 +25,31 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       .join("_");
     const completeImageName = `${imageName}.png`;
 
-    // get new drop position
-    const background = await DroppedAsset.getWithUniqueName(
-      `${themeName}-background`,
-      urlSlug,
-      process.env.INTERACTIVE_SECRET!,
-      credentials,
-    );
-    const randomX = Math.floor(Math.random() * 1201) - 600;
-    const randomY = -(Math.floor(Math.random() * 1301) - 750);
-    const spawnPosition = {
-      x: background?.position?.x || 0 + randomX,
-      y: background?.position?.y || 0 + randomY,
+    // get drop position
+    const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
+    const { moveTo } = visitor as VisitorInterface;
+    const position = {
+      x: moveTo?.x || 0 + 100,
+      y: moveTo?.y || 0,
     };
 
     // remove all user assets
-    const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
+    const droppedAssets = await world.fetchDroppedAssetsWithUniqueName({
       uniqueName: `${themeName}System-${profileId}`,
     });
 
-    if (spawnedAssets && spawnedAssets.length > 0) {
-      await Promise.all(spawnedAssets.map((spawnedAsset) => spawnedAsset.deleteDroppedAsset()));
+    if (droppedAssets && droppedAssets.length > 0) {
+      await Promise.all(droppedAssets.map((droppedAsset) => droppedAsset.deleteDroppedAsset()));
     }
 
     // drop new asset
-    const spawnedAsset = await dropImageAsset({
+    const droppedAsset = await dropImageAsset({
       completeImageName,
       credentials,
       host: req.hostname,
       imageInfo,
       s3Url,
-      spawnPosition,
+      position,
     });
 
     world.updateDataObject(
@@ -76,11 +71,9 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     );
 
     return res.json({
-      spawnSuccess: true,
       success: true,
-      isAssetSpawnedInWorld: true,
       completeImageName,
-      spawnedAsset,
+      droppedAsset,
     });
   } catch (error) {
     return errorHandler({

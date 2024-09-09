@@ -14,20 +14,20 @@ export const dropImageAsset = async ({
   host,
   imageInfo,
   s3Url,
-  spawnPosition,
+  position,
 }: {
   completeImageName: string;
   credentials: Credentials;
   host: string;
   imageInfo: ImageInfo;
   s3Url: string;
-  spawnPosition: { x: number; y: number };
+  position: { x: number; y: number };
 }) => {
   try {
     const { assetId, displayName, interactivePublicKey, identityId, profileId, themeName, urlSlug, username } =
       credentials;
 
-    const spawnedAssetUniqueName = `${themeName}System-${profileId}`;
+    const droppedAssetUniqueName = `${themeName}System-${profileId}`;
 
     const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
       credentials: { interactivePublicKey, profileId, urlSlug },
@@ -54,8 +54,8 @@ export const dropImageAsset = async ({
       isInteractive: true,
       interactivePublicKey,
       layer1: s3Url,
-      position: spawnPosition,
-      uniqueName: spawnedAssetUniqueName,
+      position: position,
+      uniqueName: droppedAssetUniqueName,
       urlSlug,
     });
 

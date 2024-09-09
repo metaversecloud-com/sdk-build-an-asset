@@ -13,7 +13,7 @@ type ThemeType = {
   splashImage: string;
   saveButtonText: string;
   baseCategoryName: string;
-  spawnAssetInRandomLocation: boolean;
+  dropAssetInRandomLocation: boolean;
   clearButtonType: string;
   showClearAssetButton: boolean;
   showFindAssetButton: boolean;
@@ -54,7 +54,7 @@ export const themes: ThemesType = {
     splashImage: `${getS3URL()}/locker/unclaimedAsset.png`,
     saveButtonText: "Save",
     baseCategoryName: "Locker Base",
-    spawnAssetInRandomLocation: false,
+    dropAssetInRandomLocation: false,
     clearButtonType: "empty",
     showClearAssetButton: true,
     showFindAssetButton: true,
@@ -263,7 +263,7 @@ export const themes: ThemesType = {
     splashImage: `${getS3URL()}/desk/unclaimedAsset.png`,
     saveButtonText: "Save",
     baseCategoryName: "Desk Base",
-    spawnAssetInRandomLocation: false,
+    dropAssetInRandomLocation: false,
     clearButtonType: "empty",
     showClearAssetButton: true,
     showFindAssetButton: true,
@@ -411,7 +411,7 @@ export const themes: ThemesType = {
     splashImage: `${getS3URL()}/snowman/unclaimedAsset.png`,
     saveButtonText: "Add Snowman",
     baseCategoryName: "Body",
-    spawnAssetInRandomLocation: true,
+    dropAssetInRandomLocation: true,
     clearButtonType: "pickup",
     showClearAssetButton: false,
     showFindAssetButton: false,
