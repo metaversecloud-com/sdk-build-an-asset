@@ -99,7 +99,7 @@ export const EditAsset = () => {
       }));
       console.log("🚀 ~ file: EditAsset.tsx:99 ~ imagesToMerge:", imagesToMerge);
 
-      mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
+      mergeImages(imagesToMerge)
         .then((result) => {
           return setPreview(result);
         })
@@ -208,7 +208,7 @@ export const EditAsset = () => {
     }));
     console.log("🚀 ~ file: EditAsset.tsx:208 ~ imagesToMerge:", imagesToMerge);
 
-    mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
+    mergeImages(imagesToMerge)
       .then((result) => {
         return setPreview(result);
       })
