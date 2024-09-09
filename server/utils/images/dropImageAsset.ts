@@ -40,7 +40,7 @@ export const dropImageAsset = async ({
       throw "Missing imageInfoParam, modifiedName or profileId";
     }
 
-    const { baseUrl } = getBaseUrl(host);
+    const baseUrl = getBaseUrl(host);
 
     const clickableLink = `${baseUrl}/${themeName}/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
 

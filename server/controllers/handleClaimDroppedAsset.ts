@@ -15,7 +15,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, displayName, identityId, profileId, themeName, urlSlug, username } = credentials;
 
-    const { baseUrl } = getBaseUrl(req.hostname);
+    const baseUrl = getBaseUrl(req.hostname);
 
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();

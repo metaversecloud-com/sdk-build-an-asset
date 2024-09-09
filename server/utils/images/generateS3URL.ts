@@ -1,15 +1,15 @@
 import Jimp from "jimp";
 import path from "path";
-import { uploadToS3 } from "./index.js";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { ImageInfo } from "../../types/index.js";
+import { Request } from "express";
 
 const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
   let images = [];
 
   for (const category in imageInfo) {
     for (const item of imageInfo[category]) {
-      const imagePath = path.join(baseDir, item.imageName + ".png");
-      const image = await Jimp.read(imagePath);
+      const image = await Jimp.read(`${baseDir}/${item.imageName}.png`);
       images.push(image);
     }
   }
@@ -41,8 +41,27 @@ const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
   return validatePNG(buffer);
 };
 
-export const generateS3Url = async (imageInfo: ImageInfo, profileId: string, themeName: string) => {
-  const baseDir = `https://${process.env.S3_BUCKET || "sdk-build-an-asset"}.s3.amazonaws.com/${themeName}`;
+const uploadToS3 = async (buffer: Buffer, fileName: string, themeName: string) => {
+  const client = new S3Client({ region: "us-east-1" });
+
+  const putObjectCommand = new PutObjectCommand({
+    Bucket: process.env.S3_BUCKET,
+    Key: `${themeName}/userUploads/${fileName}`,
+    Body: buffer,
+    ContentType: "image/png",
+  });
+
+  await client.send(putObjectCommand);
+
+  return `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${fileName}`;
+};
+
+export const generateS3Url = async (imageInfo: ImageInfo, profileId: string, themeName: string, host: string) => {
+  let baseDir = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}`;
+
+  // Mock image placeholder for localhost, since we don't have S3 Bucket PUT permissions for localhost in AWS
+  if (host === "localhost") return `${baseDir}/claimedAsset.png`;
+
   const mergedImageBuffer = await combineImages(imageInfo, baseDir);
   const imageFullName = `${profileId}-${Date.now()}.png`;
   return uploadToS3(mergedImageBuffer, imageFullName, themeName);

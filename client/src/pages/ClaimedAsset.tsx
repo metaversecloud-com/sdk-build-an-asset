@@ -31,7 +31,6 @@ export const ClaimedAsset = () => {
   const [showClearAssetModal, setShowClearAssetModal] = useState(false);
 
   const s3Url = worldDataObject?.[themeName]?.[ownerProfileId]?.s3Url;
-  console.log("🚀 ~ file: ClaimedAsset.tsx:34 ~ s3Url:", s3Url);
 
   const visitorName = assetParams["visitor-name"]?.replace("%20", " ");
 

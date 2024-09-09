@@ -21,7 +21,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     const { imageInfo } = req.body;
 
     const host = req.hostname;
-    const { baseUrl } = getBaseUrl(host);
+    const baseUrl = getBaseUrl(host);
 
     if (!validateImageInfo({ imageInfo, themeName })) return;
 
@@ -34,13 +34,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       return res.json({ isAssetAlreadyTaken: true });
     }
 
-    let s3Url;
-    if (host === "localhost") {
-      // Mock image placeholder for localhost, since we don't have S3 Bucket permissions for localhost in AWS
-      s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/claimedAsset.png`;
-    } else {
-      s3Url = await generateS3Url(imageInfo, profileId, themeName);
-    }
+    const s3Url = await generateS3Url(imageInfo, profileId, themeName, host);
 
     try {
       await world.updateDataObject(

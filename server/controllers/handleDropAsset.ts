@@ -12,12 +12,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
 
     const world = await World.create(urlSlug, { credentials });
 
-    let s3Url;
-    if (req.hostname === "localhost") {
-      s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/claimedAsset.png`;
-    } else {
-      s3Url = await generateS3Url(imageInfo, profileId, themeName);
-    }
+    const s3Url = await generateS3Url(imageInfo, profileId, themeName, req.hostname);
 
     // calculate image name
     const parts = ["body", "arms", "head", "accessories"];
@@ -44,16 +39,12 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     };
 
     // remove all user assets
-    try {
-      const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
-        uniqueName: `${themeName}System-${profileId}`,
-      });
+    const spawnedAssets = await world.fetchDroppedAssetsWithUniqueName({
+      uniqueName: `${themeName}System-${profileId}`,
+    });
 
-      if (spawnedAssets && spawnedAssets.length > 0) {
-        await Promise.all(spawnedAssets.map((spawnedAsset) => spawnedAsset.deleteDroppedAsset()));
-      }
-    } catch (error) {
-      console.error("❌ There are no assets to be deleted.", JSON.stringify(error));
+    if (spawnedAssets && spawnedAssets.length > 0) {
+      await Promise.all(spawnedAssets.map((spawnedAsset) => spawnedAsset.deleteDroppedAsset()));
     }
 
     // drop new asset

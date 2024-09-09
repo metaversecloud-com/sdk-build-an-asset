@@ -20,7 +20,8 @@ export const EditAsset = () => {
   const themeName = getThemeName();
   const themeData = getThemeData();
   const S3URL = `${getS3URL()}/${themeName}`;
-  console.log("🚀 ~ file: EditAsset.tsx:24 ~ S3URL:", S3URL);
+  const BASE_URL = window.location.origin;
+  const baseUrl = `${BASE_URL}/assets/${themeName}`;
 
   const [selected, setSelected] = useState(themeData?.defaultSelected);
 
@@ -41,7 +42,7 @@ export const EditAsset = () => {
     return selected[type]?.some((selectedImage: string) => {
       if (!selectedImage) return false;
 
-      const selectedBaseName = selectedImage.replace(S3URL, "").split(".")[0];
+      const selectedBaseName = selectedImage.replace(baseUrl, "").split(".")[0];
       const itemBaseName = imageName.split(".")[0];
       return (
         selectedBaseName === itemBaseName ||
@@ -66,8 +67,8 @@ export const EditAsset = () => {
         const categoryKey2 = `${category.replace(/\s/g, "")}2`;
 
         acc[category] = [
-          urlParams.get(categoryKey1) && `${S3URL}/${urlParams.get(categoryKey1)}.png`,
-          urlParams.get(categoryKey2) && `${S3URL}/${urlParams.get(categoryKey2)}.png`,
+          urlParams.get(categoryKey1) && `${baseUrl}/${urlParams.get(categoryKey1)}.png`,
+          urlParams.get(categoryKey2) && `${baseUrl}/${urlParams.get(categoryKey2)}.png`,
         ].filter(Boolean);
         return acc;
       }, {});
@@ -123,9 +124,9 @@ export const EditAsset = () => {
       if (item.isRequired) return;
       updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
         if (item && item.hasVariation) {
-          return !item.variations?.some((variation) => `${S3URL}/${variation}` === selectedItem);
+          return !item.variations?.some((variation) => `${baseUrl}/${variation}` === selectedItem);
         }
-        return item && selectedItem !== `${S3URL}/${item.name}`;
+        return item && selectedItem !== `${baseUrl}/${item.name}`;
       });
     } else {
       if (item.hasVariation) {
@@ -136,7 +137,7 @@ export const EditAsset = () => {
           updatedSelection[type] = updatedSelection[type].filter((selectedItem) => selectedItem !== image);
         } else {
           updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
-            return !item.variations?.some((variation) => `${S3URL}/${variation}` === selectedItem);
+            return !item.variations?.some((variation) => `${baseUrl}/${variation}` === selectedItem);
           });
           updatedSelection[type].push(image);
         }
@@ -159,15 +160,15 @@ export const EditAsset = () => {
     if (
       requiredItem &&
       !updatedSelection[type].some((selectedItem) =>
-        requiredItem.variations?.includes(selectedItem.replace(`${S3URL}/`, "")),
+        requiredItem.variations?.includes(selectedItem.replace(`${baseUrl}/`, "")),
       )
     ) {
-      updatedSelection[type].unshift(`${S3URL}/${requiredItem.variations?.[0]}`);
+      updatedSelection[type].unshift(`${baseUrl}/${requiredItem.variations?.[0]}`);
     }
 
     if (type === Object.keys(themeData.categories)[0]) {
       const requiredItemIndex = updatedSelection[type].findIndex((selectedItem) =>
-        requiredItem?.variations?.includes(selectedItem.replace(`${S3URL}/`, "")),
+        requiredItem?.variations?.includes(selectedItem.replace(`${baseUrl}/`, "")),
       );
       if (requiredItemIndex !== -1) {
         const requiredImage = updatedSelection[type].splice(requiredItemIndex, 1)[0];
@@ -208,7 +209,7 @@ export const EditAsset = () => {
     }));
     console.log("🚀 ~ file: EditAsset.tsx:208 ~ imagesToMerge:", imagesToMerge);
 
-    mergeImages(imagesToMerge)
+    mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
       .then((result) => {
         return setPreview(result);
       })
@@ -220,13 +221,13 @@ export const EditAsset = () => {
     const currentSelection = selected[type].find((selectedImage) => {
       if (!selectedImage) return false;
 
-      const selectedBaseName = selectedImage.replace(`${S3URL}/`, "").split(".")[0];
+      const selectedBaseName = selectedImage.replace(`${baseUrl}/`, "").split(".")[0];
       return item.variations?.some((variation) => {
         const variationBaseName = variation.split(".")[0];
         return selectedBaseName === variationBaseName;
       });
     });
-    const currentSelectionVariation = currentSelection ? currentSelection.replace(`${S3URL}/`, "") : "";
+    const currentSelectionVariation = currentSelection ? currentSelection.replace(`${baseUrl}/`, "") : "";
     setCurrentItemVariations(variations);
     setCurrentItem({ ...item, type });
     setIsModalOpen(true);
@@ -270,7 +271,7 @@ export const EditAsset = () => {
           variations={currentItemVariations}
           onSelect={(selectedVariation) => {
             if (selectedVariation) {
-              const imageUrl = `${S3URL}/${selectedVariation}`;
+              const imageUrl = `${baseUrl}/${selectedVariation}`;
               updateAsset(currentItem.type, imageUrl, currentItem);
             } else {
               updateAsset(currentItem.type, "", currentItem);
@@ -285,7 +286,7 @@ export const EditAsset = () => {
       <PageContainer
         isLoading={isLoading}
         headerText={`Build your ${themeData.name}!`}
-        previewImageURL={preview === "data:," ? `${S3URL}/claimedAsset.png` : preview}
+        previewImageURL={preview === "data:," ? `${baseUrl}/claimedAsset.png` : preview}
         showClearAssetBtn={visitorIsAdmin}
         footerContent={
           <button
@@ -349,7 +350,7 @@ export const EditAsset = () => {
                             </div>
                           )}
                           <img
-                            src={`${S3URL}/${item.name}`}
+                            src={`${baseUrl}/${item.name}`}
                             alt={item.name}
                             className="img-accessory"
                             style={{
@@ -365,7 +366,7 @@ export const EditAsset = () => {
                                 handleOpenModalWithVariations(item, type);
                                 return;
                               } else {
-                                updateAsset(type, `${S3URL}/${item.name}`, item);
+                                updateAsset(type, `${baseUrl}/${item.name}`, item);
                               }
                             }}
                           />

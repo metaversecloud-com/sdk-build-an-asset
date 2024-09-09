@@ -12,11 +12,11 @@ export const clearAllDroppedAssets = async ({
   themeName: string;
 }) => {
   try {
-    const { baseUrl } = getBaseUrl(hostname);
+    const baseUrl = getBaseUrl(hostname);
 
     const promises = [];
     droppedAssets.map(async (asset) => {
-      promises.push(asset.updateWebImageLayers("", `${getS3URL()}/${themeName}/unclaimedAsset.png`));
+      promises.push(asset.updateWebImageLayers("", `${getS3URL(themeName)}/unclaimedAsset.png`));
       promises.push(asset.updateClickType({ clickableLink: `${baseUrl}/${themeName}`, clickableLinkTitle: themeName }));
     });
   } catch (error) {

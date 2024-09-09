@@ -24,14 +24,14 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
       selectedAssetId = assetId;
     }
 
-    const { baseUrl } = getBaseUrl(req.hostname);
+    const baseUrl = getBaseUrl(req.hostname);
 
     const droppedAsset = DroppedAsset.create(selectedAssetId, urlSlug, {
       credentials,
     });
 
     await Promise.all([
-      droppedAsset?.updateWebImageLayers("", `${getS3URL()}/${themeName}/unclaimedAsset.png`),
+      droppedAsset?.updateWebImageLayers("", `${getS3URL(themeName)}/unclaimedAsset.png`),
       droppedAsset?.updateClickType({ clickableLink: `${baseUrl}/${themeName}`, clickableLinkTitle: themeName }),
       world.updateDataObject(
         {
