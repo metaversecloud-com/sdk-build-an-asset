@@ -30,7 +30,8 @@ export const EditAsset = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentItemVariations, setCurrentItemVariations] = useState<string[]>([]);
-  const [currentItem, setCurrentItem] = useState<{ type: string; name: string; hasVariation: boolean }>();
+  const [currentItem, setCurrentItem] = useState<{ type: string; imageName?: string; hasVariation: boolean }>();
+  const [validationErrors, setValidationErrors] = useState<{ [type: string]: boolean }>({});
 
   const [selectedVariation, setSelectedVariation] = useState<string>("");
   const [preview, setPreview] = useState(`${S3URL}/claimedAsset.png`);
@@ -46,7 +47,7 @@ export const EditAsset = () => {
       return (
         selectedBaseName === itemBaseName ||
         themeData.categories[type].some((item) => {
-          if (item.name.split(".")[0] === itemBaseName && item.hasVariation) {
+          if (item.imageName.split(".")[0] === itemBaseName && item.hasVariation) {
             return item.variations?.some((variation) => {
               const variationBaseName = variation.split(".")[0];
               return selectedBaseName === variationBaseName;
@@ -82,15 +83,20 @@ export const EditAsset = () => {
   };
 
   const updateAsset = (type: string, image: string, item: CategoryType) => {
+    setIsButtonSaveAssetDisabled(false);
+    setValidationErrors({ ...validationErrors, [type]: false });
     const updatedSelection = { ...selected };
 
-    if (image === null) {
-      if (item.isRequired) return;
+    if (!image) {
+      if (item.isRequired) {
+        setIsButtonSaveAssetDisabled(true);
+        setValidationErrors({ [type]: true });
+      }
       updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
         if (item && item.hasVariation) {
           return !item.variations?.some((variation) => `${baseUrl}/${variation}` === selectedItem);
         }
-        return item && selectedItem !== `${baseUrl}/${item.name}`;
+        return item && selectedItem !== `${baseUrl}/${item.imageName}`;
       });
     } else {
       if (item.hasVariation) {
@@ -235,12 +241,7 @@ export const EditAsset = () => {
           isOpen={isModalOpen}
           variations={currentItemVariations}
           onSelect={(selectedVariation) => {
-            if (selectedVariation) {
-              const imageUrl = `${baseUrl}/${selectedVariation}`;
-              updateAsset(currentItem.type, imageUrl, currentItem);
-            } else {
-              updateAsset(currentItem.type, "", currentItem);
-            }
+            updateAsset(currentItem.type, selectedVariation ? `${baseUrl}/${selectedVariation}` : "", currentItem);
           }}
           onClose={handleCloseModal}
           selectedVariation={selectedVariation || ""}
@@ -276,18 +277,21 @@ export const EditAsset = () => {
                       src="https://sdk-style.s3.amazonaws.com/icons/chevronDown.svg"
                     />
                   </summary>
-                  <div className="accordion-content">
-                    <div
-                      style={{
-                        margin: "6px",
-                        textAlign: "left",
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: "10px",
-                      }}
-                    >
-                      {themeData.categories[type].map((item) => (
-                        <div key={item.name} style={{ maxWidth: "40%" }}>
+                  <div className="accordion-content mt-4">
+                    <div className="items-container">
+                      {themeData.categories[type].map((item, index) => (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            if (item.hasVariation) {
+                              handleOpenModalWithVariations(item, type);
+                              return;
+                            } else {
+                              updateAsset(type, `${baseUrl}/${item.imageName}`, item);
+                            }
+                          }}
+                          className={`card ${item.imageName && isSelectedItem(type, item.imageName) ? "success" : ""}`}
+                        >
                           {item.hasVariation && (
                             <div
                               style={{
@@ -296,50 +300,26 @@ export const EditAsset = () => {
                                 right: "7px",
                                 backgroundColor: "white",
                                 borderRadius: "50%",
-                                width: "16px",
-                                height: "16px",
-                                display: "flex",
-                                justifyContent: "end",
-                                alignItems: "center",
-                                zIndex: 1,
                               }}
                             >
                               <img
                                 src="https://sdk-style.s3.amazonaws.com/icons/copy.svg"
                                 alt="Expand"
                                 style={{
-                                  width: "15px",
-                                  height: "15px",
+                                  width: "20px",
+                                  height: "20px",
+                                  padding: "2px",
                                 }}
                               />
                             </div>
                           )}
-                          <img
-                            src={`${baseUrl}/${item.name}`}
-                            alt={item.name}
-                            className="img-accessory"
-                            style={{
-                              borderRadius: "10px",
-                              padding: "5px",
-                              backgroundColor: isSelectedItem(type, item.name) ? "#edeffc" : "transparent",
-                              border: isSelectedItem(type, item.name) ? "1px solid #336699" : "1px solid #ccc",
-                              cursor: "pointer",
-                              margin: "5px",
-                            }}
-                            onClick={() => {
-                              if (item.hasVariation) {
-                                handleOpenModalWithVariations(item, type);
-                                return;
-                              } else {
-                                updateAsset(type, `${baseUrl}/${item.name}`, item);
-                              }
-                            }}
-                          />
-                        </div>
+                          <img src={`${baseUrl}/${item.imageName}`} alt={item.imageName} />
+                        </button>
                       ))}
                     </div>
                   </div>
                 </details>
+                {validationErrors[type] && <p className="p3 text-error">A {type} is required.</p>}
               </div>
             </section>
           </div>

@@ -5,16 +5,32 @@ export const initialState: InitialState = {
   error: "",
   hasInteractiveParams: false,
   hasSetupBackend: false,
-  interactiveParams: {},
+  interactiveParams: {
+    assetId: "",
+    displayName: "",
+    identityId: "",
+    interactiveNonce: "",
+    interactivePublicKey: "",
+    isInteractiveIframe: false,
+    ownerProfileId: "",
+    profileId: "",
+    sceneDropId: "",
+    themeName: "",
+    uniqueName: "",
+    urlSlug: "",
+    username: "",
+    visitorId: "",
+  },
   isAssetAlreadyTaken: false,
   visitorIsAdmin: false,
   worldDataObject: {},
 };
 
 export type CategoryType = {
-  name: string;
   hasVariation: boolean;
   isRequired?: boolean;
+  subcategory?: string;
+  imageName: string;
   variations?: string[];
 };
 
@@ -80,15 +96,16 @@ export const themes: ThemesType = {
       clearAssetButtonGeneral: "Empty Locker",
       clearAssetButtonAdmin: "Empty this Locker",
       clearAssetDescription:
-        "If you clear your locker, it will be emptied and unclaimed. You can then choose a new locker.",
+        "If you clear this locker, it will be emptied and unclaimed. A new locker can then be chosen.",
     },
     layerOrder: ["Locker Base", "Top Shelf", "Bottom Shelf", "Door"],
     categories: {
       "Locker Base": [
         {
-          name: "lockerBase_0.png",
           hasVariation: true,
+          imageName: "lockerBase_0.png",
           isRequired: true,
+          subcategory: "Locker Base",
           variations: [
             "lockerBase_0.png",
             "lockerBase_1.png",
@@ -99,8 +116,9 @@ export const themes: ThemesType = {
           ],
         },
         {
-          name: "wallpaper_0.png",
+          subcategory: "Wallpaper",
           hasVariation: true,
+          imageName: "wallpaper_0.png",
           variations: [
             "wallpaper_0.png",
             "wallpaper_1.png",
@@ -112,52 +130,54 @@ export const themes: ThemesType = {
           ],
         },
         {
-          name: "border_0.png",
+          subcategory: "Border",
           hasVariation: true,
+          imageName: "border_0.png",
           variations: ["border_0.png", "border_1.png", "border_2.png", "border_3.png", "border_4.png"],
         },
       ],
       "Top Shelf": [
         {
-          name: "topShelf_0.png",
+          subcategory: "Stack",
           hasVariation: true,
+          imageName: "topShelf_0.png",
           variations: ["topShelf_0.png", "topShelf_1.png", "topShelf_2.png", "topShelf_3.png"],
         },
         {
-          name: "topShelf_4.png",
+          subcategory: "Light",
           hasVariation: true,
-          variations: ["topShelf_4.png", "topShelf_5.png"],
+          imageName: "topShelf_4.png",
+          variations: ["topShelf_4.png", "topShelf_5.png", "topShelf_9.png"],
         },
         {
-          name: "topShelf_6.png",
+          subcategory: "Vase",
           hasVariation: true,
-          variations: ["topShelf_6.png", "topShelf_7.png"],
+          imageName: "topShelf_6.png",
+          variations: ["topShelf_6.png", "topShelf_7.png", "topShelf_8.png"],
         },
         {
-          name: "topShelf_8.png",
+          subcategory: "Ball",
           hasVariation: true,
-          variations: ["topShelf_8.png", "topShelf_9.png"],
-        },
-        {
-          name: "topShelf_10.png",
-          hasVariation: true,
+          imageName: "topShelf_10.png",
           variations: ["topShelf_10.png", "topShelf_11.png"],
         },
         {
-          name: "topShelf_12.png",
+          subcategory: "Book",
           hasVariation: true,
+          imageName: "topShelf_0.png",
           variations: ["topShelf_12.png", "topShelf_13.png", "topShelf_14.png"],
         },
-        { name: "topShelf_15.png", hasVariation: false },
-        { name: "topShelf_16.png", hasVariation: false },
-        { name: "topShelf_17.png", hasVariation: false },
-        { name: "topShelf_18.png", hasVariation: false },
-        { name: "topShelf_19.png", hasVariation: false },
+        { imageName: "topShelf_15.png", hasVariation: false },
+        { imageName: "topShelf_16.png", hasVariation: false },
+        { imageName: "topShelf_17.png", hasVariation: false },
+        { imageName: "topShelf_18.png", hasVariation: false },
+        { imageName: "topShelf_19.png", hasVariation: false },
       ],
       "Bottom Shelf": [
         {
-          name: "bottomShelf_0.png",
+          subcategory: "Bottom Shelf Lining",
           hasVariation: true,
+          imageName: "bottomShelf_0.png",
           variations: [
             "bottomShelf_0.png",
             "bottomShelf_2.png",
@@ -177,8 +197,9 @@ export const themes: ThemesType = {
         },
 
         {
-          name: "bottomShelf_18.png",
+          subcategory: "Lunchbox",
           hasVariation: true,
+          imageName: "bottomShelf_18.png",
           variations: [
             "bottomShelf_18.png",
             "bottomShelf_19.png",
@@ -191,8 +212,9 @@ export const themes: ThemesType = {
           ],
         },
         {
-          name: "bottomShelf_26.png",
+          subcategory: "Large Bottle",
           hasVariation: true,
+          imageName: "bottomShelf_26.png",
           variations: [
             "bottomShelf_26.png",
             "bottomShelf_27.png",
@@ -207,13 +229,15 @@ export const themes: ThemesType = {
           ],
         },
         {
-          name: "bottomShelf_36.png",
+          subcategory: "Book",
           hasVariation: true,
+          imageName: "bottomShelf_36.png",
           variations: ["bottomShelf_36.png", "bottomShelf_37.png", "bottomShelf_38.png"],
         },
         {
-          name: "bottomShelf_39.png",
+          subcategory: "Small Bottle",
           hasVariation: true,
+          imageName: "bottomShelf_39.png",
           variations: [
             "bottomShelf_39.png",
             "bottomShelf_40.png",
@@ -226,25 +250,28 @@ export const themes: ThemesType = {
       ],
       "Door": [
         {
-          name: "door_0.png",
+          subcategory: "Mirror",
           hasVariation: true,
+          imageName: "door_0.png",
           variations: ["door_0.png", "door_1.png", "door_2.png", "door_3.png"],
         },
         {
-          name: "door_4.png",
+          subcategory: "Note",
           hasVariation: true,
+          imageName: "door_4.png",
           variations: ["door_4.png", "door_5.png"],
         },
         {
-          name: "door_6.png",
+          subcategory: "Whiteboard",
           hasVariation: true,
+          imageName: "door_6.png",
           variations: ["door_6.png", "door_7.png", "door_8.png", "door_9.png", "door_10.png", "door_11.png"],
         },
-        { name: "door_12.png", hasVariation: false },
-        { name: "door_13.png", hasVariation: false },
-        { name: "door_14.png", hasVariation: false },
-        { name: "door_15.png", hasVariation: false },
-        { name: "door_16.png", hasVariation: false },
+        { imageName: "door_12.png", hasVariation: false },
+        { imageName: "door_13.png", hasVariation: false },
+        { imageName: "door_14.png", hasVariation: false },
+        { imageName: "door_15.png", hasVariation: false },
+        { imageName: "door_16.png", hasVariation: false },
       ],
     },
     selectionLimits: {
@@ -288,16 +315,16 @@ export const themes: ThemesType = {
       chooseNew: "To choose this one instead, click 'Empty Desk' button below.",
       clearAssetButtonGeneral: "Empty Desk",
       clearAssetButtonAdmin: "Empty this Desk",
-      clearAssetDescription:
-        "If you clear your desk, it will be emptied and unclaimed. You can then choose a new desk.",
+      clearAssetDescription: "If you clear this desk, it will be emptied and unclaimed. A new desk can then be chosen.",
     },
     layerOrder: ["Ambiance Textures", "Desk Base", "Chair", "Accessories", "Computer"],
     categories: {
       "Desk Base": [
         {
-          name: "deskBase_0.png",
+          subcategory: "Desk",
           hasVariation: true,
           isRequired: true,
+          imageName: "deskBase_0.png",
           variations: [
             "deskBase_0.png",
             "deskBase_1.png",
@@ -313,22 +340,25 @@ export const themes: ThemesType = {
       ],
       "Ambiance Textures": [
         {
-          name: "carpet_0.png",
+          subcategory: "Carpet",
           hasVariation: true,
+          imageName: "carpet_0.png",
           isRequired: false,
           variations: ["carpet_0.png", "carpet_1.png", "carpet_2.png", "carpet_3.png"],
         },
         {
-          name: "wall_0.png",
+          subcategory: "Wall",
           hasVariation: true,
+          imageName: "wall_0.png",
           isRequired: false,
           variations: ["wall_0.png", "wall_1.png", "wall_2.png", "wall_3.png"],
         },
       ],
       "Chair": [
         {
-          name: "chair_0.png",
+          subcategory: "Chair",
           hasVariation: true,
+          imageName: "chair_0.png",
           variations: [
             "chair_0.png",
             "chair_1.png",
@@ -342,8 +372,9 @@ export const themes: ThemesType = {
       ],
       "Accessories": [
         {
-          name: "middleRight_0.png",
+          subcategory: "Small Accessory",
           hasVariation: true,
+          imageName: "middleRight_0.png",
           variations: [
             "middleRight_0.png",
             "middleRight_1.png",
@@ -355,8 +386,9 @@ export const themes: ThemesType = {
           ],
         },
         {
-          name: "right_0.png",
+          subcategory: "Large Accessory",
           hasVariation: true,
+          imageName: "right_0.png",
           variations: [
             "right_0.png",
             "right_1.png",
@@ -380,8 +412,9 @@ export const themes: ThemesType = {
       ],
       "Computer": [
         {
-          name: "computer_0.png",
+          subcategory: "Computer",
           hasVariation: true,
+          imageName: "computer_0.png",
           variations: [
             "computer_0.png",
             "computer_1.png",
@@ -437,47 +470,48 @@ export const themes: ThemesType = {
       clearAssetButtonGeneral: "Pickup Snowman",
       clearAssetButtonAdmin: "Pickup this Snowman",
       clearAssetDescription:
-        "If you pick up your snowman, it will be removed from this world. You can then create a new snowman.",
+        "If you pick up this snowman, it will be removed from this world. A new snowman can then be created.",
     },
     layerOrder: ["Body", "Arms", "Head", "Accessories"],
     categories: {
       Body: [
         {
-          name: "body_0.png",
+          subcategory: "Body",
           hasVariation: true,
+          imageName: "body_0.png",
           isRequired: true,
           variations: ["body_0.png", "body_1.png", "body_2.png"],
         },
       ],
       Arms: [
-        { name: "arms_0.png", hasVariation: false },
-        { name: "arms_1.png", hasVariation: false },
-        { name: "arms_2.png", hasVariation: false },
-        { name: "arms_3.png", hasVariation: false },
-        { name: "arms_4.png", hasVariation: false },
-        { name: "arms_5.png", hasVariation: false },
-        { name: "arms_6.png", hasVariation: false },
-        { name: "arms_7.png", hasVariation: false },
-        { name: "arms_8.png", hasVariation: false },
+        { imageName: "arms_0.png", hasVariation: false },
+        { imageName: "arms_1.png", hasVariation: false },
+        { imageName: "arms_2.png", hasVariation: false },
+        { imageName: "arms_3.png", hasVariation: false },
+        { imageName: "arms_4.png", hasVariation: false },
+        { imageName: "arms_5.png", hasVariation: false },
+        { imageName: "arms_6.png", hasVariation: false },
+        { imageName: "arms_7.png", hasVariation: false },
+        { imageName: "arms_8.png", hasVariation: false },
       ],
       Head: [
-        { name: "head_0.png", hasVariation: false },
-        { name: "head_1.png", hasVariation: false },
-        { name: "head_2.png", hasVariation: false },
-        { name: "head_3.png", hasVariation: false },
-        { name: "head_4.png", hasVariation: false },
-        { name: "head_5.png", hasVariation: false },
-        { name: "head_6.png", hasVariation: false },
-        { name: "head_7.png", hasVariation: false },
-        { name: "head_8.png", hasVariation: false },
+        { imageName: "head_0.png", hasVariation: false },
+        { imageName: "head_1.png", hasVariation: false },
+        { imageName: "head_2.png", hasVariation: false },
+        { imageName: "head_3.png", hasVariation: false },
+        { imageName: "head_4.png", hasVariation: false },
+        { imageName: "head_5.png", hasVariation: false },
+        { imageName: "head_6.png", hasVariation: false },
+        { imageName: "head_7.png", hasVariation: false },
+        { imageName: "head_8.png", hasVariation: false },
       ],
       Accessories: [
-        { name: "accessories_0.png", hasVariation: false },
-        { name: "accessories_1.png", hasVariation: false },
-        { name: "accessories_2.png", hasVariation: false },
-        { name: "accessories_3.png", hasVariation: false },
-        { name: "accessories_4.png", hasVariation: false },
-        { name: "accessories_5.png", hasVariation: false },
+        { imageName: "accessories_0.png", hasVariation: false },
+        { imageName: "accessories_1.png", hasVariation: false },
+        { imageName: "accessories_2.png", hasVariation: false },
+        { imageName: "accessories_3.png", hasVariation: false },
+        { imageName: "accessories_4.png", hasVariation: false },
+        { imageName: "accessories_5.png", hasVariation: false },
       ],
     },
     selectionLimits: {

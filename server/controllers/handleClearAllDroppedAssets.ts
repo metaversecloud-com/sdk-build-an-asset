@@ -25,17 +25,17 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
     const world = await World.create(urlSlug, { credentials });
 
     const droppedAssets = await world.fetchDroppedAssetsWithUniqueName({
-      isPartial: shouldDelete,
+      isPartial: true,
       uniqueName: `${themeName}System-`,
     });
 
     if (shouldDelete) {
-      pickupAllDroppedAssets({ credentials, droppedAssets });
+      await pickupAllDroppedAssets({ credentials, droppedAssets });
     } else {
-      clearAllDroppedAssets({ droppedAssets, hostname: req.hostname, themeName });
+      await clearAllDroppedAssets({ droppedAssets, hostname: req.hostname, themeName });
     }
 
-    world.updateDataObject(
+    await world.updateDataObject(
       { [themeName]: {} },
       {
         analytics: [
@@ -49,6 +49,8 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
     );
 
     visitor.closeIframe(assetId);
+
+    await world.fetchDataObject();
 
     return res.json({ worldDataObject: world.dataObject });
   } catch (error) {

@@ -39,30 +39,30 @@ export const ItemVariationSelectorModal = ({
   };
 
   return isOpen ? (
-    <div className="topia-modal-container visible">
-      <div className="topia-modal">
+    <div className="modal-container visible">
+      <div className="modal no-padding">
         <div className="modal-header">
           <h4>Select Item</h4>
-          <span className="close-btn" onClick={onClose}>
+          <button className="close-btn" onClick={onClose}>
             &times;
-          </span>
+          </button>
         </div>
-        <div className="modal-variations">
-          <div className="variations-container">
-            {variations.map((variation, index) => (
-              <img
-                key={index}
-                src={`${S3URL}/${variation}`}
-                alt={`Variation ${index}`}
-                onClick={() => handleVariationClick(variation)}
-                className={`variation-item ${selectedItem === variation ? "selected" : ""}`}
-              />
-            ))}
-          </div>
+        <div className="items-container p-6">
+          {variations.map((variation, index) => (
+            <button
+              key={variation}
+              onClick={() => handleVariationClick(variation)}
+              className={`card ${selectedItem === variation ? "success" : ""}`}
+            >
+              <img key={index} src={`${S3URL}/${variation}`} alt={`Variation ${index}`} />
+            </button>
+          ))}
         </div>
-        <button className="btn m-4" onClick={handleOk} style={{ maxWidth: "80%" }}>
-          OK
-        </button>
+        <div className="actions">
+          <button className="btn m-4" onClick={handleOk}>
+            OK
+          </button>
+        </div>
       </div>
     </div>
   ) : null;

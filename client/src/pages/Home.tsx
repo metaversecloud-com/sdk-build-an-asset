@@ -14,16 +14,13 @@ import MoveToAssetButton from "@/components/MoveToAssetButton";
 
 export const Home = () => {
   const dispatch = useContext(GlobalDispatchContext);
-  const { worldDataObject } = useContext(GlobalStateContext);
+  const { interactiveParams, worldDataObject } = useContext(GlobalStateContext);
   const navigate = useNavigate();
 
   const themeName = getThemeName();
   const themeData = getThemeData();
 
-  const queryParams = new URLSearchParams(window.location.search);
-  const profileId = queryParams.get("profileId");
-  const username = queryParams.get("username") || "";
-  const userAssetId = worldDataObject?.[themeName]?.[profileId as string]?.droppedAssetId;
+  const userAssetId = worldDataObject?.[themeName]?.[interactiveParams.profileId]?.droppedAssetId;
 
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [showClearAssetModal, setShowClearAssetModal] = useState(false);
@@ -34,8 +31,9 @@ export const Home = () => {
     backendAPI
       .post("/dropped-assets/claim")
       .then(() => {
-        const modifiedName = username.replace(/ /g, "%20");
+        const modifiedName = interactiveParams.username.replace(/ /g, "%20");
         const redirectPath = `${themeName}/claimed?visitor-name=${modifiedName}`;
+        const queryParams = new URLSearchParams(window.location.search);
         const fullPath = `/${redirectPath}&${queryParams}&edit=true`;
         navigate(fullPath);
       })
@@ -57,7 +55,7 @@ export const Home = () => {
 
   return (
     <PageContainer
-      isLoading={false}
+      isLoading={!worldDataObject?.[themeName]}
       headerText={themeData.texts.header}
       previewImageURL={themeData.splashImage}
       footerContent={

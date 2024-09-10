@@ -24,7 +24,7 @@ export interface InitialState {
   error: string;
   hasInteractiveParams: boolean;
   hasSetupBackend: boolean;
-  interactiveParams: object;
+  interactiveParams: InteractiveParams;
   isAssetAlreadyTaken: boolean;
   visitorIsAdmin: boolean;
   worldDataObject: { [themeName: string]: { [ownerProfileId: string]: { droppedAssetId: string; s3Url: string } } };
