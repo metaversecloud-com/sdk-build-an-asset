@@ -78,7 +78,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
       .catch((error) => console.error(JSON.stringify(error)));
 
     world.triggerParticle({
-      name: "firework2_magenta",
+      name: "whiteStar_burst",
       duration: 3,
       position: {
         x: droppedAsset?.position?.x,

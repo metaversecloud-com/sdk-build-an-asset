@@ -82,7 +82,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     ]);
 
     world.triggerParticle({
-      name: "Bubbles",
+      name: "blueSmoke_puff",
       duration: 3,
       position: {
         x: droppedAsset?.position?.x,

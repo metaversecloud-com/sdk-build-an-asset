@@ -30,7 +30,7 @@ export const EditAsset = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentItemVariations, setCurrentItemVariations] = useState<string[]>([]);
-  const [currentItem, setCurrentItem] = useState<{ type: string; imageName?: string; hasVariation: boolean }>();
+  const [currentItem, setCurrentItem] = useState<{ type: string; imageName: string; hasVariation: boolean }>();
   const [validationErrors, setValidationErrors] = useState<{ [type: string]: boolean }>({});
 
   const [selectedVariation, setSelectedVariation] = useState<string>("");
