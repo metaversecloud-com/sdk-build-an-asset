@@ -1,7 +1,14 @@
 import { Request, Response } from "express";
-import { dropImageAsset, errorHandler, generateS3Url, getCredentials, Visitor, World } from "../utils/index.js";
-import { DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
-import { deleteFromS3 } from "../utils/images/deleteFromS3";
+import {
+  deleteFromS3,
+  dropImageAsset,
+  errorHandler,
+  generateS3Url,
+  getCredentials,
+  Visitor,
+  World,
+} from "../utils/index.js";
+import { VisitorInterface } from "@rtsdk/topia";
 
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
