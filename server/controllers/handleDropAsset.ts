@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { dropImageAsset, errorHandler, generateS3Url, getCredentials, Visitor, World } from "../utils/index.js";
-import { VisitorInterface } from "@rtsdk/topia";
+import { DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
+import { deleteFromS3 } from "../utils/images/deleteFromS3";
 
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
@@ -39,7 +40,13 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     });
 
     if (droppedAssets && droppedAssets.length > 0) {
-      await Promise.all(droppedAssets.map((droppedAsset) => droppedAsset.deleteDroppedAsset()));
+      await Promise.all(
+        droppedAssets.map((droppedAsset) => {
+          droppedAsset.deleteDroppedAsset();
+          // @ts-ignore
+          deleteFromS3(req.hostname, droppedAsset.topLayerURL);
+        }),
+      );
     }
 
     // drop new asset

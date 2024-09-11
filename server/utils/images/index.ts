@@ -1,3 +1,4 @@
+export * from "./deleteFromS3.js";
 export * from "./dropImageAsset.js";
 export * from "./generateImageInfoParam.js";
 export * from "./generateS3URL.js";

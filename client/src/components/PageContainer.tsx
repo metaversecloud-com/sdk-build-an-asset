@@ -36,11 +36,11 @@ export const PageContainer = ({
   return (
     <div className="container-with-footer">
       {visitorIsAdmin && (
-        <div className="p-6">
+        <div className="pt-6 px-6">
           <AdminIconButton setShowSettings={() => setShowSettings(!showSettings)} showSettings={showSettings} />
         </div>
       )}
-      <div className="p-6">
+      <div className="pb-6">
         <h2 style={{ textAlign: "center" }}>{showSettings ? "Settings" : headerText}</h2>
       </div>
       {!showSettings && (

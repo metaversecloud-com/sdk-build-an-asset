@@ -3,6 +3,7 @@ import {
   DroppedAsset,
   Visitor,
   World,
+  deleteFromS3,
   errorHandler,
   generateImageInfoParam,
   generateS3Url,
@@ -34,6 +35,9 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       return res.json({ isAssetAlreadyTaken: true });
     }
 
+    const droppedAsset = await DroppedAsset.get(assetId, urlSlug, { credentials });
+    // @ts-ignore
+    await deleteFromS3(host, droppedAsset.topLayerURL);
     const s3Url = await generateS3Url(imageInfo, profileId, themeName, host);
 
     try {
@@ -70,9 +74,6 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
 
     const clickableLink = `${baseUrl}/${themeName}/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
 
-    const droppedAsset = DroppedAsset.create(assetId, urlSlug, {
-      credentials,
-    });
     await Promise.all([
       droppedAsset.fetchDroppedAssetById(),
       droppedAsset.updateWebImageLayers("", s3Url),

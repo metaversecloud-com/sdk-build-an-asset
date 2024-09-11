@@ -1,5 +1,5 @@
 import Jimp from "jimp";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { ImageInfo } from "../../types/index.js";
 
 const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
@@ -42,7 +42,7 @@ const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
 const uploadToS3 = async (buffer: Buffer, fileName: string, themeName: string) => {
   const client = new S3Client({ region: "us-east-1" });
 
-  const pathToImage = `${themeName}/userUploads/${fileName}`;
+  const pathToImage = `${themeName}/userUploads/${fileName}-${new Date()}`;
   const putObjectCommand = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET,
     Key: pathToImage,
