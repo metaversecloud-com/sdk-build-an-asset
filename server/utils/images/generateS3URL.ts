@@ -42,7 +42,7 @@ const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
 const uploadToS3 = async (buffer: Buffer, fileName: string, themeName: string) => {
   const client = new S3Client({ region: "us-east-1" });
 
-  const pathToImage = `${themeName}/userUploads/${fileName}-${new Date()}`;
+  const pathToImage = `${themeName}/userUploads/${fileName}`;
   const putObjectCommand = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET,
     Key: pathToImage,
@@ -62,7 +62,7 @@ export const generateS3Url = async (imageInfo: ImageInfo, profileId: string, the
   if (host === "localhost") return `${baseDir}/claimedAsset.png`;
 
   const mergedImageBuffer = await combineImages(imageInfo, baseDir);
-  const imageFullName = `${profileId}.png`;
+  const imageFullName = `${profileId}-${Date.now()}.png`;
   return uploadToS3(mergedImageBuffer, imageFullName, themeName);
 };
 
