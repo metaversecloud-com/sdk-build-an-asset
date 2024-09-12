@@ -35,7 +35,7 @@ export const ClearAssetModal = ({
       .then((response) => {
         dispatch!({
           type: SET_GAME_STATE,
-          payload: response.data,
+          payload: { ...response.data, error: "" },
         });
         const queryParams = new URLSearchParams(window.location.search);
         navigate(`/${themeName}?${queryParams}`);

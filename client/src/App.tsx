@@ -108,7 +108,7 @@ const App = () => {
       .then((response) => {
         dispatch!({
           type: SET_GAME_STATE,
-          payload: response.data,
+          payload: { ...response.data, error: "" },
         });
       })
       .catch((error) => {
