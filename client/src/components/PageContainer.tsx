@@ -34,9 +34,9 @@ export const PageContainer = ({
   if (isLoading) return <Loading />;
 
   return (
-    <div className="container-with-footer">
+    <div className="container-with-footer pt-6">
       {visitorIsAdmin && (
-        <div className="pt-6 px-6">
+        <div className="px-6">
           <AdminIconButton setShowSettings={() => setShowSettings(!showSettings)} showSettings={showSettings} />
         </div>
       )}

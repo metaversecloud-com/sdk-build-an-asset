@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
+import { Route, Routes, useSearchParams } from "react-router-dom";
+// import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
 
 // pages
 import Home from "@pages/Home";
@@ -22,7 +23,7 @@ import { backendAPI, setupBackendAPI } from "./utils/backendAPI";
 import { getThemeName } from "./utils";
 
 const App = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [hasInitBackendAPI, setHasInitBackendAPI] = useState(false);
 
@@ -98,7 +99,8 @@ const App = () => {
           payload: { hasSetupBackend: true },
         }),
       )
-      .catch(() => navigate("*"))
+      .catch((error) => console.error(error))
+      // .catch(() => navigate("*"))
       .finally(() => setHasInitBackendAPI(true));
   };
 
