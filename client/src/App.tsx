@@ -1,6 +1,5 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Route, Routes, useSearchParams } from "react-router-dom";
-// import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
+import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
 
 // pages
 import Home from "@pages/Home";
@@ -23,7 +22,7 @@ import { backendAPI, setupBackendAPI } from "./utils/backendAPI";
 import { getThemeName } from "./utils";
 
 const App = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [hasInitBackendAPI, setHasInitBackendAPI] = useState(false);
 
@@ -99,8 +98,7 @@ const App = () => {
           payload: { hasSetupBackend: true },
         }),
       )
-      .catch((error) => console.error(error))
-      // .catch(() => navigate("*"))
+      .catch(() => navigate("*"))
       .finally(() => setHasInitBackendAPI(true));
   };
 
@@ -144,6 +142,7 @@ const App = () => {
 
       <Route path="/snowman/claimed" element={<ClaimedAsset />} />
       <Route path="/snowman/edit" element={<EditAsset />} />
+      <Route path="/snowman" element={<EditAsset />} />
 
       <Route path="*" element={<Error />} />
     </Routes>
