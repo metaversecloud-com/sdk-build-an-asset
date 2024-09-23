@@ -1,4 +1,4 @@
-export const Error = () => {
+const Error = () => {
   return (
     <div className="w-screen flex flex-col items-center justify-center my-4">
       <h1 className="h2">Under Construction</h1>

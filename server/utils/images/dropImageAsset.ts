@@ -9,12 +9,14 @@ import {
 } from "../index.js";
 
 export const dropImageAsset = async ({
+  completeImageName,
   credentials,
   host,
   imageInfo,
   s3Url,
   position,
 }: {
+  completeImageName: string;
   credentials: Credentials;
   host: string;
   imageInfo: ImageInfo;
@@ -58,6 +60,7 @@ export const dropImageAsset = async ({
     await droppedAsset?.updateDataObject(
       {
         profileId,
+        completeImageName,
         parentAssetId: assetId,
       },
       {

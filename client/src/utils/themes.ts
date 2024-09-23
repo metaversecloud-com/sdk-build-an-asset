@@ -3,7 +3,7 @@ import { themes } from "@/constants";
 export const getThemeData = () => {
   const pathname = window.location.pathname;
   const themeName = pathname.split("/")[1];
-  return themes[themeName];
+  return themes[themeName] || null;
 };
 
 export const getThemeNames = () => {

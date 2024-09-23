@@ -19,30 +19,22 @@ export const EditAsset = () => {
 
   const themeName = getThemeName();
   const themeData = getThemeData();
-  const {
-    baseCategoryName,
-    categories,
-    defaultSelected,
-    dropAssetInRandomLocation,
-    layerOrder,
-    name,
-    saveButtonText,
-    selectionLimits,
-  } = themeData;
 
   const S3URL = `${getS3URL()}/${themeName}`;
+  const BASE_URL = window.location.origin;
+  const baseUrl = `${BASE_URL}/assets/${themeName}`;
 
-  const [selected, setSelected] = useState(defaultSelected);
+  const [selected, setSelected] = useState(themeData?.defaultSelected);
 
   const [isLoading, setLoading] = useState(false);
   const [isButtonSaveAssetDisabled, setIsButtonSaveAssetDisabled] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentItemVariations, setCurrentItemVariations] = useState<string[]>([]);
-  const [currentItem, setCurrentItem] = useState<{ type: string; imageName: string; variations?: string[] }>();
+  const [currentItem, setCurrentItem] = useState<{ type: string; imageName: string; hasVariation: boolean }>();
   const [validationErrors, setValidationErrors] = useState<{ [type: string]: boolean }>({});
 
-  const [selectedItem, setSelectedItem] = useState<string>("");
+  const [selectedVariation, setSelectedVariation] = useState<string>("");
   const [preview, setPreview] = useState(`${S3URL}/claimedAsset.png`);
 
   const [imageInfo, setImageInfo] = useState({});
@@ -51,12 +43,15 @@ export const EditAsset = () => {
     return selected[type]?.some((selectedImage: string) => {
       if (!selectedImage) return false;
 
+      const selectedBaseName = selectedImage.replace(baseUrl, "").split(".")[0];
+      const itemBaseName = imageName.split(".")[0];
       return (
-        selectedImage === imageName ||
-        categories[type].some((item) => {
-          if (item.imageName.split(".")[0] === imageName && item.variations) {
+        selectedBaseName === itemBaseName ||
+        themeData.categories[type].some((item) => {
+          if (item.imageName.split(".")[0] === itemBaseName && item.hasVariation) {
             return item.variations?.some((variation) => {
-              return selectedImage === variation;
+              const variationBaseName = variation.split(".")[0];
+              return selectedBaseName === variationBaseName;
             });
           }
           return false;
@@ -74,15 +69,14 @@ export const EditAsset = () => {
 
   const fetchInitialState = async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const initialSelection = layerOrder.reduce((info: { [category: string]: string[] }, category: string) => {
+    const initialSelection = themeData.layerOrder.reduce((info: { [category: string]: string[] }, category: string) => {
       const categoryKey1 = `${category.replace(/\s/g, "")}1`;
       const categoryKey2 = `${category.replace(/\s/g, "")}2`;
 
       info[category] = [
-        urlParams.get(categoryKey1) && urlParams.get(categoryKey1),
-        urlParams.get(categoryKey2) && urlParams.get(categoryKey2),
+        urlParams.get(categoryKey1) && `${baseUrl}/${urlParams.get(categoryKey1)}.png`,
+        urlParams.get(categoryKey2) && `${baseUrl}/${urlParams.get(categoryKey2)}.png`,
       ].filter(Boolean);
-
       return info;
     }, {});
 
@@ -95,49 +89,79 @@ export const EditAsset = () => {
     const updatedSelection = { ...selected };
 
     if (!image) {
-      // selection is cleared
       if (item.isRequired) {
         setIsButtonSaveAssetDisabled(true);
         setValidationErrors({ [type]: true });
-        return;
       }
       updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
-        if (item && item.variations) {
-          return !item.variations?.some((variation) => variation === selectedItem);
+        if (item && item.hasVariation) {
+          return !item.variations?.some((variation) => `${baseUrl}/${variation}` === selectedItem);
         }
-        return item && selectedItem !== item.imageName;
+        return item && selectedItem !== `${baseUrl}/${item.imageName}`;
       });
     } else {
-      if (selectionLimits[type].max === 1) {
-        updatedSelection[type] = [image];
-      } else {
-        if (item.variations) {
-          // remove all other variations from array
+      if (item.hasVariation) {
+        const isSelectedVariation = updatedSelection[type]?.includes(image);
+
+        if (isSelectedVariation) {
+          if (item.isRequired) return;
+          updatedSelection[type] = updatedSelection[type].filter((selectedItem) => selectedItem !== image);
+        } else {
           updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
-            return !item.variations?.some((variation) => variation === selectedItem);
+            return !item.variations?.some((variation) => `${baseUrl}/${variation}` === selectedItem);
           });
+          updatedSelection[type].push(image);
         }
-        // add item to array
-        updatedSelection[type].push(image);
+      } else {
+        const isSelected = selected[type].includes(image);
+        if (themeData.selectionLimits[type] === 1) {
+          updatedSelection[type] = isSelected ? [] : [image];
+        } else {
+          if (isSelected) {
+            if (item.isRequired) return;
+            updatedSelection[type] = updatedSelection[type].filter((i) => i !== image);
+          } else {
+            updatedSelection[type].push(image);
+          }
+        }
       }
     }
 
-    if (selectionLimits[type].min > 0 && updatedSelection[type].length < selectionLimits[type].min) {
-      setIsButtonSaveAssetDisabled(true);
-      setValidationErrors({ [type]: true });
+    const requiredItem = themeData.categories[type].find((item) => item.isRequired);
+    if (
+      requiredItem &&
+      !updatedSelection[type].some((selectedItem) =>
+        requiredItem.variations?.includes(selectedItem.replace(`${baseUrl}/`, "")),
+      )
+    ) {
+      updatedSelection[type].unshift(`${baseUrl}/${requiredItem.variations?.[0]}`);
+    }
+
+    if (type === Object.keys(themeData.categories)[0]) {
+      const requiredItemIndex = updatedSelection[type].findIndex((selectedItem) =>
+        requiredItem?.variations?.includes(selectedItem.replace(`${baseUrl}/`, "")),
+      );
+      if (requiredItemIndex !== -1) {
+        const requiredImage = updatedSelection[type].splice(requiredItemIndex, 1)[0];
+        updatedSelection[type].unshift(requiredImage);
+      }
     }
 
     getPreview(updatedSelection);
   };
 
-  const getPreview = (selection: { [key: string]: string[] }) => {
+  const getPreview = (selection: { [x: string]: string[] }) => {
     setSelected(selection);
 
-    const updatedImageInfo = layerOrder.reduce((info: { [category: string]: object }, category: string) => {
+    const updatedImageInfo = themeData.layerOrder.reduce((info: { [category: string]: object }, category: string) => {
       if (selection[category]) {
         info[category] = selection[category]
           .map((item) => {
-            if (item) return { imageName: item };
+            if (item) {
+              return {
+                imageName: item?.split("/")?.pop()?.split(".")?.[0] || "",
+              };
+            }
             return null;
           })
           .filter(Boolean);
@@ -149,10 +173,10 @@ export const EditAsset = () => {
 
     setImageInfo(updatedImageInfo);
 
-    const orderedImages = layerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
+    const orderedImages = themeData.layerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
 
     const imagesToMerge = orderedImages.map((image) => ({
-      src: `${S3URL}/${image}`,
+      src: image,
       x: 0,
       y: 0,
     }));
@@ -165,19 +189,21 @@ export const EditAsset = () => {
   };
 
   const handleOpenModalWithVariations = (item: CategoryType, type: string) => {
-    if (!item.variations) return;
+    const variations = item.variations || [];
     const currentSelection = selected[type].find((selectedImage) => {
       if (!selectedImage) return false;
 
+      const selectedBaseName = selectedImage.replace(`${baseUrl}/`, "").split(".")[0];
       return item.variations?.some((variation) => {
-        return selectedImage === variation;
+        const variationBaseName = variation.split(".")[0];
+        return selectedBaseName === variationBaseName;
       });
     });
-
-    setCurrentItemVariations(item.variations);
+    const currentSelectionVariation = currentSelection ? currentSelection.replace(`${baseUrl}/`, "") : "";
+    setCurrentItemVariations(variations);
     setCurrentItem({ ...item, type });
     setIsModalOpen(true);
-    setSelectedItem(currentSelection || "");
+    setSelectedVariation(currentSelectionVariation);
   };
 
   const handleCloseModal = () => {
@@ -187,7 +213,7 @@ export const EditAsset = () => {
   const handleSaveToBackend = () => {
     setIsButtonSaveAssetDisabled(true);
 
-    const url = dropAssetInRandomLocation ? "/dropped-assets/drop" : "/dropped-assets/edit";
+    const url = themeData.dropAssetInRandomLocation ? "/dropped-assets/drop" : "/dropped-assets/edit";
 
     backendAPI
       .post(url, { imageInfo })
@@ -215,31 +241,31 @@ export const EditAsset = () => {
         <ItemVariationSelectorModal
           isOpen={isModalOpen}
           variations={currentItemVariations}
-          onSelect={(selectedItem) => {
-            updateAsset(currentItem.type, selectedItem, currentItem);
+          onSelect={(selectedVariation) => {
+            updateAsset(currentItem.type, selectedVariation ? `${baseUrl}/${selectedVariation}` : "", currentItem);
           }}
           onClose={handleCloseModal}
-          selectedItem={selectedItem || ""}
+          selectedVariation={selectedVariation || ""}
         />
       ) : (
         ""
       )}
       <PageContainer
         isLoading={isLoading}
-        headerText={`Build your ${name}!`}
-        previewImageURL={preview === "data:," ? `${S3URL}/claimedAsset.png` : preview}
+        headerText={`Build your ${themeData.name}!`}
+        previewImageURL={preview === "data:," ? `${baseUrl}/claimedAsset.png` : preview}
         showClearAssetBtn={visitorIsAdmin}
         footerContent={
           <button
             onClick={handleSaveToBackend}
             className="btn"
-            disabled={selected[baseCategoryName].length === 0 || isButtonSaveAssetDisabled}
+            disabled={selected[themeData.baseCategoryName].length === 0 || isButtonSaveAssetDisabled}
           >
-            {saveButtonText}
+            {themeData.saveButtonText}
           </button>
         }
       >
-        {Object.keys(categories).map((type) => (
+        {Object.keys(themeData.categories).map((type) => (
           <div key={type}>
             <section id="accordion" className="accordion m-4">
               <div className="accordion-container">
@@ -254,20 +280,20 @@ export const EditAsset = () => {
                   </summary>
                   <div className="accordion-content mt-4">
                     <div className="items-container">
-                      {categories[type].map((item, index) => (
+                      {themeData.categories[type].map((item, index) => (
                         <button
                           key={index}
                           onClick={() => {
-                            if (item.variations) {
+                            if (item.hasVariation) {
                               handleOpenModalWithVariations(item, type);
                               return;
                             } else {
-                              updateAsset(type, item.imageName, item);
+                              updateAsset(type, `${baseUrl}/${item.imageName}`, item);
                             }
                           }}
                           className={`card ${item.imageName && isSelectedItem(type, item.imageName) ? "success" : ""}`}
                         >
-                          {item.variations && (
+                          {item.hasVariation && (
                             <div
                               style={{
                                 position: "absolute",

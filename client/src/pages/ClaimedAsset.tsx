@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 // components
 import { ClearAssetButton, ClearAssetModal, PageContainer } from "@/components";
+import EditAsset from "./EditAsset";
 
 // context
 import { GlobalDispatchContext, GlobalStateContext } from "@context/GlobalContext";
@@ -13,7 +13,6 @@ import { backendAPI, capitalize, getThemeData, getThemeName } from "@/utils";
 import MoveToAssetButton from "@/components/MoveToAssetButton";
 
 export const ClaimedAsset = () => {
-  const navigate = useNavigate();
   const dispatch = useContext(GlobalDispatchContext);
   const { visitorIsAdmin, worldDataObject } = useContext(GlobalStateContext);
 
@@ -28,6 +27,7 @@ export const ClaimedAsset = () => {
 
   const [isLoading, setLoading] = useState(false);
   const [assetParams, setAssetParams] = useState<{ "edit"?: string; "visitor-name"?: string }>({});
+  const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
   const [showClearAssetModal, setShowClearAssetModal] = useState(false);
 
   const s3Url = worldDataObject?.[themeName]?.[ownerProfileId]?.s3Url;
@@ -39,7 +39,7 @@ export const ClaimedAsset = () => {
   }, []);
 
   const handleEditAsset = async () => {
-    navigate(`/${themeName}/edit?${queryParams}`);
+    setShowCustomizeScreen(true);
   };
 
   const handleToggleShowClearAssetModal = () => {
@@ -61,8 +61,10 @@ export const ClaimedAsset = () => {
     }
   };
 
-  // Navigate to Edit screen if this screen was reached from Claim Asset button
-  if (assetParams?.edit == "true") handleEditAsset();
+  // Show customize screen if Edit button is clicked, or if this screen was reached from Claim Asset button
+  if (showCustomizeScreen || assetParams?.edit == "true") {
+    return <EditAsset />;
+  }
 
   return (
     <>

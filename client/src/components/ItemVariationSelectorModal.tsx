@@ -1,35 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getS3URL, getThemeName } from "@/utils";
 
 export const ItemVariationSelectorModal = ({
   isOpen,
-  onClose,
-  onSelect,
-  selectedItem,
   variations,
+  onSelect,
+  onClose,
+  selectedVariation,
 }: {
   isOpen: boolean;
-  onClose: () => void;
-  onSelect: (selectedItemVariation: string) => void;
-  selectedItem: string;
   variations: string[];
+  onSelect: (selectedItem: string) => void;
+  onClose: () => void;
+  selectedVariation: string;
 }) => {
   const themeName = getThemeName();
   const S3URL = `${getS3URL()}/${themeName}`;
 
-  const [selectedItemVariation, setSelectedItemVariation] = useState(selectedItem);
+  const [selectedItem, setSelectedItem] = useState(selectedVariation);
+
+  useEffect(() => {
+    setSelectedItem(selectedVariation);
+  }, [selectedVariation]);
 
   const handleVariationClick = (variation: string) => {
-    if (selectedItemVariation === variation) {
-      setSelectedItemVariation("");
+    if (selectedItem === variation) {
+      setSelectedItem("");
     } else {
-      setSelectedItemVariation(variation);
+      setSelectedItem(variation);
     }
   };
 
   const handleOk = () => {
-    if (selectedItemVariation !== selectedItem) {
-      onSelect(selectedItemVariation);
+    if (selectedItem !== selectedVariation) {
+      onSelect(selectedItem);
     }
     onClose();
   };
@@ -48,7 +52,7 @@ export const ItemVariationSelectorModal = ({
             <button
               key={variation}
               onClick={() => handleVariationClick(variation)}
-              className={`card ${selectedItemVariation === variation ? "success" : ""}`}
+              className={`card ${selectedItem === variation ? "success" : ""}`}
             >
               <img key={index} src={`${S3URL}/${variation}`} alt={`Variation ${index}`} />
             </button>

@@ -23,6 +23,16 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
 
     const s3Url = await generateS3Url(imageInfo, profileId, themeName, req.hostname);
 
+    // calculate image name
+    const parts = ["body", "arms", "head", "accessories"];
+    const imageName = parts
+      .map((part) => {
+        const item = imageInfo[part.charAt(0).toUpperCase() + part.slice(1)]?.[0];
+        return item ? item.imageName : `${part}_1`;
+      })
+      .join("_");
+    const completeImageName = `${imageName}.png`;
+
     // get drop position
     const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
     const { moveTo } = visitor as VisitorInterface;
@@ -48,6 +58,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
 
     // drop new asset
     const droppedAsset = await dropImageAsset({
+      completeImageName,
       credentials,
       host: req.hostname,
       imageInfo,
