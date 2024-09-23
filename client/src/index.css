@@ -52,6 +52,9 @@ h4 {
 .card.success {
   border-color: #00875a;
 }
+.modal-container {
+  max-height: 100% !important;
+}
 .modal {
   max-height: 90vh;
   overflow-y: auto;

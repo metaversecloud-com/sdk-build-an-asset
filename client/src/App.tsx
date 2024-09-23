@@ -2,10 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
 
 // pages
-import Home from "@pages/Home";
-import ClaimedAsset from "@pages/ClaimedAsset";
-import Error from "@pages/Error";
-import EditAsset from "@/pages/EditAsset";
+import { ClaimedAsset, EditAsset, Error, Home } from "@pages/index.js";
 
 // context
 import { GlobalDispatchContext } from "@/context/GlobalContext";
@@ -19,7 +16,7 @@ import {
 
 // utils
 import { backendAPI, setupBackendAPI } from "./utils/backendAPI";
-import { getThemeName } from "./utils";
+import { getThemeData, getThemeName } from "./utils";
 
 const App = () => {
   const navigate = useNavigate();
@@ -28,6 +25,7 @@ const App = () => {
 
   const dispatch = useContext(GlobalDispatchContext);
 
+  const { hasHomePage } = getThemeData();
   const themeName = getThemeName();
 
   const interactiveParams: InteractiveParams = useMemo(() => {
@@ -134,15 +132,9 @@ const App = () => {
   }, [hasInitBackendAPI, interactiveParams]);
   return (
     <Routes>
-      <Route path="/locker/claimed" element={<ClaimedAsset />} />
-      <Route path="/locker" element={<Home />} />
-
-      <Route path="/desk" element={<Home />} />
-      <Route path="/desk/claimed" element={<ClaimedAsset />} />
-
-      <Route path="/snowman/claimed" element={<ClaimedAsset />} />
-      <Route path="/snowman/edit" element={<EditAsset />} />
-      <Route path="/snowman" element={<EditAsset />} />
+      <Route path={`/${themeName}`} element={hasHomePage ? <Home /> : <EditAsset />} />
+      <Route path={`/${themeName}/edit`} element={<EditAsset />} />
+      <Route path={`/${themeName}/claimed`} element={<ClaimedAsset />} />
 
       <Route path="*" element={<Error />} />
     </Routes>
