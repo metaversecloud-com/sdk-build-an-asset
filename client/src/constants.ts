@@ -39,7 +39,6 @@ interface ThemeDetailsInterface {
   hasHomePage: boolean;
   splashImage: string;
   saveButtonText: string;
-  baseCategoryName: string;
   dropAssetInRandomLocation: boolean;
   clearButtonType: string;
   showClearAssetButton: boolean;
@@ -88,7 +87,6 @@ const getDefaultTheme = (dropAssetInRandomLocation: boolean, themeName: string):
       hasHomePage: false,
       splashImage: `${getS3URL()}/${themeName.toLowerCase()}/unclaimedAsset.png`,
       saveButtonText: `Add ${themeName}`,
-      baseCategoryName: "Body",
       dropAssetInRandomLocation: true,
       clearButtonType: "pickup",
       showClearAssetButton: false,
@@ -108,7 +106,6 @@ const getDefaultTheme = (dropAssetInRandomLocation: boolean, themeName: string):
     hasHomePage: true,
     splashImage: `${getS3URL()}/${themeName.toLowerCase()}/unclaimedAsset.png`,
     saveButtonText: "Save",
-    baseCategoryName: `${themeName} Base`,
     dropAssetInRandomLocation: false,
     clearButtonType: "empty",
     showClearAssetButton: true,

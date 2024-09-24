@@ -19,16 +19,8 @@ export const EditAsset = () => {
 
   const themeName = getThemeName();
   const themeData = getThemeData();
-  const {
-    baseCategoryName,
-    categories,
-    defaultSelected,
-    dropAssetInRandomLocation,
-    layerOrder,
-    name,
-    saveButtonText,
-    selectionLimits,
-  } = themeData;
+  const { categories, defaultSelected, dropAssetInRandomLocation, layerOrder, name, saveButtonText, selectionLimits } =
+    themeData;
 
   const S3URL = `${getS3URL()}/${themeName}`;
 
@@ -74,14 +66,15 @@ export const EditAsset = () => {
 
   const fetchInitialState = async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const initialSelection = layerOrder.reduce((info: { [category: string]: string[] }, category: string) => {
-      const categoryKey1 = `${category.replace(/\s/g, "")}1`;
-      const categoryKey2 = `${category.replace(/\s/g, "")}2`;
 
-      info[category] = [
-        urlParams.get(categoryKey1) && `${urlParams.get(categoryKey1)}.png`,
-        urlParams.get(categoryKey2) && `${urlParams.get(categoryKey2)}.png`,
-      ].filter(Boolean);
+    const initialSelection = layerOrder.reduce((info: { [category: string]: string[] }, category: string) => {
+      info[category] = [];
+
+      for (const key of urlParams.keys()) {
+        if (key.includes(`${category.replace(/\s/g, "")}`)) {
+          info[category].push(`${urlParams.get(key)}`);
+        }
+      }
 
       return info;
     }, {});
@@ -157,7 +150,8 @@ export const EditAsset = () => {
       y: 0,
     }));
 
-    mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
+    // mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
+    mergeImages(imagesToMerge)
       .then((result) => {
         return setPreview(result);
       })
@@ -230,11 +224,7 @@ export const EditAsset = () => {
         previewImageURL={preview === "data:," ? `${S3URL}/claimedAsset.png` : preview}
         showClearAssetBtn={visitorIsAdmin}
         footerContent={
-          <button
-            onClick={handleSaveToBackend}
-            className="btn"
-            disabled={selected[baseCategoryName].length === 0 || isButtonSaveAssetDisabled}
-          >
+          <button onClick={handleSaveToBackend} className="btn" disabled={isButtonSaveAssetDisabled}>
             {saveButtonText}
           </button>
         }
