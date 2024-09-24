@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h2 {
+  font-size: 1.6em;
+}
+h3,
+h4 {
+  font-size: 1.3em;
+}
+
+.container-with-footer {
+  position: relative;
+  padding-bottom: 80px;
+}
+
+.footer-fixed {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  background: white !important;
+  padding: 20px;
+}
+
+.modal.no-padding {
+  padding: 0 !important;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em;
+  border-bottom: 1px solid #ccc;
+}
+
+.items-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 10px;
+  justify-content: space-between;
+}
+
+.items-container .card {
+  max-width: 45%;
+  position: relative;
+}
+
+/* added temporarily, remove once styles are updated */
+.card.success {
+  border-color: #00875a;
+}
+.modal {
+  max-height: 90vh;
+  overflow-y: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: flex;
+}
