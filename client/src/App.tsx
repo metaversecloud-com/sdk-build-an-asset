@@ -2,10 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
 
 // pages
-import Home from "@pages/Home";
-import ClaimedAsset from "@pages/ClaimedAsset";
-import Error from "@pages/Error";
-import EditAsset from "@/pages/EditAsset";
+import { ClaimedAsset, EditAsset, Error, Home } from "@pages/index.js";
 
 // context
 import { GlobalDispatchContext } from "@/context/GlobalContext";
@@ -143,6 +140,10 @@ const App = () => {
       <Route path="/snowman/claimed" element={<ClaimedAsset />} />
       <Route path="/snowman/edit" element={<EditAsset />} />
       <Route path="/snowman" element={<EditAsset />} />
+
+      <Route path="/pumpkin/claimed" element={<ClaimedAsset />} />
+      <Route path="/pumpkin/edit" element={<EditAsset />} />
+      <Route path="/pumpkin" element={<EditAsset />} />
 
       <Route path="*" element={<Error />} />
     </Routes>

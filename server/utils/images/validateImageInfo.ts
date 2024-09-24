@@ -13,6 +13,8 @@ export const validateImageInfo = ({ imageInfo, themeName }: { imageInfo: ImageIn
       requiredFields = ["Desk Base", "Accessories"];
     } else if (themeName === "snowman") {
       requiredFields = ["Body", "Head", "Accessories", "Arms"];
+    } else if (themeName === "pumpkin") {
+      requiredFields = ["Body", "Eyes", "Mouth"];
     }
 
     const hasAllRequiredFields = requiredFields.every(
