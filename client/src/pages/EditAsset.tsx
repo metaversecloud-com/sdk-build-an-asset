@@ -79,8 +79,8 @@ export const EditAsset = () => {
       const categoryKey2 = `${category.replace(/\s/g, "")}2`;
 
       info[category] = [
-        urlParams.get(categoryKey1) && `${S3URL}/${urlParams.get(categoryKey1)}.png`,
-        urlParams.get(categoryKey2) && `${S3URL}/${urlParams.get(categoryKey2)}.png`,
+        urlParams.get(categoryKey1) && `${urlParams.get(categoryKey1)}.png`,
+        urlParams.get(categoryKey2) && `${urlParams.get(categoryKey2)}.png`,
       ].filter(Boolean);
 
       return info;
