@@ -129,21 +129,24 @@ const App = () => {
     if (!hasInitBackendAPI) setupBackend();
     else getWorldAndVisitorData();
   }, [hasInitBackendAPI, interactiveParams]);
+
   return (
     <Routes>
-      <Route path="/locker/claimed" element={<ClaimedAsset />} />
       <Route path="/locker" element={<Home />} />
+      <Route path="/locker/edit" element={<EditAsset />} />
+      <Route path="/locker/claimed" element={<ClaimedAsset />} />
 
       <Route path="/desk" element={<Home />} />
+      <Route path="/desk/edit" element={<EditAsset />} />
       <Route path="/desk/claimed" element={<ClaimedAsset />} />
 
-      <Route path="/snowman/claimed" element={<ClaimedAsset />} />
-      <Route path="/snowman/edit" element={<EditAsset />} />
       <Route path="/snowman" element={<EditAsset />} />
+      <Route path="/snowman/edit" element={<EditAsset />} />
+      <Route path="/snowman/claimed" element={<ClaimedAsset />} />
 
-      <Route path="/pumpkin/claimed" element={<ClaimedAsset />} />
-      <Route path="/pumpkin/edit" element={<EditAsset />} />
       <Route path="/pumpkin" element={<EditAsset />} />
+      <Route path="/pumpkin/edit" element={<EditAsset />} />
+      <Route path="/pumpkin/claimed" element={<ClaimedAsset />} />
 
       <Route path="*" element={<Error />} />
     </Routes>

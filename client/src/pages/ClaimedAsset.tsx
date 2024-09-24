@@ -18,7 +18,7 @@ export const ClaimedAsset = () => {
   const { visitorIsAdmin, worldDataObject } = useContext(GlobalStateContext);
 
   const themeName = getThemeName();
-  const themeData = getThemeData();
+  const { clearButtonType, showClearAssetButton, showEditAssetButton, showFindAssetButton } = getThemeData();
   const defaultUnclaimedAsset = `/assets/${themeName}/unclaimedAsset.png`;
 
   const queryParams = new URLSearchParams(window.location.search);
@@ -43,7 +43,7 @@ export const ClaimedAsset = () => {
   };
 
   const handleToggleShowClearAssetModal = () => {
-    if (themeData.clearButtonType === "pickup") {
+    if (clearButtonType === "pickup") {
       backendAPI
         .post("/dropped-assets/pickup")
         .catch((error) => {
@@ -56,7 +56,7 @@ export const ClaimedAsset = () => {
         .finally(() => {
           setLoading(false);
         });
-    } else if (themeData.clearButtonType === "empty") {
+    } else if (clearButtonType === "empty") {
       setShowClearAssetModal(!showClearAssetModal);
     }
   };
@@ -80,17 +80,17 @@ export const ClaimedAsset = () => {
         footerContent={
           isAssetOwner && (
             <>
-              {themeData.showEditAssetButton && (
+              {showEditAssetButton && (
                 <button className="btn mb-2" onClick={() => handleEditAsset()}>
                   Edit {themeName}
                 </button>
               )}
-              {themeData.showFindAssetButton && (
+              {showFindAssetButton && (
                 <div className="mb-2">
                   <MoveToAssetButton />
                 </div>
               )}
-              {themeData.showClearAssetButton && (
+              {showClearAssetButton && (
                 <ClearAssetButton handleToggleShowClearAssetModal={handleToggleShowClearAssetModal} />
               )}
             </>
