@@ -149,9 +149,10 @@ export const EditAsset = () => {
       x: 0,
       y: 0,
     }));
+    console.log("🚀 ~ file: EditAsset.tsx:152 ~ imagesToMerge:", imagesToMerge);
 
-    // mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
-    mergeImages(imagesToMerge)
+    mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
+      // mergeImages(imagesToMerge)
       .then((result) => {
         return setPreview(result);
       })
