@@ -1,5 +1,5 @@
 import Jimp from "jimp";
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { ImageInfo } from "../../types/index.js";
 
 const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {

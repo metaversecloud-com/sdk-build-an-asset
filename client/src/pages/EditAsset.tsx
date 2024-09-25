@@ -148,10 +148,11 @@ export const EditAsset = () => {
       src: `${S3URL}/${image}`,
       x: 0,
       y: 0,
+      crossOrigin: "Anonymous",
     }));
     console.log("🚀 ~ file: EditAsset.tsx:152 ~ imagesToMerge:", imagesToMerge);
 
-    mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
+    mergeImages(imagesToMerge)
       // mergeImages(imagesToMerge)
       .then((result) => {
         return setPreview(result);
