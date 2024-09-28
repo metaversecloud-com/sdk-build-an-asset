@@ -23,8 +23,6 @@ export const EditAsset = () => {
     themeData;
 
   const S3URL = `${getS3URL()}/${themeName}`;
-  const BASE_URL = window.location.origin;
-  const baseUrl = `${BASE_URL}/assets/${themeName}`;
 
   const [selected, setSelected] = useState(defaultSelected);
 
@@ -147,7 +145,7 @@ export const EditAsset = () => {
     const orderedImages = layerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
 
     const imagesToMerge = orderedImages.map((image) => ({
-      src: `${baseUrl}/${image}`,
+      src: `${S3URL}/${image}`,
       x: 0,
       y: 0,
     }));
