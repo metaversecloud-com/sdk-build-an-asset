@@ -145,7 +145,7 @@ export const EditAsset = () => {
     const orderedImages = layerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
 
     const imagesToMerge = orderedImages.map((image) => ({
-      src: `${S3URL}/${image}`,
+      src: `${window.location.origin}/assets/${themeName}/${image}`,
       x: 0,
       y: 0,
     }));
