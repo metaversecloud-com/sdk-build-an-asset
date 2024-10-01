@@ -192,7 +192,7 @@ export const themes: ThemesType = {
         {
           subcategory: "Book",
 
-          imageName: "topShelf_0.png",
+          imageName: "topShelf_12.png",
           variations: ["topShelf_12.png", "topShelf_13.png", "topShelf_14.png"],
         },
         { imageName: "topShelf_15.png" },
