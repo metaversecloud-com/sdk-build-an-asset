@@ -7,7 +7,7 @@ const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
 
   for (const category in imageInfo) {
     for (const item of imageInfo[category]) {
-      const image = await Jimp.read(`${baseDir}/${item.imageName}.png`);
+      const image = await Jimp.read(`${baseDir}/${item.imageName}`);
       images.push(image);
     }
   }

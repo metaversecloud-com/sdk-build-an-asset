@@ -19,7 +19,7 @@ export const EditAsset = () => {
 
   const themeName = getThemeName();
   const themeData = getThemeData();
-  const { categories, defaultSelected, dropAssetInRandomLocation, layerOrder, name, saveButtonText, selectionLimits } =
+  const { categories, defaultSelected, shouldDropAsset, layerOrder, name, saveButtonText, selectionLimits } =
     themeData;
 
   const S3URL = `${getS3URL()}/${themeName}`;
@@ -180,7 +180,7 @@ export const EditAsset = () => {
   const handleSaveToBackend = () => {
     setIsButtonSaveAssetDisabled(true);
 
-    const url = dropAssetInRandomLocation ? "/dropped-assets/drop" : "/dropped-assets/edit";
+    const url = shouldDropAsset ? "/dropped-assets/drop" : "/dropped-assets/edit";
 
     backendAPI
       .post(url, { imageInfo })
@@ -215,8 +215,8 @@ export const EditAsset = () => {
           selectedItem={selectedItem || ""}
         />
       ) : (
-        ""
-      )}
+          ""
+        )}
       <PageContainer
         isLoading={isLoading}
         headerText={`Build your ${name}!`}

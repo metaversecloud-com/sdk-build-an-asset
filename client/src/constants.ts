@@ -39,7 +39,7 @@ interface ThemeDetailsInterface {
   hasHomePage: boolean;
   splashImage: string;
   saveButtonText: string;
-  dropAssetInRandomLocation: boolean;
+  shouldDropAsset: boolean;
   clearButtonType: string;
   showClearAssetButton: boolean;
   showFindAssetButton: boolean;
@@ -79,15 +79,15 @@ type ThemesType = {
   [theme: string]: ThemeType;
 };
 
-const getDefaultTheme = (dropAssetInRandomLocation: boolean, themeName: string): ThemeDetailsInterface => {
-  if (dropAssetInRandomLocation) {
+const getDefaultTheme = (shouldDropAsset: boolean, themeName: string): ThemeDetailsInterface => {
+  if (shouldDropAsset) {
     return {
       name: themeName,
       namePlural: `${themeName}s`,
       hasHomePage: false,
       splashImage: `${getS3URL()}/${themeName.toLowerCase()}/unclaimedAsset.png`,
       saveButtonText: `Add ${themeName}`,
-      dropAssetInRandomLocation: true,
+      shouldDropAsset: true,
       clearButtonType: "pickup",
       showClearAssetButton: false,
       showFindAssetButton: false,
@@ -106,7 +106,7 @@ const getDefaultTheme = (dropAssetInRandomLocation: boolean, themeName: string):
     hasHomePage: true,
     splashImage: `${getS3URL()}/${themeName.toLowerCase()}/unclaimedAsset.png`,
     saveButtonText: "Save",
-    dropAssetInRandomLocation: false,
+    shouldDropAsset: false,
     clearButtonType: "empty",
     showClearAssetButton: true,
     showFindAssetButton: true,
