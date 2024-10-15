@@ -19,32 +19,37 @@ export const EditAsset = () => {
 
   const themeName = getThemeName();
   const themeData = getThemeData();
-  const { categories, defaultSelected, shouldDropAsset, layerOrder, name, saveButtonText, selectionLimits } = themeData;
+  const { categories, shouldDropAsset, layerOrder, name, saveButtonText } = themeData;
 
   const S3URL = `${getS3URL()}/${themeName}`;
 
-  const [selected, setSelected] = useState(defaultSelected);
+  const [selected, setSelected] = useState(
+    Object.keys(categories).reduce((acc: { [key: string]: string[] }, key) => {
+      acc[key] = [];
+      return acc;
+    }, {}),
+  );
 
   const [isLoading, setLoading] = useState(false);
   const [isButtonSaveAssetDisabled, setIsButtonSaveAssetDisabled] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentItemVariations, setCurrentItemVariations] = useState<string[]>([]);
-  const [currentItem, setCurrentItem] = useState<{ type: string; imageName: string; variations?: string[] }>();
-  const [validationErrors, setValidationErrors] = useState<{ [type: string]: boolean }>({});
+  const [currentItem, setCurrentItem] = useState<{ category: string; imageName: string; variations?: string[] }>();
+  const [validationErrors, setValidationErrors] = useState<{ [category: string]: boolean }>({});
 
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [preview, setPreview] = useState(`${S3URL}/claimedAsset.png`);
 
   const [imageInfo, setImageInfo] = useState({});
 
-  const isSelectedItem = (type: string, imageName: string) => {
-    return selected[type]?.some((selectedImage: string) => {
+  const isSelectedItem = (category: string, imageName: string) => {
+    return selected[category]?.some((selectedImage: string) => {
       if (!selectedImage) return false;
 
       return (
         selectedImage === imageName ||
-        categories[type].some((item) => {
+        categories[category].items.some((item) => {
           if (item.imageName.split(".")[0] === imageName && item.variations) {
             return item.variations?.some((variation) => {
               return selectedImage === variation;
@@ -82,39 +87,41 @@ export const EditAsset = () => {
     else setIsButtonSaveAssetDisabled(false);
   }, [validationErrors]);
 
-  const updateAsset = (type: string, image: string, item: CategoryType) => {
-    setValidationErrors({ ...validationErrors, [type]: false });
+  const updateAsset = (category: string, image: string, item: CategoryType) => {
+    setValidationErrors({ ...validationErrors, [category]: false });
     const updatedSelection = { ...selected };
 
     if (!image) {
       // selection is cleared
-      if (item.isRequired) {
-        setValidationErrors({ [type]: true });
-        return;
-      }
-      updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
+      updatedSelection[category] = updatedSelection[category].filter((selectedItem) => {
         if (item && item.variations) {
           return !item.variations?.some((variation) => variation === selectedItem);
         }
         return item && selectedItem !== item.imageName;
       });
+      if (item.default) updatedSelection[category].push(item.default);
     } else {
-      if (selectionLimits[type].max === 1) {
-        updatedSelection[type] = [image];
+      if (categories[category].selectionLimits?.max === 1) {
+        // TODO: solve for max !== 1 && max !== Infinity
+        updatedSelection[category] = [image];
       } else {
         if (item.variations) {
           // remove all other variations from array
-          updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
+          updatedSelection[category] = updatedSelection[category].filter((selectedItem) => {
             return !item.variations?.some((variation) => variation === selectedItem);
           });
         }
         // add item to array
-        updatedSelection[type].push(image);
+        updatedSelection[category].push(image);
       }
     }
 
-    if (selectionLimits[type].min > 0 && updatedSelection[type].length < selectionLimits[type].min) {
-      setValidationErrors({ [type]: true });
+    if (
+      categories[category].selectionLimits &&
+      categories[category].selectionLimits.min > 0 &&
+      updatedSelection[category].length < categories[category].selectionLimits.min
+    ) {
+      setValidationErrors({ [category]: true });
     }
 
     getPreview(updatedSelection);
@@ -154,9 +161,9 @@ export const EditAsset = () => {
       .catch((error) => console.error(error));
   };
 
-  const handleOpenModalWithVariations = (item: CategoryType, type: string) => {
+  const handleOpenModalWithVariations = (item: CategoryType, category: string) => {
     if (!item.variations) return;
-    const currentSelection = selected[type].find((selectedImage) => {
+    const currentSelection = selected[category].find((selectedImage) => {
       if (!selectedImage) return false;
 
       return item.variations?.some((variation) => {
@@ -165,7 +172,7 @@ export const EditAsset = () => {
     });
 
     setCurrentItemVariations(item.variations);
-    setCurrentItem({ ...item, type });
+    setCurrentItem({ ...item, category });
     setIsModalOpen(true);
     setSelectedItem(currentSelection || "");
   };
@@ -206,7 +213,7 @@ export const EditAsset = () => {
           isOpen={isModalOpen}
           variations={currentItemVariations}
           onSelect={(selectedItem) => {
-            updateAsset(currentItem.type, selectedItem, currentItem);
+            updateAsset(currentItem.category, selectedItem, currentItem);
           }}
           onClose={handleCloseModal}
           selectedItem={selectedItem || ""}
@@ -225,13 +232,13 @@ export const EditAsset = () => {
           </button>
         }
       >
-        {Object.keys(categories).map((type) => (
-          <div key={type}>
+        {Object.keys(categories).map((category) => (
+          <div key={category}>
             <section id="accordion" className="accordion m-4">
               <div className="accordion-container">
                 <details className="accordion-item">
                   <summary className="accordion-trigger">
-                    <span className="accordion-title">Select {type}</span>
+                    <span className="accordion-title">Select {category}</span>
                     <img
                       className="accordion-icon"
                       aria-hidden="true"
@@ -240,18 +247,18 @@ export const EditAsset = () => {
                   </summary>
                   <div className="accordion-content mt-4">
                     <div className="items-container">
-                      {categories[type].map((item, index) => (
+                      {categories[category].items.map((item, index) => (
                         <button
                           key={index}
                           onClick={() => {
                             if (item.variations) {
-                              handleOpenModalWithVariations(item, type);
+                              handleOpenModalWithVariations(item, category);
                               return;
                             } else {
-                              updateAsset(type, item.imageName, item);
+                              updateAsset(category, item.imageName, item);
                             }
                           }}
-                          className={`card ${item.imageName && isSelectedItem(type, item.imageName) ? "success" : ""}`}
+                          className={`card ${item.imageName && isSelectedItem(category, item.imageName) ? "success" : ""}`}
                         >
                           {item.variations && (
                             <div
@@ -280,7 +287,7 @@ export const EditAsset = () => {
                     </div>
                   </div>
                 </details>
-                {validationErrors[type] && <p className="p3 text-error">A {type} is required.</p>}
+                {validationErrors[category] && <p className="p3 text-error">A {category} is required.</p>}
               </div>
             </section>
           </div>
