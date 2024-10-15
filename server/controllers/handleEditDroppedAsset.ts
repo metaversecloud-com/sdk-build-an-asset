@@ -40,24 +40,6 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     await deleteFromS3(host, droppedAsset.topLayerURL);
     const s3Url = await generateS3Url(imageInfo, profileId, themeName, host);
 
-    await world.updateDataObject(
-      {
-        [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
-      },
-      {
-        lock: {
-          lockId: `${assetId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
-        },
-        analytics: [
-          {
-            analyticName: `${themeName}-updates`,
-            profileId,
-            uniqueKey: profileId,
-          },
-        ],
-      },
-    );
-
     const modifiedName = username.replace(/ /g, "%20");
     const imageInfoParam = generateImageInfoParam(imageInfo);
 
@@ -71,7 +53,24 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       droppedAsset.fetchDroppedAssetById(),
       droppedAsset.updateWebImageLayers("", s3Url),
       droppedAsset.updateClickType({ clickableLink, clickableLinkTitle: themeName }),
-      world.fetchDataObject(),
+      world.updateDataObject(
+        {
+          [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
+        },
+        {
+          lock: {
+            lockId: `${assetId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
+            releaseLock: true,
+          },
+          analytics: [
+            {
+              analyticName: `${themeName}-updates`,
+              profileId,
+              uniqueKey: profileId,
+            },
+          ],
+        },
+      ),
     ]);
 
     world.triggerParticle({
@@ -88,6 +87,8 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       title: "✅ Success",
       text: `The ${themeName} has been decorated. Your changes have been saved!`,
     });
+
+    await world.fetchDataObject();
 
     return res.json({
       imageInfo,

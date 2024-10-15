@@ -89,6 +89,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       {
         lock: {
           lockId: `${droppedAsset.id}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
+          releaseLock: true,
         },
         analytics: [
           {
