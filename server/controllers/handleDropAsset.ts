@@ -51,21 +51,19 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       );
     }
 
-    // drop new asset
-    const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
-      credentials: { interactivePublicKey, profileId, urlSlug },
-    });
-
     const modifiedName = username.replace(/ /g, "%20");
     const imageInfoParam = generateImageInfoParam(imageInfo);
 
-    if (!imageInfoParam || !modifiedName || !profileId) {
-      throw "Missing imageInfoParam, modifiedName or profileId";
-    }
+    if (!imageInfoParam || !modifiedName) throw "Missing imageInfoParam or modifiedName";
 
     const baseUrl = getBaseUrl(req.hostname);
 
     const clickableLink = `${baseUrl}/${themeName}/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
+
+    // drop new asset
+    const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
+      credentials: { interactivePublicKey, profileId, urlSlug },
+    });
 
     const droppedAsset = await DroppedAsset.drop(asset, {
       clickType: "link",
@@ -80,6 +78,12 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       position,
       uniqueName: `${themeName}System-${profileId}`,
       urlSlug,
+    });
+
+    world.triggerParticle({
+      name: "whiteStar_burst",
+      duration: 3,
+      position,
     });
 
     world.updateDataObject(

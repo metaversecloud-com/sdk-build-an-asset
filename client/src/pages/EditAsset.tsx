@@ -82,6 +82,20 @@ export const EditAsset = () => {
   }, []);
 
   useEffect(() => {
+    const errors: { [category: string]: boolean } = {};
+    for (const category in selected) {
+      if (
+        categories[category].selectionLimits &&
+        categories[category].selectionLimits.min > 0 &&
+        selected[category].length < categories[category].selectionLimits.min
+      ) {
+        errors[category] = true;
+      }
+    }
+    setValidationErrors(errors);
+  }, [selected]);
+
+  useEffect(() => {
     if (Object.keys(validationErrors).filter((key) => validationErrors[key]).length > 0)
       setIsButtonSaveAssetDisabled(true);
     else setIsButtonSaveAssetDisabled(false);
@@ -99,7 +113,7 @@ export const EditAsset = () => {
         }
         return item && selectedItem !== item.imageName;
       });
-      if (item.default) updatedSelection[category].push(item.default);
+      if (item.defaultImage) updatedSelection[category].push(item.defaultImage);
     } else {
       if (categories[category].selectionLimits?.max === 1) {
         // TODO: solve for max !== 1 && max !== Infinity
@@ -114,14 +128,6 @@ export const EditAsset = () => {
         // add item to array
         updatedSelection[category].push(image);
       }
-    }
-
-    if (
-      categories[category].selectionLimits &&
-      categories[category].selectionLimits.min > 0 &&
-      updatedSelection[category].length < categories[category].selectionLimits.min
-    ) {
-      setValidationErrors({ [category]: true });
     }
 
     getPreview(updatedSelection);
@@ -236,7 +242,7 @@ export const EditAsset = () => {
           <div key={category}>
             <section id="accordion" className="accordion m-4">
               <div className="accordion-container">
-                <details className="accordion-item">
+                <details className="accordion-item" open={categories[category].shouldStartExpanded}>
                   <summary className="accordion-trigger">
                     <span className="accordion-title">Select {category}</span>
                     <img

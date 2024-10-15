@@ -28,7 +28,7 @@ export const initialState: InitialState = {
 
 export type CategoryType = {
   subcategory?: string;
-  default?: string;
+  defaultImage?: string;
   imageName: string;
   variations?: string[];
 };
@@ -60,6 +60,7 @@ interface ThemeType extends ThemeDetailsInterface {
   categories: {
     [category: string]: {
       selectionLimits: { min: number; max: number };
+      shouldStartExpanded?: boolean;
       items: CategoryType[];
     };
   };
@@ -119,10 +120,11 @@ export const themes: ThemesType = {
     categories: {
       "Locker Base": {
         selectionLimits: { min: 1, max: Infinity },
+        shouldStartExpanded: true,
         items: [
           {
             subcategory: "Locker Background",
-            default: "lockerBase_0.png",
+            defaultImage: "lockerBase_0.png",
             imageName: "lockerBase_0.png",
             variations: [
               "lockerBase_0.png",
@@ -293,6 +295,7 @@ export const themes: ThemesType = {
     categories: {
       "Desk Base": {
         selectionLimits: { min: 1, max: 1 },
+        shouldStartExpanded: true,
         items: [
           {
             subcategory: "Desk",
@@ -412,6 +415,7 @@ export const themes: ThemesType = {
     categories: {
       Body: {
         selectionLimits: { min: 1, max: 1 },
+        shouldStartExpanded: true,
         items: [
           {
             subcategory: "Body",
@@ -467,6 +471,7 @@ export const themes: ThemesType = {
     categories: {
       Body: {
         selectionLimits: { min: 1, max: 1 },
+        shouldStartExpanded: true,
         items: [
           {
             subcategory: "Body Style 1",
