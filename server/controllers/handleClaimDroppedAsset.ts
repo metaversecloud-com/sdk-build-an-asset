@@ -73,9 +73,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
         identityId,
         urlSlug,
       },
-    ])
-      .then()
-      .catch((error) => console.error(JSON.stringify(error)));
+    ]).catch((error) => console.error(JSON.stringify(error)));
 
     world.triggerParticle({
       name: "whiteStar_burst",

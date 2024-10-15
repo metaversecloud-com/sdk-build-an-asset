@@ -18,7 +18,7 @@ export const ClaimedAsset = () => {
   const { visitorIsAdmin, worldDataObject } = useContext(GlobalStateContext);
 
   const themeName = getThemeName();
-  const { clearButtonType, showClearAssetButton, showEditAssetButton, showFindAssetButton } = getThemeData();
+  const { clearButtonType, showClearAssetButton, showEditAssetButton } = getThemeData();
   const defaultUnclaimedAsset = `/assets/${themeName}/unclaimedAsset.png`;
 
   const queryParams = new URLSearchParams(window.location.search);
@@ -85,11 +85,9 @@ export const ClaimedAsset = () => {
                   Edit {themeName}
                 </button>
               )}
-              {showFindAssetButton && (
-                <div className="mb-2">
-                  <MoveToAssetButton />
-                </div>
-              )}
+              <div className="mb-2">
+                <MoveToAssetButton />
+              </div>
               {showClearAssetButton && (
                 <ClearAssetButton handleToggleShowClearAssetModal={handleToggleShowClearAssetModal} />
               )}

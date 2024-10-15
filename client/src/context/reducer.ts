@@ -31,6 +31,7 @@ const globalReducer = (state: InitialState, action: ActionType) => {
       return {
         ...state,
         ...payload,
+        error: "",
       };
 
     default: {

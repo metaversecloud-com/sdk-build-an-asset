@@ -1,9 +1,13 @@
 import { Request, Response } from "express";
 import {
+  addNewRowToGoogleSheets,
+  Asset,
   deleteFromS3,
-  dropImageAsset,
+  DroppedAsset,
   errorHandler,
+  generateImageInfoParam,
   generateS3Url,
+  getBaseUrl,
   getCredentials,
   Visitor,
   World,
@@ -13,7 +17,8 @@ import { VisitorInterface } from "@rtsdk/topia";
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
+    const { displayName, identityId, interactivePublicKey, profileId, themeName, urlSlug, username, visitorId } =
+      credentials;
 
     const { imageInfo } = req.body;
 
@@ -47,21 +52,43 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     }
 
     // drop new asset
-    const droppedAsset = await dropImageAsset({
-      credentials,
-      host: req.hostname,
-      imageInfo,
-      s3Url,
+    const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
+      credentials: { interactivePublicKey, profileId, urlSlug },
+    });
+
+    const modifiedName = username.replace(/ /g, "%20");
+    const imageInfoParam = generateImageInfoParam(imageInfo);
+
+    if (!imageInfoParam || !modifiedName || !profileId) {
+      throw "Missing imageInfoParam, modifiedName or profileId";
+    }
+
+    const baseUrl = getBaseUrl(req.hostname);
+
+    const clickableLink = `${baseUrl}/${themeName}/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
+
+    const droppedAsset = await DroppedAsset.drop(asset, {
+      clickType: "link",
+      clickableLink,
+      clickableLinkTitle: themeName,
+      clickableDisplayTextDescription: themeName,
+      clickableDisplayTextHeadline: themeName,
+      isOpenLinkInDrawer: true,
+      isInteractive: true,
+      interactivePublicKey,
+      layer1: s3Url,
       position,
+      uniqueName: `${themeName}System-${profileId}`,
+      urlSlug,
     });
 
     world.updateDataObject(
       {
-        [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
+        [`${themeName}.${profileId}`]: { droppedAssetId: droppedAsset.id, s3Url },
       },
       {
         lock: {
-          lockId: `${assetId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
+          lockId: `${droppedAsset.id}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
         },
         analytics: [
           {
@@ -69,9 +96,24 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
             profileId,
             uniqueKey: profileId,
           },
+          {
+            analyticName: `${themeName}-builds`,
+            profileId,
+            uniqueKey: profileId,
+          },
         ],
       },
     );
+
+    addNewRowToGoogleSheets([
+      {
+        appName: "Build an Asset",
+        displayName,
+        event: `${themeName}-starts`,
+        identityId,
+        urlSlug,
+      },
+    ]).catch((error) => console.error(JSON.stringify(error)));
 
     return res.json({
       droppedAsset,

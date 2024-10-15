@@ -19,8 +19,7 @@ export const EditAsset = () => {
 
   const themeName = getThemeName();
   const themeData = getThemeData();
-  const { categories, defaultSelected, shouldDropAsset, layerOrder, name, saveButtonText, selectionLimits } =
-    themeData;
+  const { categories, defaultSelected, shouldDropAsset, layerOrder, name, saveButtonText, selectionLimits } = themeData;
 
   const S3URL = `${getS3URL()}/${themeName}`;
 
@@ -59,12 +58,6 @@ export const EditAsset = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchInitialState()
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const fetchInitialState = async () => {
     const urlParams = new URLSearchParams(window.location.search);
 
     const initialSelection = layerOrder.reduce((info: { [category: string]: string[] }, category: string) => {
@@ -80,17 +73,22 @@ export const EditAsset = () => {
     }, {});
 
     getPreview(initialSelection);
-  };
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (Object.keys(validationErrors).filter((key) => validationErrors[key]).length > 0)
+      setIsButtonSaveAssetDisabled(true);
+    else setIsButtonSaveAssetDisabled(false);
+  }, [validationErrors]);
 
   const updateAsset = (type: string, image: string, item: CategoryType) => {
-    setIsButtonSaveAssetDisabled(false);
     setValidationErrors({ ...validationErrors, [type]: false });
     const updatedSelection = { ...selected };
 
     if (!image) {
       // selection is cleared
       if (item.isRequired) {
-        setIsButtonSaveAssetDisabled(true);
         setValidationErrors({ [type]: true });
         return;
       }
@@ -116,7 +114,6 @@ export const EditAsset = () => {
     }
 
     if (selectionLimits[type].min > 0 && updatedSelection[type].length < selectionLimits[type].min) {
-      setIsButtonSaveAssetDisabled(true);
       setValidationErrors({ [type]: true });
     }
 
@@ -145,7 +142,7 @@ export const EditAsset = () => {
     const orderedImages = layerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
 
     const imagesToMerge = orderedImages.map((image) => ({
-      src: `${window.location.origin}/assets/${themeName}/${image}`,
+      src: `${S3URL}/${image}`,
       x: 0,
       y: 0,
     }));
@@ -215,8 +212,8 @@ export const EditAsset = () => {
           selectedItem={selectedItem || ""}
         />
       ) : (
-          ""
-        )}
+        ""
+      )}
       <PageContainer
         isLoading={isLoading}
         headerText={`Build your ${name}!`}

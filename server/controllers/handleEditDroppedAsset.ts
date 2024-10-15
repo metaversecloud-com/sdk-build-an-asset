@@ -40,30 +40,23 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     await deleteFromS3(host, droppedAsset.topLayerURL);
     const s3Url = await generateS3Url(imageInfo, profileId, themeName, host);
 
-    try {
-      await world.updateDataObject(
-        {
-          [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
+    await world.updateDataObject(
+      {
+        [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
+      },
+      {
+        lock: {
+          lockId: `${assetId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
         },
-        {
-          lock: {
-            lockId: `${assetId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
+        analytics: [
+          {
+            analyticName: `${themeName}-updates`,
+            profileId,
+            uniqueKey: profileId,
           },
-          analytics: [
-            {
-              analyticName: `${themeName}-updates`,
-              profileId,
-              uniqueKey: profileId,
-            },
-          ],
-        },
-      );
-    } catch (error) {
-      console.error(`Error while updating the ${themeName}`, error);
-      return res.json({
-        msg: `This ${themeName} is already taken`,
-      });
-    }
+        ],
+      },
+    );
 
     const modifiedName = username.replace(/ /g, "%20");
     const imageInfoParam = generateImageInfoParam(imageInfo);

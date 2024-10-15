@@ -42,7 +42,6 @@ interface ThemeDetailsInterface {
   shouldDropAsset: boolean;
   clearButtonType: string;
   showClearAssetButton: boolean;
-  showFindAssetButton: boolean;
   showEditAssetButton: boolean;
   texts: {
     header: string;
@@ -90,7 +89,6 @@ const getDefaultTheme = (shouldDropAsset: boolean, themeName: string): ThemeDeta
       shouldDropAsset: true,
       clearButtonType: "pickup",
       showClearAssetButton: false,
-      showFindAssetButton: false,
       showEditAssetButton: true,
       texts: {
         header: `Build your ${themeName}!`,
@@ -109,7 +107,6 @@ const getDefaultTheme = (shouldDropAsset: boolean, themeName: string): ThemeDeta
     shouldDropAsset: false,
     clearButtonType: "empty",
     showClearAssetButton: true,
-    showFindAssetButton: true,
     showEditAssetButton: true,
     texts: {
       header: `Decorate your ${themeName}`,
