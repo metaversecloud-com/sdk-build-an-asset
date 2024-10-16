@@ -19,39 +19,40 @@ export const EditAsset = () => {
 
   const themeName = getThemeName();
   const themeData = getThemeData();
+  const { categories, shouldDropAsset, layerOrder, name, saveButtonText } = themeData;
 
   const S3URL = `${getS3URL()}/${themeName}`;
-  const BASE_URL = window.location.origin;
-  const baseUrl = `${BASE_URL}/assets/${themeName}`;
 
-  const [selected, setSelected] = useState(themeData?.defaultSelected);
+  const [selected, setSelected] = useState(
+    Object.keys(categories).reduce((acc: { [key: string]: string[] }, key) => {
+      acc[key] = [];
+      return acc;
+    }, {}),
+  );
 
   const [isLoading, setLoading] = useState(false);
   const [isButtonSaveAssetDisabled, setIsButtonSaveAssetDisabled] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentItemVariations, setCurrentItemVariations] = useState<string[]>([]);
-  const [currentItem, setCurrentItem] = useState<{ type: string; imageName: string; hasVariation: boolean }>();
-  const [validationErrors, setValidationErrors] = useState<{ [type: string]: boolean }>({});
+  const [currentItem, setCurrentItem] = useState<{ category: string; imageName: string; variations?: string[] }>();
+  const [validationErrors, setValidationErrors] = useState<{ [category: string]: boolean }>({});
 
-  const [selectedVariation, setSelectedVariation] = useState<string>("");
+  const [selectedItem, setSelectedItem] = useState<string>("");
   const [preview, setPreview] = useState(`${S3URL}/claimedAsset.png`);
 
   const [imageInfo, setImageInfo] = useState({});
 
-  const isSelectedItem = (type: string, imageName: string) => {
-    return selected[type]?.some((selectedImage: string) => {
+  const isSelectedItem = (category: string, imageName: string) => {
+    return selected[category]?.some((selectedImage: string) => {
       if (!selectedImage) return false;
 
-      const selectedBaseName = selectedImage.replace(baseUrl, "").split(".")[0];
-      const itemBaseName = imageName.split(".")[0];
       return (
-        selectedBaseName === itemBaseName ||
-        themeData.categories[type].some((item) => {
-          if (item.imageName.split(".")[0] === itemBaseName && item.hasVariation) {
+        selectedImage === imageName ||
+        categories[category].items.some((item) => {
+          if (item.imageName.split(".")[0] === imageName && item.variations) {
             return item.variations?.some((variation) => {
-              const variationBaseName = variation.split(".")[0];
-              return selectedBaseName === variationBaseName;
+              return selectedImage === variation;
             });
           }
           return false;
@@ -62,106 +63,84 @@ export const EditAsset = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchInitialState()
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const fetchInitialState = async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const initialSelection = themeData.layerOrder.reduce((info: { [category: string]: string[] }, category: string) => {
-      const categoryKey1 = `${category.replace(/\s/g, "")}1`;
-      const categoryKey2 = `${category.replace(/\s/g, "")}2`;
 
-      info[category] = [
-        urlParams.get(categoryKey1) && `${baseUrl}/${urlParams.get(categoryKey1)}.png`,
-        urlParams.get(categoryKey2) && `${baseUrl}/${urlParams.get(categoryKey2)}.png`,
-      ].filter(Boolean);
+    const initialSelection = layerOrder.reduce((info: { [category: string]: string[] }, category: string) => {
+      info[category] = [];
+
+      for (const key of urlParams.keys()) {
+        if (key.includes(`${category.replace(/\s/g, "")}`)) {
+          info[category].push(`${urlParams.get(key)}`);
+        }
+      }
+
       return info;
     }, {});
 
     getPreview(initialSelection);
-  };
+    setLoading(false);
+  }, []);
 
-  const updateAsset = (type: string, image: string, item: CategoryType) => {
-    setIsButtonSaveAssetDisabled(false);
-    setValidationErrors({ ...validationErrors, [type]: false });
+  useEffect(() => {
+    const errors: { [category: string]: boolean } = {};
+    for (const category in selected) {
+      if (
+        categories[category].selectionLimits &&
+        categories[category].selectionLimits.min > 0 &&
+        selected[category].length < categories[category].selectionLimits.min
+      ) {
+        errors[category] = true;
+      }
+    }
+    setValidationErrors(errors);
+  }, [selected]);
+
+  useEffect(() => {
+    if (Object.keys(validationErrors).filter((key) => validationErrors[key]).length > 0)
+      setIsButtonSaveAssetDisabled(true);
+    else setIsButtonSaveAssetDisabled(false);
+  }, [validationErrors]);
+
+  const updateAsset = (category: string, image: string, item: CategoryType) => {
+    setValidationErrors({ ...validationErrors, [category]: false });
     const updatedSelection = { ...selected };
 
     if (!image) {
-      if (item.isRequired) {
-        setIsButtonSaveAssetDisabled(true);
-        setValidationErrors({ [type]: true });
-      }
-      updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
-        if (item && item.hasVariation) {
-          return !item.variations?.some((variation) => `${baseUrl}/${variation}` === selectedItem);
+      // selection is cleared
+      updatedSelection[category] = updatedSelection[category].filter((selectedItem) => {
+        if (item && item.variations) {
+          return !item.variations?.some((variation) => variation === selectedItem);
         }
-        return item && selectedItem !== `${baseUrl}/${item.imageName}`;
+        return item && selectedItem !== item.imageName;
       });
+      if (item.defaultImage) updatedSelection[category].push(item.defaultImage);
     } else {
-      if (item.hasVariation) {
-        const isSelectedVariation = updatedSelection[type]?.includes(image);
-
-        if (isSelectedVariation) {
-          if (item.isRequired) return;
-          updatedSelection[type] = updatedSelection[type].filter((selectedItem) => selectedItem !== image);
-        } else {
-          updatedSelection[type] = updatedSelection[type].filter((selectedItem) => {
-            return !item.variations?.some((variation) => `${baseUrl}/${variation}` === selectedItem);
-          });
-          updatedSelection[type].push(image);
-        }
+      if (categories[category].selectionLimits?.max === 1) {
+        // TODO: solve for max !== 1 && max !== Infinity
+        updatedSelection[category] = [image];
       } else {
-        const isSelected = selected[type].includes(image);
-        if (themeData.selectionLimits[type] === 1) {
-          updatedSelection[type] = isSelected ? [] : [image];
-        } else {
-          if (isSelected) {
-            if (item.isRequired) return;
-            updatedSelection[type] = updatedSelection[type].filter((i) => i !== image);
-          } else {
-            updatedSelection[type].push(image);
-          }
+        if (item.variations) {
+          // remove all other variations from array
+          updatedSelection[category] = updatedSelection[category].filter((selectedItem) => {
+            return !item.variations?.some((variation) => variation === selectedItem);
+          });
         }
-      }
-    }
-
-    const requiredItem = themeData.categories[type].find((item) => item.isRequired);
-    if (
-      requiredItem &&
-      !updatedSelection[type].some((selectedItem) =>
-        requiredItem.variations?.includes(selectedItem.replace(`${baseUrl}/`, "")),
-      )
-    ) {
-      updatedSelection[type].unshift(`${baseUrl}/${requiredItem.variations?.[0]}`);
-    }
-
-    if (type === Object.keys(themeData.categories)[0]) {
-      const requiredItemIndex = updatedSelection[type].findIndex((selectedItem) =>
-        requiredItem?.variations?.includes(selectedItem.replace(`${baseUrl}/`, "")),
-      );
-      if (requiredItemIndex !== -1) {
-        const requiredImage = updatedSelection[type].splice(requiredItemIndex, 1)[0];
-        updatedSelection[type].unshift(requiredImage);
+        // add item to array
+        updatedSelection[category].push(image);
       }
     }
 
     getPreview(updatedSelection);
   };
 
-  const getPreview = (selection: { [x: string]: string[] }) => {
+  const getPreview = (selection: { [key: string]: string[] }) => {
     setSelected(selection);
 
-    const updatedImageInfo = themeData.layerOrder.reduce((info: { [category: string]: object }, category: string) => {
+    const updatedImageInfo = layerOrder.reduce((info: { [category: string]: object }, category: string) => {
       if (selection[category]) {
         info[category] = selection[category]
           .map((item) => {
-            if (item) {
-              return {
-                imageName: item?.split("/")?.pop()?.split(".")?.[0] || "",
-              };
-            }
+            if (item) return { imageName: item };
             return null;
           })
           .filter(Boolean);
@@ -173,10 +152,10 @@ export const EditAsset = () => {
 
     setImageInfo(updatedImageInfo);
 
-    const orderedImages = themeData.layerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
+    const orderedImages = layerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
 
     const imagesToMerge = orderedImages.map((image) => ({
-      src: image,
+      src: `${S3URL}/${image}`,
       x: 0,
       y: 0,
     }));
@@ -188,22 +167,20 @@ export const EditAsset = () => {
       .catch((error) => console.error(error));
   };
 
-  const handleOpenModalWithVariations = (item: CategoryType, type: string) => {
-    const variations = item.variations || [];
-    const currentSelection = selected[type].find((selectedImage) => {
+  const handleOpenModalWithVariations = (item: CategoryType, category: string) => {
+    if (!item.variations) return;
+    const currentSelection = selected[category].find((selectedImage) => {
       if (!selectedImage) return false;
 
-      const selectedBaseName = selectedImage.replace(`${baseUrl}/`, "").split(".")[0];
       return item.variations?.some((variation) => {
-        const variationBaseName = variation.split(".")[0];
-        return selectedBaseName === variationBaseName;
+        return selectedImage === variation;
       });
     });
-    const currentSelectionVariation = currentSelection ? currentSelection.replace(`${baseUrl}/`, "") : "";
-    setCurrentItemVariations(variations);
-    setCurrentItem({ ...item, type });
+
+    setCurrentItemVariations(item.variations);
+    setCurrentItem({ ...item, category });
     setIsModalOpen(true);
-    setSelectedVariation(currentSelectionVariation);
+    setSelectedItem(currentSelection || "");
   };
 
   const handleCloseModal = () => {
@@ -213,7 +190,7 @@ export const EditAsset = () => {
   const handleSaveToBackend = () => {
     setIsButtonSaveAssetDisabled(true);
 
-    const url = themeData.dropAssetInRandomLocation ? "/dropped-assets/drop" : "/dropped-assets/edit";
+    const url = shouldDropAsset ? "/dropped-assets/drop" : "/dropped-assets/edit";
 
     backendAPI
       .post(url, { imageInfo })
@@ -241,37 +218,33 @@ export const EditAsset = () => {
         <ItemVariationSelectorModal
           isOpen={isModalOpen}
           variations={currentItemVariations}
-          onSelect={(selectedVariation) => {
-            updateAsset(currentItem.type, selectedVariation ? `${baseUrl}/${selectedVariation}` : "", currentItem);
+          onSelect={(selectedItem) => {
+            updateAsset(currentItem.category, selectedItem, currentItem);
           }}
           onClose={handleCloseModal}
-          selectedVariation={selectedVariation || ""}
+          selectedItem={selectedItem || ""}
         />
       ) : (
         ""
       )}
       <PageContainer
         isLoading={isLoading}
-        headerText={`Build your ${themeData.name}!`}
-        previewImageURL={preview === "data:," ? `${baseUrl}/claimedAsset.png` : preview}
+        headerText={`Build your ${name}!`}
+        previewImageURL={preview === "data:," ? `${S3URL}/claimedAsset.png` : preview}
         showClearAssetBtn={visitorIsAdmin}
         footerContent={
-          <button
-            onClick={handleSaveToBackend}
-            className="btn"
-            disabled={selected[themeData.baseCategoryName].length === 0 || isButtonSaveAssetDisabled}
-          >
-            {themeData.saveButtonText}
+          <button onClick={handleSaveToBackend} className="btn" disabled={isButtonSaveAssetDisabled}>
+            {saveButtonText}
           </button>
         }
       >
-        {Object.keys(themeData.categories).map((type) => (
-          <div key={type}>
+        {Object.keys(categories).map((category) => (
+          <div key={category}>
             <section id="accordion" className="accordion m-4">
               <div className="accordion-container">
-                <details className="accordion-item">
+                <details className="accordion-item" open={categories[category].shouldStartExpanded}>
                   <summary className="accordion-trigger">
-                    <span className="accordion-title">Select {type}</span>
+                    <span className="accordion-title">Select {category}</span>
                     <img
                       className="accordion-icon"
                       aria-hidden="true"
@@ -280,20 +253,20 @@ export const EditAsset = () => {
                   </summary>
                   <div className="accordion-content mt-4">
                     <div className="items-container">
-                      {themeData.categories[type].map((item, index) => (
+                      {categories[category].items.map((item, index) => (
                         <button
                           key={index}
                           onClick={() => {
-                            if (item.hasVariation) {
-                              handleOpenModalWithVariations(item, type);
+                            if (item.variations) {
+                              handleOpenModalWithVariations(item, category);
                               return;
                             } else {
-                              updateAsset(type, `${baseUrl}/${item.imageName}`, item);
+                              updateAsset(category, item.imageName, item);
                             }
                           }}
-                          className={`card ${item.imageName && isSelectedItem(type, item.imageName) ? "success" : ""}`}
+                          className={`card ${item.imageName && isSelectedItem(category, item.imageName) ? "success" : ""}`}
                         >
-                          {item.hasVariation && (
+                          {item.variations && (
                             <div
                               style={{
                                 position: "absolute",
@@ -320,7 +293,7 @@ export const EditAsset = () => {
                     </div>
                   </div>
                 </details>
-                {validationErrors[type] && <p className="p3 text-error">A {type} is required.</p>}
+                {validationErrors[category] && <p className="p3 text-error">A {category} is required.</p>}
               </div>
             </section>
           </div>

@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // components
 import { ClearAssetButton, ClearAssetModal, PageContainer } from "@/components";
-import EditAsset from "./EditAsset";
 
 // context
 import { GlobalDispatchContext, GlobalStateContext } from "@context/GlobalContext";
@@ -13,11 +13,12 @@ import { backendAPI, capitalize, getThemeData, getThemeName } from "@/utils";
 import MoveToAssetButton from "@/components/MoveToAssetButton";
 
 export const ClaimedAsset = () => {
+  const navigate = useNavigate();
   const dispatch = useContext(GlobalDispatchContext);
   const { visitorIsAdmin, worldDataObject } = useContext(GlobalStateContext);
 
   const themeName = getThemeName();
-  const themeData = getThemeData();
+  const { clearButtonType, showClearAssetButton, showEditAssetButton } = getThemeData();
   const defaultUnclaimedAsset = `/assets/${themeName}/unclaimedAsset.png`;
 
   const queryParams = new URLSearchParams(window.location.search);
@@ -27,7 +28,6 @@ export const ClaimedAsset = () => {
 
   const [isLoading, setLoading] = useState(false);
   const [assetParams, setAssetParams] = useState<{ "edit"?: string; "visitor-name"?: string }>({});
-  const [showCustomizeScreen, setShowCustomizeScreen] = useState(false);
   const [showClearAssetModal, setShowClearAssetModal] = useState(false);
 
   const s3Url = worldDataObject?.[themeName]?.[ownerProfileId]?.s3Url;
@@ -39,11 +39,11 @@ export const ClaimedAsset = () => {
   }, []);
 
   const handleEditAsset = async () => {
-    setShowCustomizeScreen(true);
+    navigate(`/${themeName}/edit?${queryParams}`);
   };
 
   const handleToggleShowClearAssetModal = () => {
-    if (themeData.clearButtonType === "pickup") {
+    if (clearButtonType === "pickup") {
       backendAPI
         .post("/dropped-assets/pickup")
         .catch((error) => {
@@ -56,15 +56,13 @@ export const ClaimedAsset = () => {
         .finally(() => {
           setLoading(false);
         });
-    } else if (themeData.clearButtonType === "empty") {
+    } else if (clearButtonType === "empty") {
       setShowClearAssetModal(!showClearAssetModal);
     }
   };
 
-  // Show customize screen if Edit button is clicked, or if this screen was reached from Claim Asset button
-  if (showCustomizeScreen || assetParams?.edit == "true") {
-    return <EditAsset />;
-  }
+  // Navigate to Edit screen if this screen was reached from Claim Asset button
+  if (assetParams?.edit == "true") handleEditAsset();
 
   return (
     <>
@@ -82,17 +80,15 @@ export const ClaimedAsset = () => {
         footerContent={
           isAssetOwner && (
             <>
-              {themeData.showEditAssetButton && (
+              {showEditAssetButton && (
                 <button className="btn mb-2" onClick={() => handleEditAsset()}>
                   Edit {themeName}
                 </button>
               )}
-              {themeData.showFindAssetButton && (
-                <div className="mb-2">
-                  <MoveToAssetButton />
-                </div>
-              )}
-              {themeData.showClearAssetButton && (
+              <div className="mb-2">
+                <MoveToAssetButton />
+              </div>
+              {showClearAssetButton && (
                 <ClearAssetButton handleToggleShowClearAssetModal={handleToggleShowClearAssetModal} />
               )}
             </>

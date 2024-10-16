@@ -1,9 +1,13 @@
 import { Request, Response } from "express";
 import {
+  addNewRowToGoogleSheets,
+  Asset,
   deleteFromS3,
-  dropImageAsset,
+  DroppedAsset,
   errorHandler,
+  generateImageInfoParam,
   generateS3Url,
+  getBaseUrl,
   getCredentials,
   Visitor,
   World,
@@ -13,7 +17,8 @@ import { VisitorInterface } from "@rtsdk/topia";
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
+    const { displayName, identityId, interactivePublicKey, profileId, themeName, urlSlug, username, visitorId } =
+      credentials;
 
     const { imageInfo } = req.body;
 
@@ -22,16 +27,6 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     const world = await World.create(urlSlug, { credentials });
 
     const s3Url = await generateS3Url(imageInfo, profileId, themeName, req.hostname);
-
-    // calculate image name
-    const parts = ["body", "arms", "head", "accessories"];
-    const imageName = parts
-      .map((part) => {
-        const item = imageInfo[part.charAt(0).toUpperCase() + part.slice(1)]?.[0];
-        return item ? item.imageName : `${part}_1`;
-      })
-      .join("_");
-    const completeImageName = `${imageName}.png`;
 
     // get drop position
     const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
@@ -56,23 +51,49 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       );
     }
 
+    const modifiedName = username.replace(/ /g, "%20");
+    const imageInfoParam = generateImageInfoParam(imageInfo);
+
+    if (!imageInfoParam || !modifiedName) throw "Missing imageInfoParam or modifiedName";
+
+    const baseUrl = getBaseUrl(req.hostname);
+
+    const clickableLink = `${baseUrl}/${themeName}/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
+
     // drop new asset
-    const droppedAsset = await dropImageAsset({
-      completeImageName,
-      credentials,
-      host: req.hostname,
-      imageInfo,
-      s3Url,
+    const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
+      credentials: { interactivePublicKey, profileId, urlSlug },
+    });
+
+    const droppedAsset = await DroppedAsset.drop(asset, {
+      clickType: "link",
+      clickableLink,
+      clickableLinkTitle: themeName,
+      clickableDisplayTextDescription: themeName,
+      clickableDisplayTextHeadline: themeName,
+      isOpenLinkInDrawer: true,
+      isInteractive: true,
+      interactivePublicKey,
+      layer1: s3Url,
+      position,
+      uniqueName: `${themeName}System-${profileId}`,
+      urlSlug,
+    });
+
+    world.triggerParticle({
+      name: "whiteStar_burst",
+      duration: 3,
       position,
     });
 
     world.updateDataObject(
       {
-        [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
+        [`${themeName}.${profileId}`]: { droppedAssetId: droppedAsset.id, s3Url },
       },
       {
         lock: {
-          lockId: `${assetId}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
+          lockId: `${droppedAsset.id}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
+          releaseLock: true,
         },
         analytics: [
           {
@@ -80,9 +101,24 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
             profileId,
             uniqueKey: profileId,
           },
+          {
+            analyticName: `${themeName}-builds`,
+            profileId,
+            uniqueKey: profileId,
+          },
         ],
       },
     );
+
+    addNewRowToGoogleSheets([
+      {
+        appName: "Build an Asset",
+        displayName,
+        event: `${themeName}-starts`,
+        identityId,
+        urlSlug,
+      },
+    ]).catch((error) => console.error(JSON.stringify(error)));
 
     return res.json({
       droppedAsset,
