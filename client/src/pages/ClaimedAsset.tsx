@@ -18,8 +18,7 @@ export const ClaimedAsset = () => {
   const { visitorIsAdmin, worldDataObject } = useContext(GlobalStateContext);
 
   const themeName = getThemeName();
-  const { clearButtonType, showClearAssetButton, showEditAssetButton } = getThemeData();
-  const defaultUnclaimedAsset = `/assets/${themeName}/unclaimedAsset.png`;
+  const { clearButtonType, showClearAssetButton, showEditAssetButton, splashImage } = getThemeData();
 
   const queryParams = new URLSearchParams(window.location.search);
   const profileId = queryParams.get("profileId");
@@ -75,7 +74,7 @@ export const ClaimedAsset = () => {
       <PageContainer
         isLoading={isLoading}
         headerText={capitalize(themeName)}
-        previewImageURL={s3Url || defaultUnclaimedAsset}
+        previewImageURL={s3Url || splashImage}
         showClearAssetBtn={isAssetOwner || visitorIsAdmin}
         footerContent={
           isAssetOwner && (

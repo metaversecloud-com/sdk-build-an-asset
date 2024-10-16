@@ -38,6 +38,7 @@ interface ThemeDetailsInterface {
   namePlural: string;
   hasHomePage: boolean;
   splashImage: string;
+  splashImageSize: number;
   saveButtonText: string;
   shouldDropAsset: boolean;
   clearButtonType: string;
@@ -77,6 +78,7 @@ const getDefaultTheme = (shouldDropAsset: boolean, themeName: string): ThemeDeta
       namePlural: `${themeName}s`,
       hasHomePage: false,
       splashImage: `${getS3URL()}/${themeName.toLowerCase()}/unclaimedAsset.png`,
+      splashImageSize: 100,
       saveButtonText: `Add ${themeName}`,
       shouldDropAsset: true,
       clearButtonType: "pickup",
@@ -95,6 +97,7 @@ const getDefaultTheme = (shouldDropAsset: boolean, themeName: string): ThemeDeta
     namePlural: `${themeName}s`,
     hasHomePage: true,
     splashImage: `${getS3URL()}/${themeName.toLowerCase()}/unclaimedAsset.png`,
+    splashImageSize: 100,
     saveButtonText: "Save",
     shouldDropAsset: false,
     clearButtonType: "empty",
@@ -412,6 +415,7 @@ export const themes: ThemesType = {
     ...getDefaultTheme(true, "Snowman"),
     namePlural: "Snowmen",
     layerOrder: ["Body", "Arms", "Head", "Accessories"],
+    splashImageSize: 180,
     categories: {
       Body: {
         selectionLimits: { min: 1, max: 1 },

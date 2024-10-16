@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import mergeImages from "merge-images";
 
 import { CategoryType } from "@/constants";
 
@@ -18,8 +17,8 @@ export const EditAsset = () => {
   const { visitorIsAdmin } = useContext(GlobalStateContext);
 
   const themeName = getThemeName();
-  const themeData = getThemeData();
-  const { categories, shouldDropAsset, layerOrder, name, saveButtonText } = themeData;
+  const { categories, shouldDropAsset, layerOrder, name, saveButtonText, splashImage, splashImageSize } =
+    getThemeData();
 
   const S3URL = `${getS3URL()}/${themeName}`;
 
@@ -39,9 +38,9 @@ export const EditAsset = () => {
   const [validationErrors, setValidationErrors] = useState<{ [category: string]: boolean }>({});
 
   const [selectedItem, setSelectedItem] = useState<string>("");
-  const [preview, setPreview] = useState(`${S3URL}/claimedAsset.png`);
 
   const [imageInfo, setImageInfo] = useState({});
+  const [images, setImages] = useState<string[]>([]);
 
   const isSelectedItem = (category: string, imageName: string) => {
     return selected[category]?.some((selectedImage: string) => {
@@ -154,17 +153,7 @@ export const EditAsset = () => {
 
     const orderedImages = layerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
 
-    const imagesToMerge = orderedImages.map((image) => ({
-      src: `${S3URL}/${image}`,
-      x: 0,
-      y: 0,
-    }));
-
-    mergeImages(imagesToMerge, { crossOrigin: "anonymous" })
-      .then((result) => {
-        return setPreview(result);
-      })
-      .catch((error) => console.error(error));
+    setImages(orderedImages);
   };
 
   const handleOpenModalWithVariations = (item: CategoryType, category: string) => {
@@ -227,10 +216,10 @@ export const EditAsset = () => {
       ) : (
         ""
       )}
+
       <PageContainer
         isLoading={isLoading}
         headerText={`Build your ${name}!`}
-        previewImageURL={preview === "data:," ? `${S3URL}/claimedAsset.png` : preview}
         showClearAssetBtn={visitorIsAdmin}
         footerContent={
           <button onClick={handleSaveToBackend} className="btn" disabled={isButtonSaveAssetDisabled}>
@@ -238,6 +227,27 @@ export const EditAsset = () => {
           </button>
         }
       >
+        <div style={{ height: splashImageSize, position: "relative" }}>
+          {images.length > 0 ? (
+            images.map((image, index) => {
+              return (
+                <img
+                  key={index}
+                  src={`${S3URL}/${image}`}
+                  className="m-auto preview"
+                  style={{ height: splashImageSize, zIndex: index }}
+                />
+              );
+            })
+          ) : (
+            <img
+              src={splashImage}
+              alt={`${name} Preview`}
+              className="m-auto preview"
+              style={{ height: splashImageSize }}
+            />
+          )}
+        </div>
         {Object.keys(categories).map((category) => (
           <div key={category}>
             <section id="accordion" className="accordion m-4">

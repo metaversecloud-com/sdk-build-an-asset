@@ -48,6 +48,14 @@ h4 {
   position: relative;
 }
 
+.preview {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+}
+
 /* added temporarily, remove once styles are updated */
 .card.success {
   border-color: #00875a;

@@ -18,7 +18,7 @@ export const Home = () => {
   const navigate = useNavigate();
 
   const themeName = getThemeName();
-  const themeData = getThemeData();
+  const { splashImage, texts } = getThemeData();
 
   const userAssetId = worldDataObject?.[themeName]?.[interactiveParams.profileId]?.droppedAssetId;
 
@@ -56,8 +56,8 @@ export const Home = () => {
   return (
     <PageContainer
       isLoading={!worldDataObject?.[themeName]}
-      headerText={themeData.texts.header}
-      previewImageURL={themeData.splashImage}
+      headerText={texts.header}
+      previewImageURL={splashImage}
       footerContent={
         userAssetId ? (
           <>
@@ -68,7 +68,7 @@ export const Home = () => {
           </>
         ) : (
           <button className="btn" disabled={areButtonsDisabled} onClick={handleClaimAsset}>
-            {themeData.texts.button}
+            {texts.button}
           </button>
         )
       }
@@ -82,11 +82,11 @@ export const Home = () => {
                 isClearAssetFromUnclaimedAsset={true}
               />
             )}
-            <h3>{themeData.texts.alreadyHave}</h3>
-            <p>{themeData.texts.chooseNew}</p>
+            <h3>{texts.alreadyHave}</h3>
+            <p>{texts.chooseNew}</p>
           </>
         ) : (
-          <p>{themeData.texts.description}</p>
+          <p>{texts.description}</p>
         )}
       </div>
     </PageContainer>
