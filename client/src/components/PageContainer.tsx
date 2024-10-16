@@ -7,7 +7,7 @@ import { AdminView, AdminIconButton, Loading } from "@/components/index.js";
 import { GlobalStateContext } from "@context/GlobalContext";
 
 // utils
-import { getS3URL, getThemeData, getThemeName } from "@/utils";
+import { getS3URL, getThemeName } from "@/utils";
 
 export const PageContainer = ({
   children,
@@ -28,7 +28,6 @@ export const PageContainer = ({
   const [showSettings, setShowSettings] = useState(false);
 
   const themeName = getThemeName();
-  const themeData = getThemeData();
   const S3URL = `${getS3URL()}/${themeName}`;
 
   if (isLoading) return <Loading />;
@@ -48,8 +47,8 @@ export const PageContainer = ({
           {previewImageURL && (
             <img
               src={previewImageURL === "data:," ? `${S3URL}/claimedAsset.png` : previewImageURL}
-              alt={`${themeData.name} Preview`}
-              className="img-previewImageURL m-auto"
+              alt={`${themeName} Preview`}
+              className="m-auto"
             />
           )}
           {isAssetAlreadyTaken ? (

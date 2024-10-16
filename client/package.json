@@ -11,13 +11,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "merge-images": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.1"
   },
   "devDependencies": {
-    "@types/merge-images": "^1.2.4",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^7.0.2",

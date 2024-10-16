@@ -7,14 +7,14 @@ export const ClearAssetButton = ({
   handleToggleShowClearAssetModal: () => void;
   fromAdmin?: boolean;
 }) => {
-  const themeData = getThemeData();
+  const { texts } = getThemeData();
   return (
     <>
       <button
         className={fromAdmin ? "btn btn-danger-outline" : "btn btn-danger"}
         onClick={() => handleToggleShowClearAssetModal()}
       >
-        {fromAdmin ? themeData.texts.clearAssetButtonAdmin : themeData.texts.clearAssetButtonGeneral}
+        {fromAdmin ? texts.clearAssetButtonAdmin : texts.clearAssetButtonGeneral}
       </button>
     </>
   );
