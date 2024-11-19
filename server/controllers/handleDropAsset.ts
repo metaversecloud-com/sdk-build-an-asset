@@ -17,8 +17,17 @@ import { VisitorInterface } from "@rtsdk/topia";
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
     const credentials = getCredentials(req.query);
-    const { displayName, identityId, interactivePublicKey, profileId, themeName, urlSlug, username, visitorId } =
-      credentials;
+    const {
+      displayName,
+      identityId,
+      interactivePublicKey,
+      profileId,
+      sceneDropId,
+      themeName,
+      urlSlug,
+      username,
+      visitorId,
+    } = credentials;
 
     const { imageInfo } = req.body;
 
@@ -76,6 +85,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       interactivePublicKey,
       layer1: s3Url,
       position,
+      sceneDropId,
       uniqueName: `${themeName}System-${profileId}`,
       urlSlug,
     });
