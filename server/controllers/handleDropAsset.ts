@@ -12,7 +12,7 @@ import {
   Visitor,
   World,
 } from "../utils/index.js";
-import { VisitorInterface } from "@rtsdk/topia";
+import { DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
 
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
@@ -46,7 +46,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     };
 
     // remove all user assets
-    const droppedAssets = await world.fetchDroppedAssetsWithUniqueName({
+    const droppedAssets: DroppedAssetInterface[] = await world.fetchDroppedAssetsWithUniqueName({
       uniqueName: `${themeName}System-${profileId}`,
     });
 
@@ -54,8 +54,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       await Promise.all(
         droppedAssets.map((droppedAsset) => {
           droppedAsset.deleteDroppedAsset();
-          // @ts-ignore
-          deleteFromS3(req.hostname, droppedAsset.topLayerURL);
+          if (droppedAsset.topLayerURL) deleteFromS3(req.hostname, droppedAsset.topLayerURL);
         }),
       );
     }

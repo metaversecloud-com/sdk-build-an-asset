@@ -13,6 +13,7 @@ import {
   validateImageInfo,
 } from "../utils/index.js";
 import { WorldDataObject } from "../types/WorldDataObject.js";
+import { DroppedAssetInterface } from "@rtsdk/topia";
 
 export const handleEditDroppedAsset = async (req: Request, res: Response) => {
   try {
@@ -35,9 +36,8 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       return res.json({ isAssetAlreadyTaken: true });
     }
 
-    const droppedAsset = await DroppedAsset.get(assetId, urlSlug, { credentials });
-    // @ts-ignore
-    await deleteFromS3(host, droppedAsset.topLayerURL);
+    const droppedAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
+    if (droppedAsset.topLayerURL) await deleteFromS3(host, droppedAsset.topLayerURL);
     const s3Url = await generateS3Url(imageInfo, profileId, themeName, host);
 
     const modifiedName = username.replace(/ /g, "%20");

@@ -10,7 +10,7 @@ export const validateImageInfo = ({ imageInfo, themeName }: { imageInfo: ImageIn
     if (themeName === "locker") {
       requiredFields = ["Locker Base", "Top Shelf", "Bottom Shelf", "Door"];
     } else if (themeName === "desk") {
-      requiredFields = ["Desk Base", "Accessories"];
+      requiredFields = ["Wall", "Floor", "Desk"];
     } else if (themeName === "snowman") {
       requiredFields = ["Body", "Head", "Accessories", "Arms"];
     } else if (themeName === "pumpkin") {
