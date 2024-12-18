@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 
+// constants
 import { CategoryType } from "@/constants";
 
 // components
@@ -42,24 +43,6 @@ export const EditAsset = () => {
   const [imageInfo, setImageInfo] = useState({});
   const [images, setImages] = useState<string[]>([]);
 
-  const isSelectedItem = (category: string, imageName: string) => {
-    return selected[category]?.some((selectedImage: string) => {
-      if (!selectedImage) return false;
-
-      return (
-        selectedImage === imageName ||
-        categories[category].items.some((item) => {
-          if (item.imageName.split(".")[0] === imageName && item.variations) {
-            return item.variations?.some((variation) => {
-              return selectedImage === variation;
-            });
-          }
-          return false;
-        })
-      );
-    });
-  };
-
   useEffect(() => {
     setLoading(true);
     const urlParams = new URLSearchParams(window.location.search);
@@ -68,7 +51,7 @@ export const EditAsset = () => {
       info[category] = [];
 
       for (const key of urlParams.keys()) {
-        if (key.includes(`${category.replace(/\s/g, "")}`)) {
+        if (key.replace(/[0-9]/g, "") === `${category.replace(" ", "")}`) {
           info[category].push(`${urlParams.get(key)}`);
         }
       }
@@ -91,6 +74,7 @@ export const EditAsset = () => {
         errors[category] = true;
       }
     }
+
     setValidationErrors(errors);
   }, [selected]);
 
@@ -102,7 +86,7 @@ export const EditAsset = () => {
 
   const updateAsset = (category: string, image: string, item: CategoryType) => {
     setValidationErrors({ ...validationErrors, [category]: false });
-    const updatedSelection = { ...selected };
+    const updatedSelection = selected;
 
     if (!image) {
       // selection is cleared
@@ -154,6 +138,32 @@ export const EditAsset = () => {
     const orderedImages = layerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
 
     setImages(orderedImages);
+  };
+
+  const isSelectedItem = (category: string, imageName: string) => {
+    return selected[category]?.some((selectedImage: string) => {
+      if (!selectedImage) return false;
+
+      return (
+        selectedImage === imageName ||
+        categories[category].items.some((item) => {
+          if (item.imageName.split(".")[0] === imageName && item.variations) {
+            return item.variations?.some((variation) => {
+              return selectedImage === variation;
+            });
+          }
+          return false;
+        })
+      );
+    });
+  };
+
+  const getItemSrc = (category: string, imageName: string, variations?: string[]) => {
+    let imgSrc = `${S3URL}/${imageName}`;
+    const selectedSet = new Set(selected[category]);
+    const matches = variations?.filter((str: string) => selectedSet.has(str));
+    if (matches && matches.length > 0) imgSrc = `${S3URL}/${matches[0]}`;
+    return imgSrc;
   };
 
   const handleOpenModalWithVariations = (item: CategoryType, category: string) => {
@@ -297,7 +307,7 @@ export const EditAsset = () => {
                               />
                             </div>
                           )}
-                          <img src={`${S3URL}/${item.imageName}`} alt={item.imageName} />
+                          <img src={getItemSrc(category, item.imageName, item.variations)} alt={category} />
                         </button>
                       ))}
                     </div>
