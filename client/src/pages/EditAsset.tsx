@@ -97,6 +97,9 @@ export const EditAsset = () => {
         return item && selectedItem !== item.imageName;
       });
       if (item.defaultImage) updatedSelection[category].push(item.defaultImage);
+    } else if (updatedSelection[category].includes(image)) {
+      // remove item from array
+      updatedSelection[category] = updatedSelection[category].filter((selectedItem) => selectedItem !== image);
     } else {
       if (categories[category].selectionLimits?.max === 1) {
         // TODO: solve for max !== 1 && max !== Infinity
