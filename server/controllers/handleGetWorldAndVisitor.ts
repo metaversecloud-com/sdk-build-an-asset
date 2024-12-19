@@ -32,7 +32,7 @@ export const handleGetWorldAndVisitor = async (req: Request, res: Response) => {
 
     return res.json({ visitorIsAdmin: isAdmin, worldDataObject: world.dataObject });
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "handleGetWorldAndVisitor",
       message: "Error getting world and visitor",

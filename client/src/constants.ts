@@ -57,7 +57,8 @@ interface ThemeDetailsInterface {
 }
 
 interface ThemeType extends ThemeDetailsInterface {
-  layerOrder: string[];
+  topLayerOrder: string[];
+  bottomLayerOrder?: string[];
   categories: {
     [category: string]: {
       selectionLimits: { min: number; max: number };
@@ -119,7 +120,7 @@ const getDefaultTheme = (shouldDropAsset: boolean, themeName: string): ThemeDeta
 export const themes: ThemesType = {
   locker: {
     ...getDefaultTheme(false, "Locker"),
-    layerOrder: ["Locker Base", "Top Shelf", "Bottom Shelf", "Door"],
+    topLayerOrder: ["Locker Base", "Top Shelf", "Bottom Shelf", "Door"],
     categories: {
       "Locker Base": {
         selectionLimits: { min: 1, max: Infinity },
@@ -294,17 +295,8 @@ export const themes: ThemesType = {
   },
   desk: {
     ...getDefaultTheme(false, "Desk"),
-    layerOrder: [
-      "Wall",
-      "Floor",
-      "Wall Decor",
-      "Floor Accessories",
-      "Desk",
-      "Desk Accessories",
-      "Chair",
-      "Computers",
-      "Banners",
-    ],
+    topLayerOrder: ["Desk", "Desk Accessories", "Chair", "Computers", "Banners"],
+    bottomLayerOrder: ["Wall", "Floor", "Wall Decor", "Floor Accessories"],
     categories: {
       "Wall": {
         selectionLimits: { min: 1, max: 1 },
@@ -669,7 +661,7 @@ export const themes: ThemesType = {
   snowman: {
     ...getDefaultTheme(true, "Snowman"),
     namePlural: "Snowmen",
-    layerOrder: ["Body", "Arms", "Head", "Accessories"],
+    topLayerOrder: ["Body", "Arms", "Head", "Accessories"],
     splashImageSize: 180,
     categories: {
       Body: {
@@ -726,7 +718,7 @@ export const themes: ThemesType = {
   },
   pumpkin: {
     ...getDefaultTheme(true, "Pumpkin"),
-    layerOrder: ["Body", "Eyes", "Mouth"],
+    topLayerOrder: ["Body", "Eyes", "Mouth"],
     categories: {
       Body: {
         selectionLimits: { min: 1, max: 1 },

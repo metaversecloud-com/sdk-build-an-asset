@@ -87,7 +87,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
 
     return res.json({ droppedAsset, worldDataObject: world.dataObject });
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "handleClaimDroppedAsset",
       message: "Error claiming dropped asset",

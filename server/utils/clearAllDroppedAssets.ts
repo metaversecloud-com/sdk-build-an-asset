@@ -22,7 +22,7 @@ export const clearAllDroppedAssets = async ({
 
     await Promise.all(promises);
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "clearAllDroppedAssets",
       message: "Error clearing all dropped assets",

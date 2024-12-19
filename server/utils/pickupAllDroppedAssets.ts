@@ -23,7 +23,7 @@ export const pickupAllDroppedAssets = async ({
       );
     }
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "pickupAllDroppedAssets",
       message: "Error picking up all dropped assets",

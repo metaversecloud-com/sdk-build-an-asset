@@ -20,12 +20,18 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, themeName, urlSlug, username, visitorId } = credentials;
 
-    const { imageInfo } = req.body;
+    const { imageInfo, requiredTopLayerCategories, requiredBottomLayerCategories } = req.body;
+    const { topLayerInfo, bottomLayerInfo } = imageInfo;
 
     const host = req.hostname;
     const baseUrl = getBaseUrl(host);
 
-    if (!validateImageInfo({ imageInfo, themeName })) return;
+    if (topLayerInfo && bottomLayerInfo) {
+      validateImageInfo(topLayerInfo, requiredTopLayerCategories);
+      validateImageInfo(bottomLayerInfo, requiredBottomLayerCategories);
+    } else {
+      validateImageInfo(imageInfo, requiredTopLayerCategories);
+    }
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
     const world = await World.create(urlSlug, { credentials });
@@ -38,10 +44,16 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
 
     const droppedAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
     if (droppedAsset.topLayerURL) await deleteFromS3(host, droppedAsset.topLayerURL);
-    const s3Url = await generateS3Url(imageInfo, profileId, themeName, host);
+    if (droppedAsset.bottomLayerURL) await deleteFromS3(host, droppedAsset.bottomLayerURL);
+
+    const topLayerS3Url = await generateS3Url(topLayerInfo ? topLayerInfo : imageInfo, profileId, themeName, host);
+    const bottomLayerS3Url = bottomLayerInfo ? await generateS3Url(bottomLayerInfo, profileId, themeName, host) : "";
+    const s3Url = bottomLayerInfo
+      ? await generateS3Url({ topLayerInfo, ...bottomLayerInfo }, profileId, themeName, host)
+      : topLayerS3Url;
 
     const modifiedName = username.replace(/ /g, "%20");
-    const imageInfoParam = generateImageInfoParam(imageInfo);
+    const imageInfoParam = generateImageInfoParam(topLayerInfo ? { ...topLayerInfo, ...bottomLayerInfo } : imageInfo);
 
     if (!imageInfoParam || !modifiedName || !profileId) {
       return res.status(400).json({ error: "Missing imageInfoParam, modifiedName or profileId" });
@@ -51,7 +63,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
 
     await Promise.all([
       droppedAsset.fetchDroppedAssetById(),
-      droppedAsset.updateWebImageLayers("", s3Url),
+      droppedAsset.updateWebImageLayers(bottomLayerS3Url, topLayerS3Url),
       droppedAsset.updateClickType({ clickableLink, clickableLinkTitle: themeName }),
       world.updateDataObject(
         {
@@ -96,7 +108,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       worldDataObject: world.dataObject,
     });
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "handleEditDroppedAsset",
       message: "Error editing dropped asset",

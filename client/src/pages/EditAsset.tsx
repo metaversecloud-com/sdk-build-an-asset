@@ -18,8 +18,16 @@ export const EditAsset = () => {
   const { visitorIsAdmin } = useContext(GlobalStateContext);
 
   const themeName = getThemeName();
-  const { categories, shouldDropAsset, layerOrder, name, saveButtonText, splashImage, splashImageSize } =
-    getThemeData();
+  const {
+    bottomLayerOrder,
+    categories,
+    shouldDropAsset,
+    name,
+    saveButtonText,
+    splashImage,
+    splashImageSize,
+    topLayerOrder,
+  } = getThemeData();
 
   const S3URL = `${getS3URL()}/${themeName}`;
 
@@ -32,35 +40,32 @@ export const EditAsset = () => {
 
   const [isLoading, setLoading] = useState(false);
   const [isButtonSaveAssetDisabled, setIsButtonSaveAssetDisabled] = useState(false);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentItemVariations, setCurrentItemVariations] = useState<string[]>([]);
-  const [currentItem, setCurrentItem] = useState<{ category: string; imageName: string; variations?: string[] }>();
   const [validationErrors, setValidationErrors] = useState<{ [category: string]: boolean }>({});
 
-  const [selectedItem, setSelectedItem] = useState<string>("");
-
+  // imageInfo sent to backend on handleSaveToBackend
   const [imageInfo, setImageInfo] = useState({});
+  // images displayed in preview (stacked in order)
   const [images, setImages] = useState<string[]>([]);
+  const [requiredTopLayerCategories, setRequiredTopLayerCategories] = useState<string[]>([]);
+  const [requiredBottomLayerCategories, setRequiredBottomLayerCategories] = useState<string[]>([]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // selectedItem is the variation selected in the modal
+  const [selectedItem, setSelectedItem] = useState<string>("");
+  const [currentItemVariations, setCurrentItemVariations] = useState<string[]>([]);
+  const [currentItem, setCurrentItem] = useState<{ category: string; imageName: string; variations?: string[] }>();
 
   useEffect(() => {
     setLoading(true);
-    const urlParams = new URLSearchParams(window.location.search);
+    getInitialSelection();
 
-    const initialSelection = layerOrder.reduce((info: { [category: string]: string[] }, category: string) => {
-      info[category] = [];
+    const requiredTop = topLayerOrder.filter((category) => categories[category].selectionLimits?.min > 0);
+    setRequiredTopLayerCategories(requiredTop);
 
-      for (const key of urlParams.keys()) {
-        if (key.replace(/[0-9]/g, "") === `${category.replace(" ", "")}`) {
-          info[category].push(`${urlParams.get(key)}`);
-        }
-      }
-
-      return info;
-    }, {});
-
-    getPreview(initialSelection);
-    setLoading(false);
+    const requiredBottom = bottomLayerOrder
+      ? bottomLayerOrder.filter((category) => categories[category].selectionLimits?.min > 0)
+      : [];
+    setRequiredBottomLayerCategories(requiredBottom);
   }, []);
 
   useEffect(() => {
@@ -84,6 +89,28 @@ export const EditAsset = () => {
     else setIsButtonSaveAssetDisabled(false);
   }, [validationErrors]);
 
+  const getInitialSelection = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const getSelection = (layerOrder: string[]) => {
+      return layerOrder.reduce((info: { [category: string]: string[] }, category: string) => {
+        info[category] = [];
+        for (const key of urlParams.keys()) {
+          if (key.replace(/[0-9]/g, "") === `${category.replace(" ", "")}`) {
+            info[category].push(`${urlParams.get(key)}`);
+          }
+        }
+        return info;
+      }, {});
+    };
+
+    const topSelection = await getSelection(topLayerOrder);
+    const bottomSelection = bottomLayerOrder ? await getSelection(bottomLayerOrder) : {};
+
+    getPreview({ ...topSelection, ...bottomSelection });
+    setLoading(false);
+  };
+
   const updateAsset = (category: string, image: string, item: CategoryType) => {
     setValidationErrors({ ...validationErrors, [category]: false });
     const updatedSelection = selected;
@@ -98,7 +125,7 @@ export const EditAsset = () => {
       });
       if (item.defaultImage) updatedSelection[category].push(item.defaultImage);
     } else if (updatedSelection[category].includes(image)) {
-      // remove item from array
+      // selection is toggled, remove item from array
       updatedSelection[category] = updatedSelection[category].filter((selectedItem) => selectedItem !== image);
     } else {
       if (categories[category].selectionLimits?.max === 1) {
@@ -119,28 +146,35 @@ export const EditAsset = () => {
     getPreview(updatedSelection);
   };
 
-  const getPreview = (selection: { [key: string]: string[] }) => {
+  const getPreview = async (selection: { [key: string]: string[] }) => {
     setSelected(selection);
 
-    const updatedImageInfo = layerOrder.reduce((info: { [category: string]: object }, category: string) => {
-      if (selection[category]) {
-        info[category] = selection[category]
-          .map((item) => {
-            if (item) return { imageName: item };
-            return null;
-          })
-          .filter(Boolean);
-      } else {
-        info[category] = [];
-      }
-      return info;
-    }, {});
+    const getImageInfo = (layerOrder: string[]) => {
+      return layerOrder.reduce((info: { [category: string]: object }, category: string) => {
+        if (selection[category]) {
+          info[category] = selection[category]
+            .map((item) => {
+              if (item) return { imageName: item };
+              return null;
+            })
+            .filter(Boolean);
+        } else {
+          info[category] = [];
+        }
+        return info;
+      }, {});
+    };
 
-    setImageInfo(updatedImageInfo);
+    const topLayerInfo = await getImageInfo(topLayerOrder);
 
-    const orderedImages = layerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
+    const bottomLayerInfo = bottomLayerOrder ? await getImageInfo(bottomLayerOrder) : {};
+    setImageInfo({ topLayerInfo, bottomLayerInfo });
 
-    setImages(orderedImages);
+    const orderedBottomImage = bottomLayerOrder
+      ? bottomLayerOrder.flatMap((category) => (selection[category] ? selection[category] : []))
+      : [];
+    const orderedTopImage = topLayerOrder.flatMap((category) => (selection[category] ? selection[category] : []));
+    setImages([...orderedBottomImage, ...orderedTopImage]);
   };
 
   const isSelectedItem = (category: string, imageName: string) => {
@@ -195,7 +229,7 @@ export const EditAsset = () => {
     const url = shouldDropAsset ? "/dropped-assets/drop" : "/dropped-assets/edit";
 
     backendAPI
-      .post(url, { imageInfo })
+      .post(url, { imageInfo, requiredTopLayerCategories, requiredBottomLayerCategories })
       .then((response) => {
         dispatch!({
           type: SET_GAME_STATE,
