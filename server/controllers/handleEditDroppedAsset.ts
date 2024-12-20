@@ -48,7 +48,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     const topLayerS3Url = await generateS3Url(topLayerInfo ? topLayerInfo : imageInfo, profileId, themeName, host);
     const bottomLayerS3Url = bottomLayerInfo ? await generateS3Url(bottomLayerInfo, profileId, themeName, host) : "";
     const s3Url = bottomLayerInfo
-      ? await generateS3Url({ ...topLayerInfo, ...bottomLayerInfo }, profileId, themeName, host)
+      ? await generateS3Url({ ...bottomLayerInfo, ...topLayerInfo }, profileId, themeName, host)
       : topLayerS3Url;
 
     const modifiedName = username.replace(/ /g, "%20");
