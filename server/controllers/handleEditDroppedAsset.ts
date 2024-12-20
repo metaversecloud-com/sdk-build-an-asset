@@ -33,7 +33,6 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       validateImageInfo(imageInfo, requiredTopLayerCategories);
     }
 
-    const visitor = Visitor.create(visitorId, urlSlug, { credentials });
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
     const dataObject = world.dataObject as WorldDataObject;
@@ -49,7 +48,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     const topLayerS3Url = await generateS3Url(topLayerInfo ? topLayerInfo : imageInfo, profileId, themeName, host);
     const bottomLayerS3Url = bottomLayerInfo ? await generateS3Url(bottomLayerInfo, profileId, themeName, host) : "";
     const s3Url = bottomLayerInfo
-      ? await generateS3Url({ topLayerInfo, ...bottomLayerInfo }, profileId, themeName, host)
+      ? await generateS3Url({ ...topLayerInfo, ...bottomLayerInfo }, profileId, themeName, host)
       : topLayerS3Url;
 
     const modifiedName = username.replace(/ /g, "%20");
@@ -62,7 +61,6 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     const clickableLink = `${baseUrl}/${themeName}/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
 
     await Promise.all([
-      droppedAsset.fetchDroppedAssetById(),
       droppedAsset.updateWebImageLayers(bottomLayerS3Url, topLayerS3Url),
       droppedAsset.updateClickType({ clickableLink, clickableLinkTitle: themeName }),
       world.updateDataObject(
@@ -94,6 +92,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       },
     });
 
+    const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
     visitor.fireToast({
       groupId: themeName,
       title: "✅ Success",
