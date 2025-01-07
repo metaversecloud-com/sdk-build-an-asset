@@ -647,7 +647,6 @@ export const themes: ThemesType = {
               "bannerBalloons.png",
               "bannerBirthday1.png",
               "bannerBirthday2.png",
-              "bannerPennant1.png",
               "bannerPennant2.png",
               "bannerPennant3.png",
               "bannerPuffs4.png",
