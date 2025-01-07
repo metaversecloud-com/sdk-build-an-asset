@@ -295,8 +295,8 @@ export const themes: ThemesType = {
   },
   desk: {
     ...getDefaultTheme(false, "Desk"),
-    topLayerOrder: ["Desk", "Desk Accessories", "Chair", "Computers", "Banners"],
-    bottomLayerOrder: ["Wall", "Floor", "Wall Decor", "Floor Accessories"],
+    topLayerOrder: ["Desk", "Desk Accessories", "Computers", "Chair", "Floor Accessories", "Banners"],
+    bottomLayerOrder: ["Wall", "Floor", "Wall Decor", "Floor Lamp"],
     categories: {
       "Wall": {
         selectionLimits: { min: 1, max: 1 },
@@ -419,8 +419,8 @@ export const themes: ThemesType = {
           },
         ],
       },
-      "Floor Accessories": {
-        selectionLimits: { min: 0, max: Infinity },
+      "Floor Lamp": {
+        selectionLimits: { min: 0, max: 1 },
         items: [
           {
             subcategory: "Floor Lamp",
@@ -431,25 +431,6 @@ export const themes: ThemesType = {
               "floorAccessoryLamp3.png",
               "floorAccessoryLamp4.png",
             ],
-          },
-          {
-            subcategory: "Floor Left",
-            imageName: "floorAccessoryLeftBackpack1.png",
-            variations: [
-              "floorAccessoryLeftBackpack1.png",
-              "floorAccessoryLeftBackpack2.png",
-              "floorAccessoryLeftBackpack3.png",
-              "floorAccessoryLeftBackpack4.png",
-              "floorAccessoryLeftPlant1.png",
-              "floorAccessoryLeftPlant2.png",
-              "floorAccessoryLeftPlant3.png",
-              "floorAccessoryLeftPlant4.png",
-            ],
-          },
-          {
-            subcategory: "Floor Right",
-            imageName: "floorAccessoryRightPlant3.png",
-            variations: ["floorAccessoryRightPlant3.png", "floorAccessoryRightSoccerBall.png"],
           },
         ],
       },
@@ -571,29 +552,6 @@ export const themes: ThemesType = {
           },
         ],
       },
-      "Chair": {
-        selectionLimits: { min: 0, max: Infinity },
-        items: [
-          {
-            subcategory: "Chairs",
-            imageName: "chairBluePurple.png",
-            variations: [
-              "chairBluePurple.png",
-              "chairCandyGreen.png",
-              "chairElectricBlue.png",
-              "chairExecutive1.png",
-              "chairExecutive2.png",
-              "chairExecutive3.png",
-              "chairExecutive4.png",
-              "chairGamer.png",
-              "chairPurple.png",
-              "chairPurpleBlue.png",
-              "chairPurpleNatural.png",
-              "chairStool.png",
-            ],
-          },
-        ],
-      },
       "Computers": {
         selectionLimits: { min: 0, max: Infinity },
         items: [
@@ -629,6 +587,53 @@ export const themes: ThemesType = {
               "computerRightMonitor2.png",
               "computerRightMonitorWideSceen.png",
             ],
+          },
+        ],
+      },
+      "Chair": {
+        selectionLimits: { min: 0, max: Infinity },
+        items: [
+          {
+            subcategory: "Chairs",
+            imageName: "chairBluePurple.png",
+            variations: [
+              "chairBluePurple.png",
+              "chairCandyGreen.png",
+              "chairElectricBlue.png",
+              "chairExecutive1.png",
+              "chairExecutive2.png",
+              "chairExecutive3.png",
+              "chairExecutive4.png",
+              "chairGamer.png",
+              "chairPurple.png",
+              "chairPurpleBlue.png",
+              "chairPurpleNatural.png",
+              "chairStool.png",
+            ],
+          },
+        ],
+      },
+      "Floor Accessories": {
+        selectionLimits: { min: 0, max: Infinity },
+        items: [
+          {
+            subcategory: "Floor Left",
+            imageName: "floorAccessoryLeftBackpack1.png",
+            variations: [
+              "floorAccessoryLeftBackpack1.png",
+              "floorAccessoryLeftBackpack2.png",
+              "floorAccessoryLeftBackpack3.png",
+              "floorAccessoryLeftBackpack4.png",
+              "floorAccessoryLeftPlant1.png",
+              "floorAccessoryLeftPlant2.png",
+              "floorAccessoryLeftPlant3.png",
+              "floorAccessoryLeftPlant4.png",
+            ],
+          },
+          {
+            subcategory: "Floor Right",
+            imageName: "floorAccessoryRightPlant3.png",
+            variations: ["floorAccessoryRightPlant3.png", "floorAccessoryRightSoccerBall.png"],
           },
         ],
       },
