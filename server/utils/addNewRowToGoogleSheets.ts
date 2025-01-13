@@ -55,6 +55,6 @@ export const addNewRowToGoogleSheets = async (SSAEvents: SSAEvent[]) => {
       },
     });
   } catch (error) {
-    console.error(JSON.stringify(error));
+    return console.error(JSON.stringify(error));
   }
 };

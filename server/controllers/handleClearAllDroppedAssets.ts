@@ -54,7 +54,7 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
 
     return res.json({ worldDataObject: world.dataObject });
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "handleClearAllDroppedAssets",
       message: "Error clearing all dropped assets",

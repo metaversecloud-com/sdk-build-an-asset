@@ -32,7 +32,7 @@ export const handleMoveToDroppedAsset = async (req: Request, res: Response) => {
       success: true,
     });
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "handleMoveToDroppedAsset",
       message: "Error moving to dropped asset",

@@ -40,7 +40,7 @@ export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
 
     return res.json({ success: true });
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "handlePickupDroppedAsset",
       message: "Error picking up dropped asset",

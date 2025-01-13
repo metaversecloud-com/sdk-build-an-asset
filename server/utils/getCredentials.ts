@@ -3,7 +3,14 @@ import { errorHandler } from "./errorHandler.js";
 
 export const getCredentials = (query: any): Credentials => {
   try {
-    const requiredFields = ["interactiveNonce", "interactivePublicKey", "urlSlug", "visitorId"];
+    const requiredFields = [
+      "interactiveNonce",
+      "interactivePublicKey",
+      "profileId",
+      "themeName",
+      "urlSlug",
+      "visitorId",
+    ];
     const missingFields = requiredFields.filter((variable) => !query[variable]);
     if (missingFields.length > 0) {
       throw `Missing required parameters: ${missingFields.join(", ")}`;
