@@ -26,12 +26,10 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     const host = req.hostname;
     const baseUrl = getBaseUrl(host);
 
-    if (topLayerInfo || bottomLayerInfo) {
-      if (topLayerInfo) validateImageInfo(topLayerInfo, requiredTopLayerCategories);
-      if (bottomLayerInfo) validateImageInfo(bottomLayerInfo, requiredBottomLayerCategories);
-    } else {
-      validateImageInfo(imageInfo, requiredTopLayerCategories);
-    }
+    if (requiredTopLayerCategories?.length > 0)
+      validateImageInfo(topLayerInfo || imageInfo, requiredTopLayerCategories);
+    if (bottomLayerInfo && requiredBottomLayerCategories?.length > 0)
+      validateImageInfo(bottomLayerInfo, requiredBottomLayerCategories);
 
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
@@ -45,7 +43,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     if (droppedAsset.topLayerURL) await deleteFromS3(host, droppedAsset.topLayerURL);
     if (droppedAsset.bottomLayerURL) await deleteFromS3(host, droppedAsset.bottomLayerURL);
 
-    const topLayerS3Url = await generateS3Url(topLayerInfo ? topLayerInfo : imageInfo, profileId, themeName, host);
+    const topLayerS3Url = await generateS3Url(topLayerInfo || imageInfo, profileId, themeName, host);
     const bottomLayerS3Url = bottomLayerInfo ? await generateS3Url(bottomLayerInfo, profileId, themeName, host) : "";
     const s3Url = bottomLayerInfo
       ? await generateS3Url({ ...bottomLayerInfo, ...topLayerInfo }, profileId, themeName, host)
