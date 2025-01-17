@@ -16,7 +16,7 @@ const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
   let maxWidth = 0;
   let maxHeight = 0;
 
-  console.log("🚀 ~ file: generateS3URL.ts:20 ~ images:", JSON.stringify(images));
+  console.log("🚀 ~ file: generateS3URL.ts:20 ~ images.length:", images.length);
   if (images.length === 0) return;
   images.forEach((image) => {
     if (image.bitmap.width > maxWidth) maxWidth = image.bitmap.width;
@@ -55,7 +55,6 @@ const uploadToS3 = async (buffer: Buffer, fileName: string, themeName: string) =
 };
 
 export const generateS3Url = async (imageInfo: ImageInfo, profileId: string, themeName: string, host: string) => {
-  console.log("🚀 ~ file: generateS3URL.ts:57 ~ imageInfo:", imageInfo);
   let baseDir = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}`;
 
   // Mock image placeholder for localhost, since we don't have S3 Bucket PUT permissions for localhost in AWS
@@ -65,7 +64,7 @@ export const generateS3Url = async (imageInfo: ImageInfo, profileId: string, the
   if (!mergedImageBuffer) throw new Error("Failed to generate merged image buffer.");
 
   const imageFullName = `${profileId}-${Date.now()}.png`;
-  console.log("🚀 ~ file: generateS3URL.ts:67 ~ imageFullName:", imageFullName);
+  console.log("🚀 ~ file: generateS3URL.ts:68 ~ imageFullName:", imageFullName);
   return uploadToS3(mergedImageBuffer, imageFullName, themeName);
 };
 

@@ -22,6 +22,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
 
     const { imageInfo, requiredTopLayerCategories, requiredBottomLayerCategories } = req.body;
     const { topLayerInfo, bottomLayerInfo } = imageInfo;
+    console.log("🚀 ~ file: handleEditDroppedAsset.ts:25 ~ bottomLayerInfo:", bottomLayerInfo);
 
     const host = req.hostname;
     const baseUrl = getBaseUrl(host);
@@ -44,10 +45,8 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     if (droppedAsset.bottomLayerURL) await deleteFromS3(host, droppedAsset.bottomLayerURL);
 
     const topLayerS3Url = await generateS3Url(topLayerInfo || imageInfo, profileId, themeName, host);
-    console.log("🚀 ~ file: handleEditDroppedAsset.ts:47 ~ topLayerS3Url:", topLayerS3Url);
-    const bottomLayerS3Url =
-      bottomLayerInfo.length > 0 ? await generateS3Url(bottomLayerInfo, profileId, themeName, host) : "";
-    console.log("🚀 ~ file: handleEditDroppedAsset.ts:49 ~ bottomLayerS3Url:", bottomLayerS3Url);
+    const bottomLayerS3Url = bottomLayerInfo ? await generateS3Url(bottomLayerInfo, profileId, themeName, host) : "";
+    console.log("🚀 ~ file: handleEditDroppedAsset.ts:48 ~ bottomLayerS3Url:", bottomLayerS3Url);
     const s3Url =
       bottomLayerInfo.length > 0
         ? await generateS3Url({ ...bottomLayerInfo, ...topLayerInfo }, profileId, themeName, host)
