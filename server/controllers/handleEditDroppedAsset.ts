@@ -26,9 +26,9 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     const host = req.hostname;
     const baseUrl = getBaseUrl(host);
 
-    if (topLayerInfo && bottomLayerInfo) {
-      validateImageInfo(topLayerInfo, requiredTopLayerCategories);
-      validateImageInfo(bottomLayerInfo, requiredBottomLayerCategories);
+    if (topLayerInfo || bottomLayerInfo) {
+      if (topLayerInfo) validateImageInfo(topLayerInfo, requiredTopLayerCategories);
+      if (bottomLayerInfo) validateImageInfo(bottomLayerInfo, requiredBottomLayerCategories);
     } else {
       validateImageInfo(imageInfo, requiredTopLayerCategories);
     }
