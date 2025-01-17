@@ -44,10 +44,13 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     if (droppedAsset.bottomLayerURL) await deleteFromS3(host, droppedAsset.bottomLayerURL);
 
     const topLayerS3Url = await generateS3Url(topLayerInfo || imageInfo, profileId, themeName, host);
+    console.log("🚀 ~ file: handleEditDroppedAsset.ts:47 ~ topLayerS3Url:", topLayerS3Url);
     const bottomLayerS3Url = bottomLayerInfo ? await generateS3Url(bottomLayerInfo, profileId, themeName, host) : "";
+    console.log("🚀 ~ file: handleEditDroppedAsset.ts:49 ~ bottomLayerS3Url:", bottomLayerS3Url);
     const s3Url = bottomLayerInfo
       ? await generateS3Url({ ...bottomLayerInfo, ...topLayerInfo }, profileId, themeName, host)
       : topLayerS3Url;
+    console.log("🚀 ~ file: handleEditDroppedAsset.ts:51 ~ s3Url:", s3Url);
 
     const modifiedName = username.replace(/ /g, "%20");
     const imageInfoParam = generateImageInfoParam(topLayerInfo ? { ...topLayerInfo, ...bottomLayerInfo } : imageInfo);

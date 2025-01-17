@@ -16,7 +16,7 @@ const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
   let maxWidth = 0;
   let maxHeight = 0;
 
-  console.log("🚀 ~ file: generateS3URL.ts:20 ~ images:", images);
+  console.log("🚀 ~ file: generateS3URL.ts:20 ~ images:", JSON.stringify(images));
   images.forEach((image) => {
     if (image.bitmap.width > maxWidth) maxWidth = image.bitmap.width;
     if (image.bitmap.height > maxHeight) maxHeight = image.bitmap.height;
@@ -63,6 +63,7 @@ export const generateS3Url = async (imageInfo: ImageInfo, profileId: string, the
   if (!mergedImageBuffer) throw new Error("Failed to generate merged image buffer.");
 
   const imageFullName = `${profileId}-${Date.now()}.png`;
+  console.log("🚀 ~ file: generateS3URL.ts:67 ~ imageFullName:", imageFullName);
   return uploadToS3(mergedImageBuffer, imageFullName, themeName);
 };
 
