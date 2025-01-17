@@ -21,15 +21,18 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     const { assetId, profileId, themeName, urlSlug, username, visitorId } = credentials;
 
     const { imageInfo, requiredTopLayerCategories, requiredBottomLayerCategories } = req.body;
-    const { topLayerInfo, bottomLayerInfo } = imageInfo;
+    const { topLayerInfo, bottomLayerInfo } = imageInfo || {};
+    const hasBottomLayer = bottomLayerInfo && Object.keys(bottomLayerInfo).length > 0;
 
     const host = req.hostname;
     const baseUrl = getBaseUrl(host);
 
-    if (requiredTopLayerCategories?.length > 0)
+    if (requiredTopLayerCategories?.length > 0) {
       validateImageInfo(topLayerInfo || imageInfo, requiredTopLayerCategories);
-    if (bottomLayerInfo && requiredBottomLayerCategories?.length > 0)
+    }
+    if (bottomLayerInfo && requiredBottomLayerCategories?.length > 0) {
       validateImageInfo(bottomLayerInfo, requiredBottomLayerCategories);
+    }
 
     const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
@@ -44,11 +47,10 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     if (droppedAsset.bottomLayerURL) await deleteFromS3(host, droppedAsset.bottomLayerURL);
 
     const topLayerS3Url = await generateS3Url(topLayerInfo || imageInfo, profileId, themeName, host);
-    const bottomLayerS3Url = bottomLayerInfo ? await generateS3Url(bottomLayerInfo, profileId, themeName, host) : "";
-    const s3Url =
-      bottomLayerInfo.length > 0
-        ? await generateS3Url({ ...bottomLayerInfo, ...topLayerInfo }, profileId, themeName, host)
-        : topLayerS3Url;
+    const bottomLayerS3Url = hasBottomLayer ? await generateS3Url(bottomLayerInfo, profileId, themeName, host) : "";
+    const s3Url = hasBottomLayer
+      ? await generateS3Url({ ...bottomLayerInfo, ...topLayerInfo }, profileId, themeName, host)
+      : topLayerS3Url;
 
     const modifiedName = username.replace(/ /g, "%20");
     const imageInfoParam = generateImageInfoParam(topLayerInfo ? { ...topLayerInfo, ...bottomLayerInfo } : imageInfo);
