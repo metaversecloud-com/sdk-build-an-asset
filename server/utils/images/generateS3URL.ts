@@ -6,6 +6,7 @@ const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
   let images = [];
 
   for (const category in imageInfo) {
+    if (category.length === 0) return;
     for (const item of imageInfo[category]) {
       const image = await Jimp.read(`${baseDir}/${item.imageName}`);
       images.push(image);
@@ -15,13 +16,10 @@ const combineImages = async (imageInfo: ImageInfo, baseDir: string) => {
   let maxWidth = 0;
   let maxHeight = 0;
 
+  if (images.length === 0) return;
   images.forEach((image) => {
-    if (image.bitmap.width > maxWidth) {
-      maxWidth = image.bitmap.width;
-    }
-    if (image.bitmap.height > maxHeight) {
-      maxHeight = image.bitmap.height;
-    }
+    if (image.bitmap.width > maxWidth) maxWidth = image.bitmap.width;
+    if (image.bitmap.height > maxHeight) maxHeight = image.bitmap.height;
   });
 
   let mergedImage = new Jimp(maxWidth, maxHeight, 0x00000000);
@@ -62,6 +60,8 @@ export const generateS3Url = async (imageInfo: ImageInfo, profileId: string, the
   if (host === "localhost") return `${baseDir}/claimedAsset.png`;
 
   const mergedImageBuffer = await combineImages(imageInfo, baseDir);
+  if (!mergedImageBuffer) throw new Error("Failed to generate merged image buffer.");
+
   const imageFullName = `${profileId}-${Date.now()}.png`;
   return uploadToS3(mergedImageBuffer, imageFullName, themeName);
 };

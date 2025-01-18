@@ -30,20 +30,11 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     } = credentials;
 
     const { imageInfo } = req.body;
+    const { topLayerInfo } = imageInfo;
 
     if (!imageInfo) throw "Input data missing. Please provide the imageInfo in the request body.";
 
     const world = await World.create(urlSlug, { credentials });
-
-    const s3Url = await generateS3Url(imageInfo, profileId, themeName, req.hostname);
-
-    // get drop position
-    const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
-    const { moveTo } = visitor as VisitorInterface;
-    const position = {
-      x: (moveTo?.x || 0) + 60,
-      y: moveTo?.y || 0,
-    };
 
     // remove all user assets
     const droppedAssets: DroppedAssetInterface[] = await world.fetchDroppedAssetsWithUniqueName({
@@ -60,13 +51,23 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     }
 
     const modifiedName = username.replace(/ /g, "%20");
-    const imageInfoParam = generateImageInfoParam(imageInfo);
+    const imageInfoParam = generateImageInfoParam(topLayerInfo || imageInfo);
 
     if (!imageInfoParam || !modifiedName) throw "Missing imageInfoParam or modifiedName";
 
     const baseUrl = getBaseUrl(req.hostname);
 
     const clickableLink = `${baseUrl}/${themeName}/claimed?${imageInfoParam}&visitor-name=${modifiedName}&ownerProfileId=${profileId}`;
+
+    const s3Url = await generateS3Url(topLayerInfo || imageInfo, profileId, themeName, req.hostname);
+
+    // get drop position
+    const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
+    const { moveTo } = visitor as VisitorInterface;
+    const position = {
+      x: (moveTo?.x || 0) + 60,
+      y: moveTo?.y || 0,
+    };
 
     // drop new asset
     const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {

@@ -21,16 +21,17 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     const { assetId, profileId, themeName, urlSlug, username, visitorId } = credentials;
 
     const { imageInfo, requiredTopLayerCategories, requiredBottomLayerCategories } = req.body;
-    const { topLayerInfo, bottomLayerInfo } = imageInfo;
+    const { topLayerInfo, bottomLayerInfo } = imageInfo || {};
+    const hasBottomLayer = bottomLayerInfo && Object.keys(bottomLayerInfo).length > 0;
 
     const host = req.hostname;
     const baseUrl = getBaseUrl(host);
 
-    if (topLayerInfo && bottomLayerInfo) {
-      validateImageInfo(topLayerInfo, requiredTopLayerCategories);
+    if (requiredTopLayerCategories?.length > 0) {
+      validateImageInfo(topLayerInfo || imageInfo, requiredTopLayerCategories);
+    }
+    if (bottomLayerInfo && requiredBottomLayerCategories?.length > 0) {
       validateImageInfo(bottomLayerInfo, requiredBottomLayerCategories);
-    } else {
-      validateImageInfo(imageInfo, requiredTopLayerCategories);
     }
 
     const world = await World.create(urlSlug, { credentials });
@@ -45,9 +46,9 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     if (droppedAsset.topLayerURL) await deleteFromS3(host, droppedAsset.topLayerURL);
     if (droppedAsset.bottomLayerURL) await deleteFromS3(host, droppedAsset.bottomLayerURL);
 
-    const topLayerS3Url = await generateS3Url(topLayerInfo ? topLayerInfo : imageInfo, profileId, themeName, host);
-    const bottomLayerS3Url = bottomLayerInfo ? await generateS3Url(bottomLayerInfo, profileId, themeName, host) : "";
-    const s3Url = bottomLayerInfo
+    const topLayerS3Url = await generateS3Url(topLayerInfo || imageInfo, profileId, themeName, host);
+    const bottomLayerS3Url = hasBottomLayer ? await generateS3Url(bottomLayerInfo, profileId, themeName, host) : "";
+    const s3Url = hasBottomLayer
       ? await generateS3Url({ ...bottomLayerInfo, ...topLayerInfo }, profileId, themeName, host)
       : topLayerS3Url;
 
