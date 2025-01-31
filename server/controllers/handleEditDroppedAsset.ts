@@ -85,7 +85,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     ]);
 
     world.triggerParticle({
-      name: "blueSmoke_puff",
+      name: "firework1_gold",
       duration: 3,
       position: {
         x: droppedAsset?.position?.x,
