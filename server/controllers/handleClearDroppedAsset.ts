@@ -26,9 +26,7 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
 
     const baseUrl = getBaseUrl(req.hostname);
 
-    const droppedAsset = DroppedAsset.create(selectedAssetId, urlSlug, {
-      credentials,
-    });
+    const droppedAsset = DroppedAsset.create(selectedAssetId, urlSlug, { credentials });
 
     await Promise.all([
       droppedAsset?.updateWebImageLayers("", `${getS3URL(themeName)}/unclaimedAsset.png`),
@@ -50,9 +48,8 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
     ]);
 
     await world.fetchDataObject();
-    return res.json({
-      worldDataObject: world.dataObject,
-    });
+
+    return res.json({ worldDataObject: world.dataObject });
   } catch (error) {
     return errorHandler({
       error,

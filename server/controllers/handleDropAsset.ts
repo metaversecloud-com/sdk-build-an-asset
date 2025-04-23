@@ -70,9 +70,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     };
 
     // drop new asset
-    const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", {
-      credentials: { interactivePublicKey, profileId, urlSlug },
-    });
+    const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", { credentials });
 
     const droppedAsset = await DroppedAsset.drop(asset, {
       clickType: "link",
@@ -130,9 +128,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       },
     ]).catch((error) => console.error(JSON.stringify(error)));
 
-    return res.json({
-      droppedAsset,
-    });
+    return res.json({ droppedAsset });
   } catch (error) {
     return errorHandler({
       error,

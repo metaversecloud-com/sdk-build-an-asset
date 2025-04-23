@@ -16,9 +16,7 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
 
     const { shouldDelete } = req.body;
 
-    const visitor = await Visitor.get(visitorId, urlSlug, {
-      credentials,
-    });
+    const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
     const { isAdmin } = visitor as VisitorInterface;
     if (!isAdmin) throw "Only admins have enough permissions to pick up all assets";
 
