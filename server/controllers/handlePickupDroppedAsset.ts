@@ -6,9 +6,7 @@ export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
 
-    const visitor = await Visitor.get(visitorId, urlSlug, {
-      credentials,
-    });
+    const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
     await visitor.closeIframe(assetId);
 
     visitor.updatePublicKeyAnalytics([
