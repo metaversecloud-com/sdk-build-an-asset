@@ -76,14 +76,22 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
       },
     ]).catch((error) => console.error(JSON.stringify(error)));
 
-    world.triggerParticle({
-      name: "whiteStar_burst",
-      duration: 3,
-      position: {
-        x: droppedAsset?.position?.x,
-        y: droppedAsset?.position?.y,
-      },
-    });
+    world
+      .triggerParticle({
+        name: "whiteStar_burst",
+        duration: 3,
+        position: {
+          x: droppedAsset?.position?.x,
+          y: droppedAsset?.position?.y,
+        },
+      })
+      .catch((error) =>
+        errorHandler({
+          error,
+          functionName: "handleClaimDroppedAsset",
+          message: "Error triggering particle effects",
+        }),
+      );
 
     return res.json({ droppedAsset, worldDataObject: world.dataObject });
   } catch (error) {

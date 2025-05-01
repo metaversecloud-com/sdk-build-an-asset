@@ -88,11 +88,19 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       urlSlug,
     });
 
-    world.triggerParticle({
-      name: "whiteStar_burst",
-      duration: 3,
-      position,
-    });
+    world
+      .triggerParticle({
+        name: "whiteStar_burst",
+        duration: 3,
+        position,
+      })
+      .catch((error) =>
+        errorHandler({
+          error,
+          functionName: "handleDropAsset",
+          message: "Error triggering particle effects",
+        }),
+      );
 
     world.updateDataObject(
       {
