@@ -84,21 +84,37 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       ),
     ]);
 
-    world.triggerParticle({
-      name: "firework1_gold",
-      duration: 3,
-      position: {
-        x: droppedAsset?.position?.x,
-        y: droppedAsset?.position?.y,
-      },
-    });
+    world
+      .triggerParticle({
+        name: "firework1_gold",
+        duration: 3,
+        position: {
+          x: droppedAsset?.position?.x,
+          y: droppedAsset?.position?.y,
+        },
+      })
+      .catch((error) =>
+        errorHandler({
+          error,
+          functionName: "handleEditDroppedAsset",
+          message: "Error triggering particle effects",
+        }),
+      );
 
     const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
-    visitor.fireToast({
-      groupId: themeName,
-      title: "✅ Success",
-      text: `The ${themeName} has been decorated. Your changes have been saved!`,
-    });
+    visitor
+      .fireToast({
+        groupId: themeName,
+        title: "✅ Success",
+        text: `The ${themeName} has been decorated. Your changes have been saved!`,
+      })
+      .catch((error) =>
+        errorHandler({
+          error,
+          functionName: "handleEditDroppedAsset",
+          message: "Error firing toast",
+        }),
+      );
 
     await world.fetchDataObject();
 
