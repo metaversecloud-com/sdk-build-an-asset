@@ -26,7 +26,14 @@ export const handleMoveToDroppedAsset = async (req: Request, res: Response) => {
       y,
     });
 
-    if (closeIframeAfterMove) await visitor.closeIframe(assetId);
+    if (closeIframeAfterMove)
+      visitor.closeIframe(assetId).catch((error: any) =>
+        errorHandler({
+          error,
+          functionName: "handleMoveToDroppedAsset",
+          message: "Error closing iframe",
+        }),
+      );
 
     return res.json({
       success: true,
