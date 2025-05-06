@@ -46,7 +46,13 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
       },
     );
 
-    visitor.closeIframe(assetId);
+    visitor.closeIframe(assetId).catch((error: any) =>
+      errorHandler({
+        error,
+        functionName: "handleClearAllDroppedAssets",
+        message: "Error closing iframe",
+      }),
+    );
 
     await world.fetchDataObject();
 

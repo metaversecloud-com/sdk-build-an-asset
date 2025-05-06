@@ -7,7 +7,13 @@ export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
     const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
 
     const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
-    await visitor.closeIframe(assetId);
+    visitor.closeIframe(assetId).catch((error: any) =>
+      errorHandler({
+        error,
+        functionName: "handlePickupDroppedAsset",
+        message: "Error closing iframe",
+      }),
+    );
 
     visitor.updatePublicKeyAnalytics([
       {
