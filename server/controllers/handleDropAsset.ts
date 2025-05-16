@@ -36,19 +36,10 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
 
     const world = await World.create(urlSlug, { credentials });
 
-    // remove all user assets
+    // get user's dropped assets
     const droppedAssets: DroppedAssetInterface[] = await world.fetchDroppedAssetsWithUniqueName({
       uniqueName: `${themeName}System-${profileId}`,
     });
-
-    if (droppedAssets && droppedAssets.length > 0) {
-      await Promise.all(
-        droppedAssets.map((droppedAsset) => {
-          droppedAsset.deleteDroppedAsset();
-          if (droppedAsset.topLayerURL) deleteFromS3(req.hostname, droppedAsset.topLayerURL);
-        }),
-      );
-    }
 
     const modifiedName = username.replace(/ /g, "%20");
     const imageInfoParam = generateImageInfoParam(topLayerInfo || imageInfo);
@@ -87,6 +78,16 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       uniqueName: `${themeName}System-${profileId}`,
       urlSlug,
     });
+
+    // remove user's previously dropped assets
+    if (droppedAssets && droppedAssets.length > 0) {
+      await Promise.all(
+        droppedAssets.map((droppedAsset) => {
+          droppedAsset.deleteDroppedAsset();
+          if (droppedAsset.topLayerURL) deleteFromS3(req.hostname, droppedAsset.topLayerURL);
+        }),
+      );
+    }
 
     world
       .triggerParticle({
