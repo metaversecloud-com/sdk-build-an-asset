@@ -16,6 +16,8 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
 
     const { shouldDelete } = req.body;
 
+    const promises = [];
+
     const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
     const { isAdmin } = visitor as VisitorInterface;
     if (!isAdmin) throw "Only admins have enough permissions to pick up all assets";
@@ -28,31 +30,37 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
     });
 
     if (shouldDelete) {
-      await pickupAllDroppedAssets({ credentials, droppedAssets });
+      promises.push(pickupAllDroppedAssets({ credentials, droppedAssets }));
     } else {
-      await clearAllDroppedAssets({ droppedAssets, hostname: req.hostname, themeName });
+      promises.push(clearAllDroppedAssets({ droppedAssets, hostname: req.hostname, themeName }));
     }
 
-    await world.updateDataObject(
-      { [themeName]: {} },
-      {
-        analytics: [
-          {
-            analyticName: `${themeName}-${shouldDelete ? "pickupAllAssets" : "resets"}`,
-            uniqueKey: profileId,
-            profileId,
-          },
-        ],
-      },
+    promises.push(
+      world.updateDataObject(
+        { [themeName]: {} },
+        {
+          analytics: [
+            {
+              analyticName: `${themeName}-${shouldDelete ? "pickupAllAssets" : "resets"}`,
+              uniqueKey: profileId,
+              profileId,
+            },
+          ],
+        },
+      ),
     );
 
-    visitor.closeIframe(assetId).catch((error: any) =>
-      errorHandler({
-        error,
-        functionName: "handleClearAllDroppedAssets",
-        message: "Error closing iframe",
-      }),
+    promises.push(
+      visitor.closeIframe(assetId).catch((error: any) =>
+        errorHandler({
+          error,
+          functionName: "handleClearAllDroppedAssets",
+          message: "Error closing iframe",
+        }),
+      ),
     );
+
+    await Promise.all(promises);
 
     await world.fetchDataObject();
 

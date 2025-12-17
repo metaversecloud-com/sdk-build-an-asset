@@ -64,42 +64,41 @@ export const ClaimedAsset = () => {
   if (assetParams?.edit == "true") handleEditAsset();
 
   return (
-    <>
+    <PageContainer
+      isLoading={isLoading}
+      headerText={capitalize(themeName)}
+      previewImageURL={s3Url || splashImage}
+      showClearAssetBtn={isAssetOwner || visitorIsAdmin}
+      footerContent={
+        isAssetOwner && (
+          <>
+            {showEditAssetButton && (
+              <button className="btn mb-2" onClick={() => handleEditAsset()}>
+                Edit {themeName}
+              </button>
+            )}
+            <div className="mb-2">
+              <MoveToAssetButton />
+            </div>
+            {showClearAssetButton && (
+              <ClearAssetButton handleToggleShowClearAssetModal={handleToggleShowClearAssetModal} />
+            )}
+          </>
+        )
+      }
+    >
+      <div style={{ marginTop: "20px", textAlign: "center" }}>
+        <p>This {themeName} belongs to</p>
+        <h3>{visitorName}!</h3>
+      </div>
+
       {showClearAssetModal && (
         <ClearAssetModal
           handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
           isClearAssetFromUnclaimedAsset={false}
         />
       )}
-      <PageContainer
-        isLoading={isLoading}
-        headerText={capitalize(themeName)}
-        previewImageURL={s3Url || splashImage}
-        showClearAssetBtn={isAssetOwner || visitorIsAdmin}
-        footerContent={
-          isAssetOwner && (
-            <>
-              {showEditAssetButton && (
-                <button className="btn mb-2" onClick={() => handleEditAsset()}>
-                  Edit {themeName}
-                </button>
-              )}
-              <div className="mb-2">
-                <MoveToAssetButton />
-              </div>
-              {showClearAssetButton && (
-                <ClearAssetButton handleToggleShowClearAssetModal={handleToggleShowClearAssetModal} />
-              )}
-            </>
-          )
-        }
-      >
-        <div style={{ marginTop: "20px", textAlign: "center" }}>
-          <p>This {themeName} belongs to</p>
-          <h3>{visitorName}!</h3>
-        </div>
-      </PageContainer>
-    </>
+    </PageContainer>
   );
 };
 

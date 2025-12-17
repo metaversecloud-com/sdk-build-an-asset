@@ -76,12 +76,6 @@ export const Home = () => {
       <div className="m-6">
         {userAssetId ? (
           <>
-            {showClearAssetModal && (
-              <ClearAssetModal
-                handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
-                isClearAssetFromUnclaimedAsset={true}
-              />
-            )}
             <h3>{texts.alreadyHave}</h3>
             <p>{texts.chooseNew}</p>
           </>
@@ -89,6 +83,13 @@ export const Home = () => {
           <p>{texts.description}</p>
         )}
       </div>
+
+      {showClearAssetModal && (
+        <ClearAssetModal
+          handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
+          isClearAssetFromUnclaimedAsset={true}
+        />
+      )}
     </PageContainer>
   );
 };

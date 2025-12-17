@@ -34,7 +34,11 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
 
     if (!imageInfo) throw "Input data missing. Please provide the imageInfo in the request body.";
 
-    const world = await World.create(urlSlug, { credentials });
+    const [world, visitor, asset] = await Promise.all([
+      World.create(urlSlug, { credentials }),
+      Visitor.get(visitorId, urlSlug, { credentials }),
+      Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", { credentials }),
+    ]);
 
     // get user's dropped assets
     const droppedAssets: DroppedAssetInterface[] = await world.fetchDroppedAssetsWithUniqueName({
@@ -53,7 +57,6 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     const s3Url = await generateS3Url(topLayerInfo || imageInfo, profileId, themeName, req.hostname);
 
     // get drop position
-    const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
     const { moveTo } = visitor as VisitorInterface;
     const position = {
       x: (moveTo?.x || 0) + 60,
@@ -61,8 +64,6 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     };
 
     // drop new asset
-    const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", { credentials });
-
     const droppedAsset = await DroppedAsset.drop(asset, {
       clickType: "link",
       clickableLink,
@@ -89,53 +90,55 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       );
     }
 
-    world
-      .triggerParticle({
-        name: "whiteStar_burst",
-        duration: 3,
-        position,
-      })
-      .catch((error) =>
-        errorHandler({
-          error,
-          functionName: "handleDropAsset",
-          message: "Error triggering particle effects",
-        }),
-      );
+    await Promise.all([
+      world
+        .triggerParticle({
+          name: "whiteStar_burst",
+          duration: 3,
+          position,
+        })
+        .catch((error) =>
+          errorHandler({
+            error,
+            functionName: "handleDropAsset",
+            message: "Error triggering particle effects",
+          }),
+        ),
 
-    world.updateDataObject(
-      {
-        [`${themeName}.${profileId}`]: { droppedAssetId: droppedAsset.id, s3Url },
-      },
-      {
-        lock: {
-          lockId: `${droppedAsset.id}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
-          releaseLock: true,
+      world.updateDataObject(
+        {
+          [`${themeName}.${profileId}`]: { droppedAssetId: droppedAsset.id, s3Url },
         },
-        analytics: [
-          {
-            analyticName: `${themeName}-updates`,
-            profileId,
-            uniqueKey: profileId,
+        {
+          lock: {
+            lockId: `${droppedAsset.id}-${new Date(Math.round(new Date().getTime() / 10000) * 10000)}`,
+            releaseLock: true,
           },
-          {
-            analyticName: `${themeName}-builds`,
-            profileId,
-            uniqueKey: profileId,
-          },
-        ],
-      },
-    );
+          analytics: [
+            {
+              analyticName: `${themeName}-updates`,
+              profileId,
+              uniqueKey: profileId,
+            },
+            {
+              analyticName: `${themeName}-builds`,
+              profileId,
+              uniqueKey: profileId,
+            },
+          ],
+        },
+      ),
 
-    addNewRowToGoogleSheets([
-      {
-        appName: "Build an Asset",
-        displayName,
-        event: `${themeName}-starts`,
-        identityId,
-        urlSlug,
-      },
-    ]).catch((error) => console.error(JSON.stringify(error)));
+      addNewRowToGoogleSheets([
+        {
+          appName: "Build an Asset",
+          displayName,
+          event: `${themeName}-starts`,
+          identityId,
+          urlSlug,
+        },
+      ]).catch((error) => console.error(JSON.stringify(error))),
+    ]);
 
     return res.json({ droppedAsset });
   } catch (error) {
