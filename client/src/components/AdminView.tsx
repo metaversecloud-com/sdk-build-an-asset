@@ -15,25 +15,24 @@ export const AdminView = ({ showClearAssetBtn }: { showClearAssetBtn: boolean })
 
   return (
     <>
-      {showClearAssetModal ? (
-        <ClearAssetModal
-          handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
-          isClearAssetFromUnclaimedAsset={false}
-        />
-      ) : (
-        ""
-      )}
-      {showClearAllAssetsModal ? (
-        <ClearAllAssetsModal handleToggleShowClearAllAssetsModal={handleToggleShowClearAllAssetsModal} />
-      ) : (
-        ""
-      )}
       {showClearAssetBtn && (
         <div style={{ marginBottom: "10px" }}>
           <ClearAssetButton handleToggleShowClearAssetModal={handleToggleShowClearAssetModal} fromAdmin={true} />
         </div>
       )}
+
       <ClearAllAssetsButton handleToggleShowClearAllAssetsModal={handleToggleShowClearAllAssetsModal} />
+
+      {showClearAssetModal && (
+        <ClearAssetModal
+          handleToggleShowClearAssetModal={handleToggleShowClearAssetModal}
+          isClearAssetFromUnclaimedAsset={false}
+        />
+      )}
+
+      {showClearAllAssetsModal && (
+        <ClearAllAssetsModal handleToggleShowClearAllAssetsModal={handleToggleShowClearAllAssetsModal} />
+      )}
     </>
   );
 };

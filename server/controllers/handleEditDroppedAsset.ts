@@ -13,7 +13,7 @@ import {
   validateImageInfo,
 } from "../utils/index.js";
 import { WorldDataObject } from "../types/WorldDataObject.js";
-import { DroppedAssetInterface } from "@rtsdk/topia";
+import { DroppedAssetInterface, VisitorInterface, WorldInterface } from "@rtsdk/topia";
 
 export const handleEditDroppedAsset = async (req: Request, res: Response) => {
   try {
@@ -27,6 +27,14 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     const host = req.hostname;
     const baseUrl = getBaseUrl(host);
 
+    const [world, visitor, droppedAsset]: [WorldInterface, VisitorInterface, DroppedAssetInterface] = await Promise.all(
+      [
+        World.create(urlSlug, { credentials }),
+        Visitor.create(visitorId, urlSlug, { credentials }),
+        DroppedAsset.get(assetId, urlSlug, { credentials }),
+      ],
+    );
+
     if (requiredTopLayerCategories?.length > 0) {
       validateImageInfo(topLayerInfo || imageInfo, requiredTopLayerCategories);
     }
@@ -34,7 +42,6 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       validateImageInfo(bottomLayerInfo, requiredBottomLayerCategories);
     }
 
-    const world = await World.create(urlSlug, { credentials });
     await world.fetchDataObject();
     const dataObject = world.dataObject as WorldDataObject;
 
@@ -42,7 +49,6 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       return res.json({ isAssetAlreadyTaken: true });
     }
 
-    const droppedAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
     if (droppedAsset.topLayerURL) await deleteFromS3(host, droppedAsset.topLayerURL);
     if (droppedAsset.bottomLayerURL) await deleteFromS3(host, droppedAsset.bottomLayerURL);
 
@@ -82,39 +88,37 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
           ],
         },
       ),
+      world
+        .triggerParticle({
+          name: "firework1_gold",
+          duration: 3,
+          position: {
+            x: droppedAsset?.position?.x,
+            y: droppedAsset?.position?.y,
+          },
+        })
+        .catch((error: any) =>
+          errorHandler({
+            error,
+            functionName: "handleEditDroppedAsset",
+            message: "Error triggering particle effects",
+          }),
+        ),
+
+      visitor
+        .fireToast({
+          groupId: themeName,
+          title: "✅ Success",
+          text: `The ${themeName} has been decorated. Your changes have been saved!`,
+        })
+        .catch((error) =>
+          errorHandler({
+            error,
+            functionName: "handleEditDroppedAsset",
+            message: "Error firing toast",
+          }),
+        ),
     ]);
-
-    world
-      .triggerParticle({
-        name: "firework1_gold",
-        duration: 3,
-        position: {
-          x: droppedAsset?.position?.x,
-          y: droppedAsset?.position?.y,
-        },
-      })
-      .catch((error) =>
-        errorHandler({
-          error,
-          functionName: "handleEditDroppedAsset",
-          message: "Error triggering particle effects",
-        }),
-      );
-
-    const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
-    visitor
-      .fireToast({
-        groupId: themeName,
-        title: "✅ Success",
-        text: `The ${themeName} has been decorated. Your changes have been saved!`,
-      })
-      .catch((error) =>
-        errorHandler({
-          error,
-          functionName: "handleEditDroppedAsset",
-          message: "Error firing toast",
-        }),
-      );
 
     await world.fetchDataObject();
 

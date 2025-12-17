@@ -21,14 +21,22 @@ export const handleGetWorldAndVisitor = async (req: Request, res: Response) => {
       await world.updateDataObject({ [themeName]: {} });
     }
 
-    visitor.updatePublicKeyAnalytics([
-      {
-        analyticName: `${themeName}-starts`,
-        uniqueKey: profileId,
-        profileId,
-        urlSlug,
-      },
-    ]);
+    visitor
+      .updatePublicKeyAnalytics([
+        {
+          analyticName: `${themeName}-starts`,
+          uniqueKey: profileId,
+          profileId,
+          urlSlug,
+        },
+      ])
+      .catch((error: any) =>
+        errorHandler({
+          error,
+          functionName: "handleGetWorldAndVisitor",
+          message: "Error updating public key analytics",
+        }),
+      );
 
     return res.json({ visitorIsAdmin: isAdmin, worldDataObject: world.dataObject });
   } catch (error) {
