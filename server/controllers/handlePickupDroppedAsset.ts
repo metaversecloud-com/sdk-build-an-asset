@@ -15,13 +15,21 @@ export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
       }),
     );
 
-    visitor.updatePublicKeyAnalytics([
-      {
-        analyticName: `${themeName}-pickupUserAsset`,
-        uniqueKey: profileId,
-        profileId,
-      },
-    ]);
+    visitor
+      .updatePublicKeyAnalytics([
+        {
+          analyticName: `${themeName}-pickupUserAsset`,
+          uniqueKey: profileId,
+          profileId,
+        },
+      ])
+      .catch((error: any) =>
+        errorHandler({
+          error,
+          functionName: "handlePickupDroppedAsset",
+          message: "Error updating public key analytics",
+        }),
+      );
 
     const world = await World.create(urlSlug, { credentials });
 
