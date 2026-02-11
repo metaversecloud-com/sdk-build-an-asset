@@ -30,6 +30,28 @@ Themes such as "Build a Snowman" and "Decorate a Locker" provide seasonal and th
 
 Snowmen are hosted inside the app and locker images are stored in an S3 bucket. The Locker App can identify the owners through the world dataObject, with profileId as keys, and locker id (droppedAsset id) as the value.
 
+## Environment Variables
+
+Create a `.env` file in the root directory and a `client/.env` file. See `.env-example` for a template.
+
+### Root `.env`
+
+| Variable             | Description                                                                        | Required |
+| -------------------- | ---------------------------------------------------------------------------------- | -------- |
+| `NODE_ENV`           | Node environment (e.g., `production`, `development`)                               | No       |
+| `IMG_ASSET_ID`       | Asset ID template for web image assets (e.g., `webImageAsset`)                     | No       |
+| `IS_LOCALHOST`       | Flag for local development (`true`/`false`)                                        | No       |
+| `S3_BUCKET`          | S3 bucket name for storing built assets                                            | Yes      |
+| `INSTANCE_DOMAIN`    | Topia API domain (`api.topia.io` for production, `api-stage.topia.io` for staging) | Yes      |
+| `INTERACTIVE_KEY`    | Topia interactive app key                                                          | Yes      |
+| `INTERACTIVE_SECRET` | Topia interactive app secret                                                       | Yes      |
+
+### Client `client/.env`
+
+| Variable         | Description                        | Required |
+| ---------------- | ---------------------------------- | -------- |
+| `VITE_S3_BUCKET` | S3 bucket name for the Vite client | Yes      |
+
 ## Developer Sections
 
 ### Getting Started
@@ -47,11 +69,7 @@ Refer to the `.env-example` file to configure your environment variables correct
 2. In a new terminal, navigate to the client directory: `cd client && npm start`
 3. Access `http://localhost:3001/snowman` or `http://localhost:3001/locker` to begin customization.
 
-### .env Variables
-
-Ensure all required environment variables are set as outlined in the `.env-example` file.
-
-### API Keys
+### Interactive Key Pairs
 
 Find the `INTERACTIVE_KEY`, and `INTERACTIVE_SECRET` in the admin settings in https://topia.io.
 
