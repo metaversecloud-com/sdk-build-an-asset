@@ -30,6 +30,14 @@ Themes such as "Build a Snowman" and "Decorate a Locker" provide seasonal and th
 
 Snowmen are hosted inside the app and locker images are stored in an S3 bucket. The Locker App can identify the owners through the world dataObject, with profileId as keys, and locker id (droppedAsset id) as the value.
 
+## Required Assets with Unique Names
+
+The app uses the following unique name patterns for managing dropped assets:
+
+| Unique Name Pattern               | Description           |
+| --------------------------------- | --------------------- |
+| `${themeName}System-${profileId}` | Claimed/dropped asset |
+
 ## Environment Variables
 
 Create a `.env` file in the root directory and a `client/.env` file. See `.env-example` for a template.
