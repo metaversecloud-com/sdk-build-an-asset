@@ -20,6 +20,12 @@ export const pickupAllDroppedAssets = async ({
         droppedAssetIds,
         process.env.INTERACTIVE_SECRET!,
         credentials,
+      ).catch((error) =>
+        errorHandler({
+          error,
+          functionName: "pickupAllDroppedAssets",
+          message: "Error deleting dropped assets",
+        }),
       );
     }
   } catch (error) {

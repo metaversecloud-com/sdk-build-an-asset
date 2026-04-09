@@ -12,7 +12,7 @@ import {
   Visitor,
   World,
 } from "../utils/index.js";
-import { DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
+import { DroppedAssetClickType, DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
 
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
@@ -65,7 +65,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
 
     // drop new asset
     const droppedAsset = await DroppedAsset.drop(asset, {
-      clickType: "link",
+      clickType: DroppedAssetClickType.LINK,
       clickableLink,
       clickableLinkTitle: themeName,
       clickableDisplayTextDescription: themeName,
@@ -84,7 +84,13 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
     if (droppedAssets && droppedAssets.length > 0) {
       await Promise.all(
         droppedAssets.map((droppedAsset) => {
-          droppedAsset.deleteDroppedAsset();
+          droppedAsset.deleteDroppedAsset().catch((error) =>
+            errorHandler({
+              error,
+              functionName: "handleDropAsset",
+              message: "Error deleting previous dropped asset",
+            }),
+          );
           if (droppedAsset.topLayerURL) deleteFromS3(req.hostname, droppedAsset.topLayerURL);
         }),
       );
