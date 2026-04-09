@@ -51,11 +51,23 @@ export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
           droppedAssetIds,
           process.env.INTERACTIVE_SECRET!,
           credentials,
+        ).catch((error) =>
+          errorHandler({
+            error,
+            functionName: "handlePickupDroppedAsset",
+            message: "Error deleting dropped assets",
+          }),
         );
       }
     } else {
       const droppedAsset = DroppedAsset.create(assetId, urlSlug, { credentials });
-      await droppedAsset.deleteDroppedAsset();
+      await droppedAsset.deleteDroppedAsset().catch((error) =>
+        errorHandler({
+          error,
+          functionName: "handlePickupDroppedAsset",
+          message: "Error deleting dropped asset",
+        }),
+      );
     }
 
     return res.json({ success: true });
