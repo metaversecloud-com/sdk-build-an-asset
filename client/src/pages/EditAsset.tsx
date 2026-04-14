@@ -7,7 +7,7 @@ import { CategoryType } from "@/constants";
 import { PageContainer, ItemVariationSelectorModal } from "@/components/index.js";
 
 // context
-import { GlobalDispatchContext, GlobalStateContext } from "@context/GlobalContext";
+import { GlobalDispatchContext } from "@context/GlobalContext";
 import { SET_ERROR, SET_GAME_STATE } from "@/context/types.js";
 
 // utils
@@ -15,7 +15,6 @@ import { backendAPI, getS3URL, getThemeData, getThemeName } from "@/utils";
 
 export const EditAsset = () => {
   const dispatch = useContext(GlobalDispatchContext);
-  const { visitorIsAdmin } = useContext(GlobalStateContext);
 
   const themeName = getThemeName();
   const {
@@ -267,7 +266,7 @@ export const EditAsset = () => {
       <PageContainer
         isLoading={isLoading}
         headerText={`Build your ${name}!`}
-        showClearAssetBtn={visitorIsAdmin}
+        showClearAssetBtn={false}
         footerContent={
           <button onClick={handleSaveToBackend} className="btn" disabled={isButtonSaveAssetDisabled}>
             {saveButtonText}
