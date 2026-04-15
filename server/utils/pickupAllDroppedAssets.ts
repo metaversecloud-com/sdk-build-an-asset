@@ -13,7 +13,8 @@ export const pickupAllDroppedAssets = async ({
     if (Object.keys(droppedAssets).length > 0) {
       const droppedAssetIds: string[] = [];
       for (const index in droppedAssets) {
-        if (droppedAssets[index].id) droppedAssetIds.push(droppedAssets[index].id);
+        const id = droppedAssets[index].id;
+        if (id) droppedAssetIds.push(id);
       }
       await World.deleteDroppedAssets(
         credentials.urlSlug,
