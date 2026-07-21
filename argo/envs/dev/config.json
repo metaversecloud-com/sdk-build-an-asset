@@ -1,0 +1,17 @@
+{
+  "app": "sdk-build-an-asset",
+  "env": "dev",
+  "clusterName": "Topia-dev-SDK-Apps",
+  "clusterType": "eks",
+  "namespace": "sdk-apps-dev",
+  "services": [
+    {
+      "name": "basset0",
+      "image": "368076259134.dkr.ecr.us-east-1.amazonaws.com/sdk-example:sdk-build-an-asset",
+      "hosts": [
+        "basset0-dev-topia.topia-rtsdk.com"
+      ],
+      "health": "/"
+    }
+  ]
+}
