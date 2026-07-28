@@ -1,17 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 # No `namespace:` directive: the interceptor Ingress must stay in `keda`; the
 # workload resources carry no namespace and Argo injects the Application's
 # destination namespace (sdk-apps-dev).
-
 resources:
   - ../../services/basset0
   - basset0-config.yaml
   - basset0-sealedsecret.yaml
   - basset0-httpscaledobject.yaml
   - basset0-interceptor-ingress.yaml
-
 patches:
   # Drop the direct ALB Ingress: in dev the app is fronted through the KEDA
   # interceptor so a scaled-to-zero Deployment is woken by the first request.
@@ -24,10 +21,9 @@ patches:
       kind: Ingress
       metadata:
         name: basset0
-
 # Per-service image (defaults to the shared dev ECR sdk-example:<repo>; an
 # independent deployment may pin a different tag/image).
 images:
   - name: basset0
     newName: 368076259134.dkr.ecr.us-east-1.amazonaws.com/sdk-example
-    newTag: sdk-build-an-asset
+    digest: sha256:607bb9ffef0397b50d47dd243ccf20c64f5c1ecc49359d164f28c3825e8d264f
