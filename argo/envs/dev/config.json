@@ -9,7 +9,8 @@
       "name": "basset0",
       "image": "368076259134.dkr.ecr.us-east-1.amazonaws.com/sdk-example:sdk-build-an-asset",
       "hosts": [
-        "basset0-dev-topia.topia-rtsdk.com"
+        "basset0-dev-topia.topia-rtsdk.com",
+        "locker0-dev-topia.topia-rtsdk.com"
       ],
       "health": "/"
     }

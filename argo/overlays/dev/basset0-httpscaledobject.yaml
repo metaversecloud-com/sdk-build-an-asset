@@ -9,6 +9,7 @@ spec:
   # >1 host here = scenario "same deployment, multiple URLs" (shared keys).
   hosts:
     - basset0-dev-topia.topia-rtsdk.com
+    - locker0-dev-topia.topia-rtsdk.com
   scaleTargetRef:
     name: basset0
     kind: Deployment

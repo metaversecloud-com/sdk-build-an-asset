@@ -18,7 +18,18 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
+    # basset0 and locker0 are aliases for the SAME deployment (shared keys/data).
     - host: basset0-dev-topia.topia-rtsdk.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keda-add-ons-http-interceptor-proxy
+                port:
+                  number: 8080
+    - host: locker0-dev-topia.topia-rtsdk.com
       http:
         paths:
           - path: /
