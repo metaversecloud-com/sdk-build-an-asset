@@ -27,3 +27,4 @@ images:
   - name: basset0
     newName: 368076259134.dkr.ecr.us-east-1.amazonaws.com/sdk-example
     digest: sha256:70470590f26ee3d0b856ce768a900c6fdd0717893dd5919d6763e02146bda130
+    newTag: sdk-build-an-asset
