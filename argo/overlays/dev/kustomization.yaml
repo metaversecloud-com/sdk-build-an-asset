@@ -26,5 +26,5 @@ patches:
 images:
   - name: basset0
     newName: 368076259134.dkr.ecr.us-east-1.amazonaws.com/sdk-example
-    digest: sha256:45f31d4dcf743b9a97c162c293b8054296efeb65359e5df7e8c539873677c895
+    digest: sha256:b589006cc7c009615931db1092b205cc8037b57d329cd9696a8113a07fdb0888
     newTag: sdk-build-an-asset
