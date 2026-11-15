@@ -12,6 +12,10 @@ import {
   unclaimedUrl,
 } from "../../fixtures";
 
+// The item pickers' variation modal lays its cards out for a desktop-width page: unstyled (CDN stylesheets are
+// aborted) at drawer width its cards collapse and Playwright can't click them.
+test.use({ viewport: { width: 1280, height: 720 } });
+
 const owned = (theme: string, droppedAssetId: string) => ({ droppedAssetId, s3Url: placeholderUrl(theme) });
 const claimedLink = (theme: string, ownerProfileId: string) =>
   `http://localhost:3001/${theme}/claimed?visitor-name=Owner&ownerProfileId=${ownerProfileId}`;
@@ -79,7 +83,7 @@ test.describe("claiming and decorating", () => {
     expect(state.dataObject.locker[world.profileId]).toEqual(owned("locker", KEY_ASSET_ID));
     expect(state.events).toContainEqual(expect.objectContaining({ type: "analytics", analyticName: "locker-builds" }));
     expect(state.events).toContainEqual(
-      expect.objectContaining({ type: "particles", particleId: "particle-4", position: { x: 300, y: 400 } }),
+      expect.objectContaining({ type: "particles", particleName: "whiteStar_burst", position: { x: 300, y: 400 } }),
     );
   });
 
@@ -127,7 +131,7 @@ test.describe("claiming and decorating", () => {
     });
     expect(state.assets[KEY_ASSET_ID]).toMatchObject({ topLayerURL: placeholderUrl("locker"), bottomLayerURL: "" });
     expect(state.dataObject.locker[world.profileId]).toEqual(owned("locker", KEY_ASSET_ID));
-    expect(state.events).toContainEqual(expect.objectContaining({ type: "particles", particleId: "particle-5" }));
+    expect(state.events).toContainEqual(expect.objectContaining({ type: "particles", particleName: "firework1_gold" }));
     expect(state.events).toContainEqual(expect.objectContaining({ type: "analytics", analyticName: "locker-updates" }));
   });
 
