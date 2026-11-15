@@ -2,6 +2,10 @@
 // asset next to them. Admins can pick builds up one at a time or all at once.
 import { KEY_ASSET_ID, buildAsset, expect, pickItem, pickVariation, placeholderUrl, test } from "../../fixtures";
 
+// The item pickers' variation modal lays its cards out for a desktop-width page: unstyled (CDN stylesheets are
+// aborted) at drawer width its cards collapse and Playwright can't click them.
+test.use({ viewport: { width: 1280, height: 720 } });
+
 const snowmanOf = (profileId: string) => `snowmanSystem-${profileId}`;
 
 test.describe("building a snowman", () => {
@@ -55,7 +59,7 @@ test.describe("building a snowman", () => {
       ownerProfileId: world.profileId,
     });
     expect(state.events).toContainEqual(
-      expect.objectContaining({ type: "particles", particleId: "particle-4", position: { x: 160, y: 200 } }),
+      expect.objectContaining({ type: "particles", particleName: "whiteStar_burst", position: { x: 160, y: 200 } }),
     );
     expect(state.events).toContainEqual(expect.objectContaining({ type: "analytics", analyticName: "snowman-builds" }));
   });

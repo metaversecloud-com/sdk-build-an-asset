@@ -4,6 +4,10 @@
 import { INTERACTIVE_SECRET } from "../../constants";
 import { KEY_ASSET_ID, buildAsset, expect, pickVariation, placeholderUrl, test } from "../../fixtures";
 
+// The item pickers' variation modal lays its cards out for a desktop-width page: unstyled (CDN stylesheets are
+// aborted) at drawer width its cards collapse and Playwright can't click them.
+test.use({ viewport: { width: 1280, height: 720 } });
+
 const owned = (theme: string, droppedAssetId: string) => ({ droppedAssetId, s3Url: placeholderUrl(theme) });
 const lockerInfo = (base?: string) => ({
   topLayerInfo: { "Locker Base": base ? [{ imageName: base }] : [], "Top Shelf": [], "Bottom Shelf": [], Door: [] },
