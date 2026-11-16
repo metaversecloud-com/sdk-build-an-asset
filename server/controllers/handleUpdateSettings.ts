@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { MAX_DROPPED_ASSETS_OPTIONS, Visitor, World, errorHandler, getCredentials } from "../utils/index.js";
+import { MAX_DROPPED_ASSETS_OPTIONS, Visitor, World, errorHandler, getRequiredCredentials } from "../utils/index.js";
 import { WorldDataObject } from "../types/index.js";
 import { VisitorInterface } from "@rtsdk/topia";
 
 export const handleUpdateSettings = async (req: Request, res: Response) => {
   try {
-    const credentials = getCredentials(req.query);
+    const credentials = getRequiredCredentials(req.query);
     const { profileId, themeName, urlSlug, visitorId } = credentials;
 
     const { maxDroppedAssets } = req.body;

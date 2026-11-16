@@ -4,15 +4,16 @@ import {
   World,
   errorHandler,
   getBaseUrl,
-  getCredentials,
+  getRequiredCredentials,
   isDroppedAssetClaimed,
+  releaseClaimedAsset,
 } from "../utils/index.js";
 import { WorldDataObject } from "../types/WorldDataObject.js";
 import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 
 export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
   try {
-    const credentials = getCredentials(req.query);
+    const credentials = getRequiredCredentials(req.query);
     const { assetId, displayName, identityId, profileId, themeName, urlSlug, username } = credentials;
 
     const baseUrl = getBaseUrl(req.hostname);
@@ -24,6 +25,19 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
     // Check if this dropped asset is taken
     if (isDroppedAssetClaimed({ assetId, dataObject, profileId, themeName })) {
       return res.json({ isAssetAlreadyTaken: true });
+    }
+
+    // one per player: release the player's previous sign so it isn't orphaned
+    const previousAssetId = dataObject?.[themeName]?.[profileId]?.droppedAssetId;
+    if (previousAssetId && previousAssetId !== assetId) {
+      await releaseClaimedAsset({ credentials, droppedAssetId: previousAssetId, hostname: req.hostname }).catch(
+        (error) =>
+          errorHandler({
+            error,
+            functionName: "handleClaimDroppedAsset",
+            message: "Error releasing previously claimed asset",
+          }),
+      );
     }
 
     const s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/claimedAsset.png`;

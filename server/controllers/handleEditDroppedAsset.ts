@@ -8,19 +8,23 @@ import {
   generateImageInfoParam,
   generateS3Url,
   getBaseUrl,
-  getCredentials,
+  getRequiredCredentials,
   isDroppedAssetClaimed,
-  validateImageInfo,
+  releaseClaimedAsset,
+  validateRequiredLayers,
 } from "../utils/index.js";
 import { WorldDataObject } from "../types/WorldDataObject.js";
+import { THEMES } from "../constants.js";
 import { DroppedAssetInterface, VisitorInterface, WorldInterface } from "@rtsdk/topia";
 
 export const handleEditDroppedAsset = async (req: Request, res: Response) => {
   try {
-    const credentials = getCredentials(req.query);
+    const credentials = getRequiredCredentials(req.query);
     const { assetId, profileId, themeName, urlSlug, username, visitorId } = credentials;
 
     const { imageInfo, requiredTopLayerCategories, requiredBottomLayerCategories } = req.body;
+    validateRequiredLayers({ imageInfo, requiredTopLayerCategories, requiredBottomLayerCategories, themeName });
+
     const { topLayerInfo, bottomLayerInfo } = imageInfo || {};
     const hasBottomLayer = bottomLayerInfo && Object.keys(bottomLayerInfo).length > 0;
 
@@ -35,18 +39,23 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
       ],
     );
 
-    if (requiredTopLayerCategories?.length > 0) {
-      validateImageInfo(topLayerInfo || imageInfo, requiredTopLayerCategories);
-    }
-    if (bottomLayerInfo && requiredBottomLayerCategories?.length > 0) {
-      validateImageInfo(bottomLayerInfo, requiredBottomLayerCategories);
-    }
-
     await world.fetchDataObject();
     const dataObject = world.dataObject as WorldDataObject;
 
     if (isDroppedAssetClaimed({ assetId, dataObject, profileId, themeName })) {
       return res.json({ isAssetAlreadyTaken: true });
+    }
+
+    // one per player: editing an unclaimed sign claims it, so release the player's previous sign
+    const previousAssetId = dataObject?.[themeName]?.[profileId]?.droppedAssetId;
+    if (!THEMES[themeName]?.shouldDropAsset && previousAssetId && previousAssetId !== assetId) {
+      await releaseClaimedAsset({ credentials, droppedAssetId: previousAssetId, hostname: host }).catch((error) =>
+        errorHandler({
+          error,
+          functionName: "handleEditDroppedAsset",
+          message: "Error releasing previously claimed asset",
+        }),
+      );
     }
 
     if (droppedAsset.topLayerURL) await deleteFromS3(host, droppedAsset.topLayerURL);

@@ -8,8 +8,9 @@ import {
   generateImageInfoParam,
   generateS3Url,
   getBaseUrl,
-  getCredentials,
   getDroppedAssetsToEvict,
+  getRequiredCredentials,
+  validateRequiredLayers,
   Visitor,
   World,
 } from "../utils/index.js";
@@ -18,7 +19,7 @@ import { WorldDataObject } from "../types/index.js";
 
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
-    const credentials = getCredentials(req.query);
+    const credentials = getRequiredCredentials(req.query);
     const {
       displayName,
       identityId,
@@ -31,10 +32,10 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
       visitorId,
     } = credentials;
 
-    const { imageInfo } = req.body;
-    const { topLayerInfo } = imageInfo;
+    const { imageInfo, requiredTopLayerCategories, requiredBottomLayerCategories } = req.body;
+    validateRequiredLayers({ imageInfo, requiredTopLayerCategories, requiredBottomLayerCategories, themeName });
 
-    if (!imageInfo) throw "Input data missing. Please provide the imageInfo in the request body.";
+    const { topLayerInfo } = imageInfo;
 
     const userUniqueName = `${themeName}System-${profileId}`;
 

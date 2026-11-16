@@ -1,14 +1,62 @@
 import { Request, Response } from "express";
-import { DroppedAsset, Visitor, World, errorHandler, getCredentials } from "../utils/index.js";
+import {
+  DroppedAsset,
+  Visitor,
+  World,
+  assertCanManageDroppedAsset,
+  deleteFromS3,
+  errorHandler,
+  getDroppedAssetOwnerProfileId,
+  getRequiredCredentials,
+} from "../utils/index.js";
+import { WorldDataObject } from "../types/WorldDataObject.js";
+import { DroppedAssetInterface } from "@rtsdk/topia";
 
 export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
   try {
-    const credentials = getCredentials(req.query);
+    const credentials = getRequiredCredentials(req.query);
     const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
 
     const { isClearAssetFromUnclaimedAsset } = req.body;
 
-    const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
+    const world = World.create(urlSlug, { credentials });
+    await world.fetchDataObject();
+    const dataObject = world.dataObject as WorldDataObject;
+
+    let droppedAssets: DroppedAssetInterface[] = [];
+    let ownerProfileId: string | undefined;
+
+    if (isClearAssetFromUnclaimedAsset) {
+      // player picks up their own build(s)
+      ownerProfileId = profileId;
+      droppedAssets = await world.fetchDroppedAssetsWithUniqueName({ uniqueName: `${themeName}System-${profileId}` });
+    } else {
+      const droppedAsset = await DroppedAsset.get(assetId, urlSlug, { credentials });
+      const { uniqueName } = droppedAsset as DroppedAssetInterface & { uniqueName?: string };
+      const uniqueNamePrefix = `${themeName}System-`;
+      ownerProfileId =
+        getDroppedAssetOwnerProfileId({ assetId, dataObject, themeName }) ||
+        (uniqueName?.startsWith(uniqueNamePrefix) ? uniqueName.slice(uniqueNamePrefix.length) : undefined);
+      await assertCanManageDroppedAsset({ credentials, ownerProfileId });
+      droppedAssets = [droppedAsset];
+    }
+
+    const droppedAssetIds = droppedAssets.map(({ id }) => id).filter((id): id is string => !!id);
+
+    if (droppedAssetIds.length > 0) {
+      await World.deleteDroppedAssets(urlSlug, droppedAssetIds, process.env.INTERACTIVE_SECRET!, credentials);
+      for (const { topLayerURL } of droppedAssets) {
+        if (topLayerURL) deleteFromS3(req.hostname, topLayerURL);
+      }
+    }
+
+    // clear the owner's record if it points at an asset that was just removed
+    const ownerAssetId = ownerProfileId ? dataObject?.[themeName]?.[ownerProfileId]?.droppedAssetId : undefined;
+    if (ownerAssetId && (isClearAssetFromUnclaimedAsset || droppedAssetIds.includes(ownerAssetId))) {
+      await world.updateDataObject({ [`${themeName}.${ownerProfileId}`]: null });
+    }
+
+    const visitor = Visitor.create(visitorId, urlSlug, { credentials });
 
     visitor.closeIframe(assetId).catch((error: any) =>
       errorHandler({
@@ -34,44 +82,9 @@ export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
         }),
       );
 
-    if (isClearAssetFromUnclaimedAsset) {
-      const world = await World.create(urlSlug, { credentials });
+    await world.fetchDataObject();
 
-      const droppedAssets = await world.fetchDroppedAssetsWithUniqueName({
-        uniqueName: `${themeName}System-${visitor?.profileId}`,
-      });
-
-      if (Object.keys(droppedAssets).length > 0) {
-        const droppedAssetIds: string[] = [];
-        for (const index in droppedAssets) {
-          const id = droppedAssets[index].id;
-          if (id) droppedAssetIds.push(id);
-        }
-        await World.deleteDroppedAssets(
-          credentials.urlSlug,
-          droppedAssetIds,
-          process.env.INTERACTIVE_SECRET!,
-          credentials,
-        ).catch((error) =>
-          errorHandler({
-            error,
-            functionName: "handlePickupDroppedAsset",
-            message: "Error deleting dropped assets",
-          }),
-        );
-      }
-    } else {
-      const droppedAsset = DroppedAsset.create(assetId, urlSlug, { credentials });
-      await droppedAsset.deleteDroppedAsset().catch((error) =>
-        errorHandler({
-          error,
-          functionName: "handlePickupDroppedAsset",
-          message: "Error deleting dropped asset",
-        }),
-      );
-    }
-
-    return res.json({ success: true });
+    return res.json({ success: true, worldDataObject: world.dataObject });
   } catch (error) {
     return errorHandler({
       error,

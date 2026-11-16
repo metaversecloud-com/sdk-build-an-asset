@@ -4,14 +4,14 @@ import {
   World,
   clearAllDroppedAssets,
   errorHandler,
-  getCredentials,
+  getRequiredCredentials,
   pickupAllDroppedAssets,
 } from "../utils/index.js";
 import { VisitorInterface } from "@rtsdk/topia";
 
 export const handleClearAllDroppedAssets = async (req: Request, res: Response) => {
   try {
-    const credentials = getCredentials(req.query);
+    const credentials = getRequiredCredentials(req.query);
     const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
 
     const { shouldDelete } = req.body;
