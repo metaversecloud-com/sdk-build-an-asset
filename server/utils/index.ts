@@ -5,6 +5,7 @@ export * from "./clearAllDroppedAssets.js";
 export * from "./errorHandler.js";
 export * from "./getBaseUrl.js";
 export * from "./getCredentials.js";
+export * from "./getDroppedAssetsToEvict.js";
 export * from "./getVersion.js";
 export * from "./isDroppedAssetClaimed.js";
 export * from "./pickupAllDroppedAssets.js";
