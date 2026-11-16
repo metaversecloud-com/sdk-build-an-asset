@@ -154,7 +154,6 @@ test.describe("server-side validation", () => {
 });
 
 test("claiming and saving never send the interactive secret to the browser", async ({ page, world }) => {
-  test.fail(true, "EXP-429: /claim and /edit return the raw SDK DroppedAsset (cleanReturnPayload never runs)");
   await world.seed({ asset: buildAsset("locker") });
   const bodies: string[] = [];
   page.on("response", async (response) => {

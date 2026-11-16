@@ -64,17 +64,6 @@ export type RouteSpec = {
   knownBugs?: KnownBugs;
 };
 
-// getCredentials (protected file) returns { error } instead of throwing, so every route that
-// uses it has this bug until it's fixed there.
-const GET_CREDENTIALS_DOESNT_THROW = "EXP-428 #6: getCredentials doesn't throw";
-
-// /dropped-assets/pickup swallows every Topia error and answers { success: true } even when getCredentials failed.
-const PICKUP_BUG = "EXP-434: pickup answers success without valid credentials";
-// server/index.ts registers the cleanReturnPayload scrubber after the API routes, so it never runs: the routes
-// that return an SDK DroppedAsset (claim, drop, edit) leak the secret.
-const LEAKS = "EXP-429: cleanReturnPayload is registered after the routes (server/index.ts)";
-const UNNAMED = { unnamedCredentialError: GET_CREDENTIALS_DOESNT_THROW };
-
 const imageInfo = { topLayerInfo: { "Locker Base": [{ imageName: "lockerBase_0.png" }] }, bottomLayerInfo: {} };
 
 /**
@@ -86,23 +75,21 @@ const imageInfo = { topLayerInfo: { "Locker Base": [{ imageName: "lockerBase_0.p
  * tests/app instead (open it with page.request or fetch + AbortController and check the status).
  */
 export const CREDENTIALED_ROUTES: RouteSpec[] = [
-  { method: "get", path: "/world-and-visitor", knownBugs: UNNAMED },
-  { method: "post", path: "/dropped-assets/claim", knownBugs: { leaksSecret: LEAKS, ...UNNAMED } },
-  { method: "post", path: "/dropped-assets/clear", data: { isClearAssetFromUnclaimedAsset: false }, knownBugs: UNNAMED },
-  { method: "post", path: "/dropped-assets/clear-all", data: { shouldDelete: false }, knownBugs: UNNAMED },
-  { method: "post", path: "/dropped-assets/drop", data: { imageInfo }, knownBugs: { leaksSecret: LEAKS, ...UNNAMED } },
+  { method: "get", path: "/world-and-visitor" },
+  { method: "post", path: "/dropped-assets/claim" },
+  { method: "post", path: "/dropped-assets/clear", data: { isClearAssetFromUnclaimedAsset: false } },
+  { method: "post", path: "/dropped-assets/clear-all", data: { shouldDelete: false } },
+  { method: "post", path: "/dropped-assets/drop", data: { imageInfo } },
   {
     method: "post",
     path: "/dropped-assets/edit",
     data: { imageInfo, requiredTopLayerCategories: ["Locker Base"] },
-    knownBugs: { leaksSecret: LEAKS, ...UNNAMED },
   },
-  { method: "post", path: "/dropped-assets/move-to", data: { closeIframeAfterMove: false }, knownBugs: UNNAMED },
+  { method: "post", path: "/dropped-assets/move-to", data: { closeIframeAfterMove: false } },
   {
     method: "post",
     path: "/dropped-assets/pickup",
     data: { isClearAssetFromUnclaimedAsset: false },
-    knownBugs: { acceptsMissingCredentials: PICKUP_BUG, acceptsForeignCredentials: PICKUP_BUG, ...UNNAMED },
   },
 ];
 
@@ -160,10 +147,7 @@ export const HEALTH_KNOWN_BUGS: { incompleteContract?: string } = {};
  * registers its own logging handler. Fix: process.removeAllListeners("unhandledRejection") before
  * registering the app's handler.
  */
-export const PROCESS_KNOWN_BUGS: { exitsOnUnhandledRejection?: string } = {
-  exitsOnUnhandledRejection:
-    "EXP-472: @rtsdk/topia's unhandledRejection hook calls process.exit(1); server/index.ts's handler doesn't stop it",
-};
+export const PROCESS_KNOWN_BUGS: { exitsOnUnhandledRejection?: string } = {};
 
 /**
  * The request system.spec sends a malformed JSON body to. Default: the first POST/PUT route in
@@ -179,9 +163,7 @@ export const MALFORMED_JSON_REQUEST: { method: "post" | "put"; path: string } | 
  * middleware after express.json()). Fix: an error middleware that answers body-parser errors
  * (err.type === "entity.parse.failed") with res.status(400).json({ success: false, error: "Invalid JSON" }).
  */
-export const ERROR_KNOWN_BUGS: { malformedJson?: string } = {
-  malformedJson: "EXP-473: no error middleware: Express' default error page shows the stack trace (NODE_ENV isn't production)",
-};
+export const ERROR_KNOWN_BUGS: { malformedJson?: string } = {};
 
 /**
  * true starts mock-redis/server.mjs (an in-memory Redis) next to mock-topia and points REDIS_URL at it
