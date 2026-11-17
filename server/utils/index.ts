@@ -6,6 +6,7 @@ export * from "./droppedAssetOwnership.js";
 export * from "./errorHandler.js";
 export * from "./getBaseUrl.js";
 export * from "./getCredentials.js";
+export * from "./getKeyAssetDataObject.js";
 export * from "./getDroppedAssetsToEvict.js";
 export * from "./getRequiredCredentials.js";
 export * from "./getVersion.js";

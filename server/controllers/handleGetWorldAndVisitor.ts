@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { Visitor, World, errorHandler, getCredentials } from "../utils/index.js";
-import { WorldDataObject } from "../types/WorldDataObject.js";
+import { Visitor, errorHandler, getCredentials, getKeyAssetDataObject } from "../utils/index.js";
 import { VisitorInterface } from "@rtsdk/topia";
 
 export const handleGetWorldAndVisitor = async (req: Request, res: Response) => {
@@ -11,15 +10,8 @@ export const handleGetWorldAndVisitor = async (req: Request, res: Response) => {
     const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
     const { isAdmin } = visitor as VisitorInterface;
 
-    const world = await World.create(urlSlug, { credentials });
-    await world.fetchDataObject();
-    const dataObject = world.dataObject as WorldDataObject;
-
-    if (!dataObject || Object.keys(dataObject).length === 0) {
-      await world.setDataObject({ [themeName]: {} });
-    } else if (!dataObject[themeName]) {
-      await world.updateDataObject({ [themeName]: {} });
-    }
+    // initializes the theme's data (and copies it from the world the first time a key asset is used)
+    const { dataObject } = await getKeyAssetDataObject(credentials);
 
     visitor
       .updatePublicKeyAnalytics([
@@ -38,7 +30,7 @@ export const handleGetWorldAndVisitor = async (req: Request, res: Response) => {
         }),
       );
 
-    return res.json({ visitorIsAdmin: isAdmin, worldDataObject: world.dataObject });
+    return res.json({ visitorIsAdmin: isAdmin, worldDataObject: dataObject });
   } catch (error) {
     return errorHandler({
       error,

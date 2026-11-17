@@ -1,26 +1,23 @@
 import { Request, Response } from "express";
 import {
-  World,
   assertCanManageDroppedAsset,
   errorHandler,
+  getKeyAssetDataObject,
   getDroppedAssetOwnerProfileId,
   getRequiredCredentials,
   releaseClaimedAsset,
 } from "../utils/index.js";
-import { WorldDataObject } from "../types/WorldDataObject.js";
 
 export const handleClearDroppedAsset = async (req: Request, res: Response) => {
   try {
     const credentials = getRequiredCredentials(req.query);
-    const { assetId, profileId, themeName, urlSlug } = credentials;
+    const { assetId, profileId, themeName } = credentials;
 
     const { isClearAssetFromUnclaimedAsset } = req.body;
 
-    const world = await World.create(urlSlug, { credentials });
-    await world.fetchDataObject();
-    const dataObject = world.dataObject as WorldDataObject;
+    const { dataObjectEntity, dataObject } = await getKeyAssetDataObject(credentials);
 
-    // ownerProfileId is looked up from the world data object; the query param is ignored
+    // ownerProfileId is looked up from the data object; the query param is ignored
     let selectedAssetId: string | undefined;
     let ownerProfileId: string | undefined;
 
@@ -36,7 +33,7 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
 
     await Promise.all([
       releaseClaimedAsset({ credentials, droppedAssetId: selectedAssetId, hostname: req.hostname }),
-      world.updateDataObject(
+      dataObjectEntity.updateDataObject(
         ownerProfileId && dataObject?.[themeName] ? { [`${themeName}.${ownerProfileId}`]: null } : {},
         {
           analytics: [
@@ -50,9 +47,9 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
       ),
     ]);
 
-    await world.fetchDataObject();
+    await dataObjectEntity.fetchDataObject();
 
-    return res.json({ worldDataObject: world.dataObject });
+    return res.json({ worldDataObject: dataObjectEntity.dataObject });
   } catch (error) {
     return errorHandler({
       error,

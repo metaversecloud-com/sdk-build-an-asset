@@ -1,5 +1,5 @@
 import { DroppedAssetInterface } from "@rtsdk/topia";
-import { WorldDataObject } from "../types/index.js";
+import { AppDataObject } from "../types/index.js";
 
 export const MAX_DROPPED_ASSETS_OPTIONS = [50, 200, 500];
 
@@ -8,7 +8,7 @@ export const MAX_DROPPED_ASSETS_OPTIONS = [50, 200, 500];
  * the theme stays at or below `maxDroppedAssets`.
  *
  * `otherDroppedAssets` must exclude the dropping user's own previous asset(s) since
- * those are always replaced. Age comes from `droppedAt` in the world data object;
+ * those are always replaced. Age comes from `droppedAt` in the data object;
  * assets without one (dropped before the cap existed, or missing from the data object)
  * are treated as the oldest.
  */
@@ -18,7 +18,7 @@ export const getDroppedAssetsToEvict = ({
   otherDroppedAssets,
   themeName,
 }: {
-  dataObject: WorldDataObject;
+  dataObject: AppDataObject;
   maxDroppedAssets?: number | null;
   otherDroppedAssets: DroppedAssetInterface[];
   themeName: string;

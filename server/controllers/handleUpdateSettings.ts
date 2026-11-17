@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { MAX_DROPPED_ASSETS_OPTIONS, Visitor, World, errorHandler, getRequiredCredentials } from "../utils/index.js";
-import { WorldDataObject } from "../types/index.js";
+import { MAX_DROPPED_ASSETS_OPTIONS, Visitor, errorHandler, getKeyAssetDataObject, getRequiredCredentials } from "../utils/index.js";
 import { VisitorInterface } from "@rtsdk/topia";
 
 export const handleUpdateSettings = async (req: Request, res: Response) => {
@@ -18,13 +17,11 @@ export const handleUpdateSettings = async (req: Request, res: Response) => {
     const { isAdmin } = visitor as VisitorInterface;
     if (!isAdmin) throw "Only admins have enough permissions to update settings";
 
-    const world = World.create(urlSlug, { credentials });
-    await world.fetchDataObject();
-    const dataObject = world.dataObject as WorldDataObject;
+    const { dataObjectEntity, dataObject } = await getKeyAssetDataObject(credentials);
 
     const themeSettings = { ...dataObject?.settings?.[themeName], maxDroppedAssets };
 
-    await world.updateDataObject(
+    await dataObjectEntity.updateDataObject(
       dataObject?.settings ? { [`settings.${themeName}`]: themeSettings } : { settings: { [themeName]: themeSettings } },
       {
         analytics: [
@@ -37,9 +34,9 @@ export const handleUpdateSettings = async (req: Request, res: Response) => {
       },
     );
 
-    await world.fetchDataObject();
+    await dataObjectEntity.fetchDataObject();
 
-    return res.json({ worldDataObject: world.dataObject });
+    return res.json({ worldDataObject: dataObjectEntity.dataObject });
   } catch (error) {
     return errorHandler({
       error,

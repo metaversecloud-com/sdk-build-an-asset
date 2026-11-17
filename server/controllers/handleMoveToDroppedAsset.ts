@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { DroppedAsset, Visitor, World, errorHandler, getCredentials } from "../utils/index.js";
-import { WorldDataObject } from "../types/WorldDataObject.js";
+import { DroppedAsset, Visitor, errorHandler, getCredentials, getKeyAssetDataObject } from "../utils/index.js";
 
 export const handleMoveToDroppedAsset = async (req: Request, res: Response) => {
   try {
@@ -9,13 +8,11 @@ export const handleMoveToDroppedAsset = async (req: Request, res: Response) => {
 
     const { closeIframeAfterMove } = req.body;
 
-    const world = await World.create(urlSlug, { credentials });
-    await world.fetchDataObject();
-    const dataObject = world.dataObject as WorldDataObject;
+    const { dataObject } = await getKeyAssetDataObject(credentials);
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
 
-    const userAsset = await DroppedAsset.get(dataObject[themeName][profileId]?.droppedAssetId, urlSlug, {
+    const userAsset = await DroppedAsset.get(dataObject?.[themeName]?.[profileId]?.droppedAssetId, urlSlug, {
       credentials,
     });
 

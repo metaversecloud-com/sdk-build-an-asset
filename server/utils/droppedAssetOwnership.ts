@@ -1,9 +1,9 @@
 import { VisitorInterface } from "@rtsdk/topia";
-import { Credentials, WorldDataObject } from "../types/index.js";
+import { Credentials, AppDataObject } from "../types/index.js";
 import { Visitor } from "./topiaInit.js";
 
 /**
- * Looks up which player owns a dropped asset from the world data object.
+ * Looks up which player owns a dropped asset from the app data object (key asset or world).
  * Never trust an ownerProfileId sent by the client.
  */
 export const getDroppedAssetOwnerProfileId = ({
@@ -12,7 +12,7 @@ export const getDroppedAssetOwnerProfileId = ({
   themeName,
 }: {
   assetId: string;
-  dataObject: WorldDataObject;
+  dataObject: AppDataObject;
   themeName: string;
 }): string | undefined => {
   if (!assetId) return undefined;

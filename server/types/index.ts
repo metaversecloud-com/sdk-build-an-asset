@@ -1,3 +1,3 @@
 export * from "./Credentials.js";
 export * from "./ImageInfo.js";
-export * from "./WorldDataObject.js";
+export * from "./AppDataObject.js";

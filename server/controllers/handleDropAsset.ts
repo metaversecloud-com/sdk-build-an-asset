@@ -8,6 +8,7 @@ import {
   generateImageInfoParam,
   generateS3Url,
   getBaseUrl,
+  getKeyAssetDataObject,
   getDroppedAssetsToEvict,
   getRequiredCredentials,
   validateRequiredLayers,
@@ -15,7 +16,6 @@ import {
   World,
 } from "../utils/index.js";
 import { DroppedAssetClickType, DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
-import { WorldDataObject } from "../types/index.js";
 
 export const handleDropAsset = async (req: Request, res: Response): Promise<Record<string, any> | void> => {
   try {
@@ -39,13 +39,11 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
 
     const userUniqueName = `${themeName}System-${profileId}`;
 
-    const world = World.create(urlSlug, { credentials });
-    const [visitor, asset] = await Promise.all([
+    const [visitor, asset, { world, dataObjectEntity, dataObject }] = await Promise.all([
       Visitor.get(visitorId, urlSlug, { credentials }),
       Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", { credentials }),
-      world.fetchDataObject(),
+      getKeyAssetDataObject(credentials),
     ]);
-    const dataObject = world.dataObject as WorldDataObject;
     const maxDroppedAssets = dataObject?.settings?.[themeName]?.maxDroppedAssets;
 
     // get user's dropped assets, plus everyone else's for this theme when a max is set
@@ -155,7 +153,7 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
           }),
         ),
 
-      world.updateDataObject(
+      dataObjectEntity.updateDataObject(
         {
           [`${themeName}.${profileId}`]: { droppedAssetId: droppedAsset.id, s3Url, droppedAt: Date.now() },
           ...Object.fromEntries(

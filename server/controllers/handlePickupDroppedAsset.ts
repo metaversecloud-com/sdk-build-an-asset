@@ -6,10 +6,10 @@ import {
   assertCanManageDroppedAsset,
   deleteFromS3,
   errorHandler,
+  getKeyAssetDataObject,
   getDroppedAssetOwnerProfileId,
   getRequiredCredentials,
 } from "../utils/index.js";
-import { WorldDataObject } from "../types/WorldDataObject.js";
 import { DroppedAssetInterface } from "@rtsdk/topia";
 
 export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
@@ -19,9 +19,7 @@ export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
 
     const { isClearAssetFromUnclaimedAsset } = req.body;
 
-    const world = World.create(urlSlug, { credentials });
-    await world.fetchDataObject();
-    const dataObject = world.dataObject as WorldDataObject;
+    const { world, dataObjectEntity, dataObject } = await getKeyAssetDataObject(credentials);
 
     let droppedAssets: DroppedAssetInterface[] = [];
     let ownerProfileId: string | undefined;
@@ -53,7 +51,7 @@ export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
     // clear the owner's record if it points at an asset that was just removed
     const ownerAssetId = ownerProfileId ? dataObject?.[themeName]?.[ownerProfileId]?.droppedAssetId : undefined;
     if (ownerAssetId && (isClearAssetFromUnclaimedAsset || droppedAssetIds.includes(ownerAssetId))) {
-      await world.updateDataObject({ [`${themeName}.${ownerProfileId}`]: null });
+      await dataObjectEntity.updateDataObject({ [`${themeName}.${ownerProfileId}`]: null }, {});
     }
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
@@ -82,9 +80,9 @@ export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
         }),
       );
 
-    await world.fetchDataObject();
+    await dataObjectEntity.fetchDataObject();
 
-    return res.json({ success: true, worldDataObject: world.dataObject });
+    return res.json({ success: true, worldDataObject: dataObjectEntity.dataObject });
   } catch (error) {
     return errorHandler({
       error,

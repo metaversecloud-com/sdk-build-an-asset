@@ -3,7 +3,9 @@ export type ThemeSettings = {
   maxDroppedAssets?: number | null;
 };
 
-export type WorldDataObject = {
+// Stored on the theme's key asset (uniqueName `BuildAnAsset_keyAsset_{themeName}`), or on the
+// world when the world has no key asset for the theme. See server/utils/getKeyAssetDataObject.ts.
+export type AppDataObject = {
   settings?: {
     [themeName: string]: ThemeSettings;
   };

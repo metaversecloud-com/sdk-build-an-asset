@@ -2,20 +2,19 @@ import { Request, Response } from "express";
 import {
   DroppedAsset,
   Visitor,
-  World,
   deleteFromS3,
   errorHandler,
   generateImageInfoParam,
   generateS3Url,
   getBaseUrl,
+  getKeyAssetDataObject,
   getRequiredCredentials,
   isDroppedAssetClaimed,
   releaseClaimedAsset,
   validateRequiredLayers,
 } from "../utils/index.js";
-import { WorldDataObject } from "../types/WorldDataObject.js";
 import { THEMES } from "../constants.js";
-import { DroppedAssetInterface, VisitorInterface, WorldInterface } from "@rtsdk/topia";
+import { DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
 
 export const handleEditDroppedAsset = async (req: Request, res: Response) => {
   try {
@@ -31,16 +30,15 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     const host = req.hostname;
     const baseUrl = getBaseUrl(host);
 
-    const [world, visitor, droppedAsset]: [WorldInterface, VisitorInterface, DroppedAssetInterface] = await Promise.all(
-      [
-        World.create(urlSlug, { credentials }),
-        Visitor.create(visitorId, urlSlug, { credentials }),
-        DroppedAsset.get(assetId, urlSlug, { credentials }),
-      ],
-    );
-
-    await world.fetchDataObject();
-    const dataObject = world.dataObject as WorldDataObject;
+    const [{ world, dataObjectEntity, dataObject }, visitor, droppedAsset]: [
+      Awaited<ReturnType<typeof getKeyAssetDataObject>>,
+      VisitorInterface,
+      DroppedAssetInterface,
+    ] = await Promise.all([
+      getKeyAssetDataObject(credentials),
+      Visitor.create(visitorId, urlSlug, { credentials }),
+      DroppedAsset.get(assetId, urlSlug, { credentials }),
+    ]);
 
     if (isDroppedAssetClaimed({ assetId, dataObject, profileId, themeName })) {
       return res.json({ isAssetAlreadyTaken: true });
@@ -79,7 +77,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     await Promise.all([
       droppedAsset.updateWebImageLayers(bottomLayerS3Url, topLayerS3Url),
       droppedAsset.updateClickType({ clickableLink, clickableLinkTitle: themeName }),
-      world.updateDataObject(
+      dataObjectEntity.updateDataObject(
         {
           [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
         },
@@ -129,12 +127,12 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
         ),
     ]);
 
-    await world.fetchDataObject();
+    await dataObjectEntity.fetchDataObject();
 
     return res.json({
       imageInfo,
       droppedAsset,
-      worldDataObject: world.dataObject,
+      worldDataObject: dataObjectEntity.dataObject,
     });
   } catch (error) {
     return errorHandler({

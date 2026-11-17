@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
 import {
   DroppedAsset,
-  World,
   errorHandler,
   getBaseUrl,
+  getKeyAssetDataObject,
   getRequiredCredentials,
   isDroppedAssetClaimed,
   releaseClaimedAsset,
 } from "../utils/index.js";
-import { WorldDataObject } from "../types/WorldDataObject.js";
 import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 
 export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
@@ -18,9 +17,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
 
     const baseUrl = getBaseUrl(req.hostname);
 
-    const world = await World.create(urlSlug, { credentials });
-    await world.fetchDataObject();
-    const dataObject = world.dataObject as WorldDataObject;
+    const { world, dataObjectEntity, dataObject } = await getKeyAssetDataObject(credentials);
 
     // Check if this dropped asset is taken
     if (isDroppedAssetClaimed({ assetId, dataObject, profileId, themeName })) {
@@ -58,7 +55,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
       droppedAsset.fetchDroppedAssetById(),
       droppedAsset.updateWebImageLayers("", s3Url),
       droppedAsset.updateClickType({ clickableLink, clickableLinkTitle: themeName }),
-      world.updateDataObject(
+      dataObjectEntity.updateDataObject(
         {
           [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
         },
@@ -77,8 +74,8 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
           },
         },
       ),
-      world.fetchDataObject(),
     ]);
+    await dataObjectEntity.fetchDataObject();
 
     addNewRowToGoogleSheets([
       {
@@ -107,7 +104,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
         }),
       );
 
-    return res.json({ droppedAsset, worldDataObject: world.dataObject });
+    return res.json({ droppedAsset, worldDataObject: dataObjectEntity.dataObject });
   } catch (error) {
     return errorHandler({
       error,
