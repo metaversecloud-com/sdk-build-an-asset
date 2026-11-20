@@ -6,7 +6,7 @@ import { ClearAssetButton, ClearAssetModal, PageContainer } from "@/components";
 
 // context
 import { GlobalDispatchContext, GlobalStateContext } from "@context/GlobalContext";
-import { SET_ERROR } from "@/context/types";
+import { SET_ERROR, SET_GAME_STATE } from "@/context/types";
 
 // utils
 import { backendAPI, getThemeData, getThemeName } from "@/utils";
@@ -30,7 +30,15 @@ export const Home = () => {
 
     backendAPI
       .post("/dropped-assets/claim")
-      .then(() => {
+      .then((response) => {
+        if (response.data?.isAssetAlreadyTaken) {
+          dispatch!({
+            type: SET_GAME_STATE,
+            payload: { isAssetAlreadyTaken: true },
+          });
+          return;
+        }
+
         const modifiedName = interactiveParams.username.replace(/ /g, "%20");
         const redirectPath = `${themeName}/claimed?visitor-name=${modifiedName}`;
         const queryParams = new URLSearchParams(window.location.search);

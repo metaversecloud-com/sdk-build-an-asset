@@ -6,3 +6,4 @@ export * from "./handleEditDroppedAsset.js";
 export * from "./handleGetWorldAndVisitor.js";
 export * from "./handleMoveToDroppedAsset.js";
 export * from "./handlePickupDroppedAsset.js";
+export * from "./handleUpdateSettings.js";

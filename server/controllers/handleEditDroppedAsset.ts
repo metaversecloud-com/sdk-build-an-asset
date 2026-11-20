@@ -2,51 +2,58 @@ import { Request, Response } from "express";
 import {
   DroppedAsset,
   Visitor,
-  World,
   deleteFromS3,
   errorHandler,
   generateImageInfoParam,
   generateS3Url,
   getBaseUrl,
-  getCredentials,
+  getKeyAssetDataObject,
+  getRequiredCredentials,
   isDroppedAssetClaimed,
-  validateImageInfo,
+  releaseClaimedAsset,
+  validateRequiredLayers,
 } from "../utils/index.js";
-import { WorldDataObject } from "../types/WorldDataObject.js";
-import { DroppedAssetInterface, VisitorInterface, WorldInterface } from "@rtsdk/topia";
+import { THEMES } from "../constants.js";
+import { DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
 
 export const handleEditDroppedAsset = async (req: Request, res: Response) => {
   try {
-    const credentials = getCredentials(req.query);
+    const credentials = getRequiredCredentials(req.query);
     const { assetId, profileId, themeName, urlSlug, username, visitorId } = credentials;
 
     const { imageInfo, requiredTopLayerCategories, requiredBottomLayerCategories } = req.body;
+    validateRequiredLayers({ imageInfo, requiredTopLayerCategories, requiredBottomLayerCategories, themeName });
+
     const { topLayerInfo, bottomLayerInfo } = imageInfo || {};
     const hasBottomLayer = bottomLayerInfo && Object.keys(bottomLayerInfo).length > 0;
 
     const host = req.hostname;
     const baseUrl = getBaseUrl(host);
 
-    const [world, visitor, droppedAsset]: [WorldInterface, VisitorInterface, DroppedAssetInterface] = await Promise.all(
-      [
-        World.create(urlSlug, { credentials }),
-        Visitor.create(visitorId, urlSlug, { credentials }),
-        DroppedAsset.get(assetId, urlSlug, { credentials }),
-      ],
-    );
-
-    if (requiredTopLayerCategories?.length > 0) {
-      validateImageInfo(topLayerInfo || imageInfo, requiredTopLayerCategories);
-    }
-    if (bottomLayerInfo && requiredBottomLayerCategories?.length > 0) {
-      validateImageInfo(bottomLayerInfo, requiredBottomLayerCategories);
-    }
-
-    await world.fetchDataObject();
-    const dataObject = world.dataObject as WorldDataObject;
+    const [{ world, dataObjectEntity, dataObject }, visitor, droppedAsset]: [
+      Awaited<ReturnType<typeof getKeyAssetDataObject>>,
+      VisitorInterface,
+      DroppedAssetInterface,
+    ] = await Promise.all([
+      getKeyAssetDataObject(credentials),
+      Visitor.create(visitorId, urlSlug, { credentials }),
+      DroppedAsset.get(assetId, urlSlug, { credentials }),
+    ]);
 
     if (isDroppedAssetClaimed({ assetId, dataObject, profileId, themeName })) {
       return res.json({ isAssetAlreadyTaken: true });
+    }
+
+    // one per player: editing an unclaimed sign claims it, so release the player's previous sign
+    const previousAssetId = dataObject?.[themeName]?.[profileId]?.droppedAssetId;
+    if (!THEMES[themeName]?.shouldDropAsset && previousAssetId && previousAssetId !== assetId) {
+      await releaseClaimedAsset({ credentials, droppedAssetId: previousAssetId, hostname: host }).catch((error) =>
+        errorHandler({
+          error,
+          functionName: "handleEditDroppedAsset",
+          message: "Error releasing previously claimed asset",
+        }),
+      );
     }
 
     if (droppedAsset.topLayerURL) await deleteFromS3(host, droppedAsset.topLayerURL);
@@ -70,7 +77,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
     await Promise.all([
       droppedAsset.updateWebImageLayers(bottomLayerS3Url, topLayerS3Url),
       droppedAsset.updateClickType({ clickableLink, clickableLinkTitle: themeName }),
-      world.updateDataObject(
+      dataObjectEntity.updateDataObject(
         {
           [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
         },
@@ -120,12 +127,12 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
         ),
     ]);
 
-    await world.fetchDataObject();
+    await dataObjectEntity.fetchDataObject();
 
     return res.json({
       imageInfo,
       droppedAsset,
-      worldDataObject: world.dataObject,
+      worldDataObject: dataObjectEntity.dataObject,
     });
   } catch (error) {
     return errorHandler({

@@ -1,7 +1,15 @@
 import { useState } from "react";
-import { ClearAllAssetsButton, ClearAllAssetsModal, ClearAssetButton, ClearAssetModal } from "@/components/index.js";
+import {
+  ClearAllAssetsButton,
+  ClearAllAssetsModal,
+  ClearAssetButton,
+  ClearAssetModal,
+  MaxDroppedAssetsSetting,
+} from "@/components/index.js";
+import { getThemeData } from "@/utils/themes.js";
 
 export const AdminView = ({ showClearAssetBtn }: { showClearAssetBtn: boolean }) => {
+  const { shouldDropAsset } = getThemeData();
   const [showClearAssetModal, setShowClearAssetModal] = useState(false);
   const [showClearAllAssetsModal, setShowClearAllAssetsModal] = useState(false);
 
@@ -15,8 +23,10 @@ export const AdminView = ({ showClearAssetBtn }: { showClearAssetBtn: boolean })
 
   return (
     <>
+      {shouldDropAsset && <MaxDroppedAssetsSetting />}
+
       {showClearAssetBtn && (
-        <div style={{ marginBottom: "10px" }}>
+        <div className="mb-4">
           <ClearAssetButton handleToggleShowClearAssetModal={handleToggleShowClearAssetModal} fromAdmin={true} />
         </div>
       )}

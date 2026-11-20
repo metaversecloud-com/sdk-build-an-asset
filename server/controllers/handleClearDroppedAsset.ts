@@ -1,40 +1,40 @@
 import { Request, Response } from "express";
-import { DroppedAsset, World, errorHandler, getBaseUrl, getCredentials } from "../utils/index.js";
-import { WorldDataObject } from "../types/WorldDataObject.js";
-import { getS3URL } from "../utils/images/getS3URL.js";
+import {
+  assertCanManageDroppedAsset,
+  errorHandler,
+  getKeyAssetDataObject,
+  getDroppedAssetOwnerProfileId,
+  getRequiredCredentials,
+  releaseClaimedAsset,
+} from "../utils/index.js";
 
 export const handleClearDroppedAsset = async (req: Request, res: Response) => {
   try {
-    const credentials = getCredentials(req.query);
-    const { assetId, profileId, themeName, urlSlug } = credentials;
-
-    let { ownerProfileId } = req.query;
-    let selectedAssetId = assetId;
+    const credentials = getRequiredCredentials(req.query);
+    const { assetId, profileId, themeName } = credentials;
 
     const { isClearAssetFromUnclaimedAsset } = req.body;
 
-    const world = await World.create(urlSlug, { credentials });
-    await world.fetchDataObject();
-    const dataObject = world.dataObject as WorldDataObject;
+    const { dataObjectEntity, dataObject } = await getKeyAssetDataObject(credentials);
+
+    // ownerProfileId is looked up from the data object; the query param is ignored
+    let selectedAssetId: string | undefined;
+    let ownerProfileId: string | undefined;
 
     if (isClearAssetFromUnclaimedAsset) {
       selectedAssetId = dataObject?.[themeName]?.[profileId]?.droppedAssetId;
       ownerProfileId = profileId;
+      if (!selectedAssetId) throw { status: 404, message: `You don't have a ${themeName} to clear` };
     } else {
       selectedAssetId = assetId;
+      ownerProfileId = getDroppedAssetOwnerProfileId({ assetId, dataObject, themeName });
+      await assertCanManageDroppedAsset({ credentials, ownerProfileId });
     }
 
-    const baseUrl = getBaseUrl(req.hostname);
-
-    const droppedAsset = DroppedAsset.create(selectedAssetId, urlSlug, { credentials });
-
     await Promise.all([
-      droppedAsset?.updateWebImageLayers("", `${getS3URL(themeName)}/unclaimedAsset.png`),
-      droppedAsset?.updateClickType({ clickableLink: `${baseUrl}/${themeName}`, clickableLinkTitle: themeName }),
-      world.updateDataObject(
-        {
-          [`${themeName}.${ownerProfileId}`]: null,
-        },
+      releaseClaimedAsset({ credentials, droppedAssetId: selectedAssetId, hostname: req.hostname }),
+      dataObjectEntity.updateDataObject(
+        ownerProfileId && dataObject?.[themeName] ? { [`${themeName}.${ownerProfileId}`]: null } : {},
         {
           analytics: [
             {
@@ -47,9 +47,9 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
       ),
     ]);
 
-    await world.fetchDataObject();
+    await dataObjectEntity.fetchDataObject();
 
-    return res.json({ worldDataObject: world.dataObject });
+    return res.json({ worldDataObject: dataObjectEntity.dataObject });
   } catch (error) {
     return errorHandler({
       error,

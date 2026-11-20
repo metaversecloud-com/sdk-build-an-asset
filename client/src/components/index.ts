@@ -7,3 +7,4 @@ export * from "./PageContainer.js";
 export * from "./AdminIconButton.js";
 export * from "./ItemVariationSelectorModal.js";
 export * from "./Loading.js";
+export * from "./MaxDroppedAssetsSetting.js";

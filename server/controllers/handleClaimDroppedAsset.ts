@@ -1,29 +1,40 @@
 import { Request, Response } from "express";
 import {
   DroppedAsset,
-  World,
   errorHandler,
   getBaseUrl,
-  getCredentials,
+  getKeyAssetDataObject,
+  getRequiredCredentials,
   isDroppedAssetClaimed,
+  releaseClaimedAsset,
 } from "../utils/index.js";
-import { WorldDataObject } from "../types/WorldDataObject.js";
 import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 
 export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
   try {
-    const credentials = getCredentials(req.query);
+    const credentials = getRequiredCredentials(req.query);
     const { assetId, displayName, identityId, profileId, themeName, urlSlug, username } = credentials;
 
     const baseUrl = getBaseUrl(req.hostname);
 
-    const world = await World.create(urlSlug, { credentials });
-    await world.fetchDataObject();
-    const dataObject = world.dataObject as WorldDataObject;
+    const { world, dataObjectEntity, dataObject } = await getKeyAssetDataObject(credentials);
 
     // Check if this dropped asset is taken
     if (isDroppedAssetClaimed({ assetId, dataObject, profileId, themeName })) {
       return res.json({ isAssetAlreadyTaken: true });
+    }
+
+    // one per player: release the player's previous sign so it isn't orphaned
+    const previousAssetId = dataObject?.[themeName]?.[profileId]?.droppedAssetId;
+    if (previousAssetId && previousAssetId !== assetId) {
+      await releaseClaimedAsset({ credentials, droppedAssetId: previousAssetId, hostname: req.hostname }).catch(
+        (error) =>
+          errorHandler({
+            error,
+            functionName: "handleClaimDroppedAsset",
+            message: "Error releasing previously claimed asset",
+          }),
+      );
     }
 
     const s3Url = `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${themeName}/claimedAsset.png`;
@@ -44,7 +55,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
       droppedAsset.fetchDroppedAssetById(),
       droppedAsset.updateWebImageLayers("", s3Url),
       droppedAsset.updateClickType({ clickableLink, clickableLinkTitle: themeName }),
-      world.updateDataObject(
+      dataObjectEntity.updateDataObject(
         {
           [`${themeName}.${profileId}`]: { droppedAssetId: assetId, s3Url },
         },
@@ -63,8 +74,8 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
           },
         },
       ),
-      world.fetchDataObject(),
     ]);
+    await dataObjectEntity.fetchDataObject();
 
     addNewRowToGoogleSheets([
       {
@@ -93,7 +104,7 @@ export const handleClaimDroppedAsset = async (req: Request, res: Response) => {
         }),
       );
 
-    return res.json({ droppedAsset, worldDataObject: world.dataObject });
+    return res.json({ droppedAsset, worldDataObject: dataObjectEntity.dataObject });
   } catch (error) {
     return errorHandler({
       error,

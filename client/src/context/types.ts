@@ -27,8 +27,16 @@ export interface InitialState {
   interactiveParams: InteractiveParams;
   isAssetAlreadyTaken: boolean;
   visitorIsAdmin: boolean;
-  worldDataObject: { [themeName: string]: { [ownerProfileId: string]: { droppedAssetId: string; s3Url: string } } };
+  worldDataObject: WorldDataObject;
 }
+
+// Named for where it used to live. The server now reads it from the theme's key asset
+// (uniqueName `BuildAnAsset_keyAsset_{themeName}`), or from the world when there is no key asset.
+export type WorldDataObject = {
+  settings?: { [themeName: string]: { maxDroppedAssets?: number | null } };
+} & {
+  [themeName: string]: { [ownerProfileId: string]: { droppedAssetId: string; s3Url: string; droppedAt?: number } };
+};
 
 export type ActionType = {
   type: string;
@@ -39,6 +47,6 @@ export type ActionType = {
     interactiveParams?: InteractiveParams;
     isAssetAlreadyTaken?: boolean;
     visitorIsAdmin?: boolean;
-    worldDataObject?: object;
+    worldDataObject?: WorldDataObject;
   };
 };
