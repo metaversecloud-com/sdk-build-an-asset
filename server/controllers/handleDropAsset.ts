@@ -172,11 +172,13 @@ export const handleDropAsset = async (req: Request, res: Response): Promise<Reco
               analyticName: `${themeName}-updates`,
               profileId,
               uniqueKey: profileId,
+              urlSlug,
             },
             {
               analyticName: `${themeName}-builds`,
               profileId,
               uniqueKey: profileId,
+              urlSlug,
             },
           ],
         },

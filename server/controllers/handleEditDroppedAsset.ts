@@ -91,6 +91,7 @@ export const handleEditDroppedAsset = async (req: Request, res: Response) => {
               analyticName: `${themeName}-updates`,
               profileId,
               uniqueKey: profileId,
+              urlSlug,
             },
           ],
         },

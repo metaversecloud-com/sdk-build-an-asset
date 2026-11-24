@@ -29,6 +29,7 @@ export const handleUpdateSettings = async (req: Request, res: Response) => {
             analyticName: `${themeName}-settingsUpdates`,
             profileId,
             uniqueKey: profileId,
+            urlSlug,
           },
         ],
       },

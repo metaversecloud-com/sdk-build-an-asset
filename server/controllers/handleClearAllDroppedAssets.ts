@@ -44,6 +44,7 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
               analyticName: `${themeName}-${shouldDelete ? "pickupAllAssets" : "resets"}`,
               uniqueKey: profileId,
               profileId,
+              urlSlug,
             },
           ],
         },

@@ -11,7 +11,7 @@ import {
 export const handleClearDroppedAsset = async (req: Request, res: Response) => {
   try {
     const credentials = getRequiredCredentials(req.query);
-    const { assetId, profileId, themeName } = credentials;
+    const { assetId, profileId, themeName, urlSlug } = credentials;
 
     const { isClearAssetFromUnclaimedAsset } = req.body;
 
@@ -41,6 +41,7 @@ export const handleClearDroppedAsset = async (req: Request, res: Response) => {
               analyticName: `${themeName}-unclaims`,
               profileId,
               uniqueKey: profileId,
+              urlSlug,
             },
           ],
         },

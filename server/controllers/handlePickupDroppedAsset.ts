@@ -70,6 +70,7 @@ export const handlePickupDroppedAsset = async (req: Request, res: Response) => {
           analyticName: `${themeName}-pickupUserAsset`,
           uniqueKey: profileId,
           profileId,
+          urlSlug,
         },
       ])
       .catch((error: any) =>
