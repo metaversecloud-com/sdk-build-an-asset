@@ -62,9 +62,7 @@ export const PageContainer = ({
           {error && <p className="p3 pt-10 text-center text-error">{error}</p>}
         </>
       )}
-      <div className="footer-fixed">
-        {showSettings ? <AdminView showClearAssetBtn={showClearAssetBtn} /> : footerContent}
-      </div>
+      <div className="p-4">{showSettings ? <AdminView showClearAssetBtn={showClearAssetBtn} /> : footerContent}</div>
     </div>
   );
 };

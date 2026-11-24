@@ -6,7 +6,7 @@ import { ClaimedAsset, EditAsset, Error, Home } from "@pages/index.js";
 import { Loading } from "./components";
 
 // context
-import { GlobalDispatchContext } from "@/context/GlobalContext";
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
 import {
   InteractiveParams,
   SET_ERROR,
@@ -24,10 +24,12 @@ const App = () => {
   const [searchParams] = useSearchParams();
   const [hasInitBackendAPI, setHasInitBackendAPI] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasLoadError, setHasLoadError] = useState(false);
 
   const dispatch = useContext(GlobalDispatchContext);
+  const { error } = useContext(GlobalStateContext);
 
-  const { hasHomePage } = getThemeData();
+  const themeData = getThemeData();
   const themeName = getThemeName();
 
   const interactiveParams: InteractiveParams = useMemo(() => {
@@ -114,6 +116,7 @@ const App = () => {
       })
       .catch((error) => {
         console.error(error);
+        setHasLoadError(true);
         dispatch!({
           type: SET_ERROR,
           payload: { error: "There was an error while getting world and visitor details" },
@@ -134,11 +137,13 @@ const App = () => {
     else getWorldAndVisitorData();
   }, [hasInitBackendAPI, interactiveParams]);
 
+  if (themeName && !themeData) return <Error />;
+  if (hasLoadError) return <p className="p3 pt-10 text-center text-error">{error}</p>;
   if (!themeName || isLoading) return <Loading />;
 
   return (
     <Routes>
-      <Route path={`/${themeName}`} element={hasHomePage ? <Home /> : <EditAsset />} />
+      <Route path={`/${themeName}`} element={themeData.hasHomePage ? <Home /> : <EditAsset />} />
       <Route path={`/${themeName}/edit`} element={<EditAsset />} />
       <Route path={`/${themeName}/claimed`} element={<ClaimedAsset />} />
 

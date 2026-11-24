@@ -6,7 +6,7 @@
 
 ## Introduction / Summary
 
-Build-an-Asset lets visitors customize a layered image asset — a snowman, a pumpkin, a locker, or a desk — from an in-world drawer. The client composites PNG layers server-side (via Jimp), uploads the result to S3, and either **drops a new dropped asset** at the visitor's location (pickup themes) or **rewrites a pre-placed sign in place** (empty themes). Ownership is tracked on the world data object per theme, so a visitor can revisit, edit, move to, or clear their own asset later.
+Build-an-Asset lets visitors customize a layered image asset — a snowman, a pumpkin, a locker, or a desk — from an in-world drawer. The client composites PNG layers server-side (via Jimp), uploads the result to S3, and either **drops a new dropped asset** at the visitor's location (pickup themes) or **rewrites a pre-placed sign in place** (empty themes). Ownership is tracked per theme on the theme's key asset data object (or the world data object when there is no key asset), so a visitor can revisit, edit, move to, or clear their own asset later.
 
 ## Key Features
 
@@ -26,7 +26,7 @@ Build-an-Asset lets visitors customize a layered image asset — a snowman, a pu
 
 - **Access:** any visitor whose `isAdmin` is true gets admin controls in the drawer.
 - **Single clear:** admins can clear a sign they don't own (returns it to the unclaimed state).
-- **Clear all:** iterates every dropped asset with unique-name prefix `{themeName}System-` and either resets each sign's image to unclaimed or (with `shouldDelete: true`) actually deletes them. Wipes the theme's slice of the world data object.
+- **Clear all:** iterates every dropped asset with unique-name prefix `{themeName}System-` and either resets each sign's image to unclaimed or (with `shouldDelete: true`) actually deletes them. Wipes the theme's slice of the data object.
 
 ### Themes
 
@@ -43,10 +43,11 @@ Adding a fifth theme is a data-only change: add an entry to [`client/src/constan
 
 ## Required Assets with Unique Names
 
-| Unique Name                     | Placed by | Description                                                                                                                                                                                    |
-| ------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `{themeName}System-{profileId}` | The app   | Every dropped asset the app creates uses this pattern (both pickup drops and claimed signs).                                                                                                   |
-| Unclaimed sign (empty themes)   | Manually  | For `locker` / `desk`: pre-drop unclaimed signs in the scene with `clickableLink = /{themeName}`. No fixed unique name required — the app receives the clicked `assetId` via the iframe query. |
+| Unique Name                         | Placed by | Description                                                                                                                                                                                                                                                               |
+| ----------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BuildAnAsset_keyAsset_{themeName}` | Manually  | The theme's key asset (e.g. `BuildAnAsset_keyAsset_snowman`). Holds the theme's data object. Optional: without one the app stores data on the world (worlds set up before key assets). One per theme per world; if there are several, the one with the lowest id is used. |
+| `{themeName}System-{profileId}`     | The app   | Every dropped asset the app creates uses this pattern (both pickup drops and claimed signs).                                                                                                                                                                              |
+| Unclaimed sign (empty themes)       | Manually  | For `locker` / `desk`: pre-drop unclaimed signs in the scene with `clickableLink = /{themeName}`. No fixed unique name required — the app receives the clicked `assetId` via the iframe query.                                                                            |
 
 Bulk operations (`Clear all`, `Pickup all`) match by prefix: `fetchDroppedAssetsWithUniqueName({ isPartial: true, uniqueName: "{themeName}System-" })`.
 
@@ -54,9 +55,16 @@ Bulk operations (`Clear all`, `Pickup all`) match by prefix: `fetchDroppedAssets
 
 ### Data Objects
 
-#### World
+#### Key Asset (or World)
 
-The only data-object surface this app writes. Keyed by theme name, then by profileId.
+The only data-object surface this app writes. `server/utils/getKeyAssetDataObject.ts` picks where it lives:
+
+- **Key asset**, when the world has a dropped asset with uniqueName `BuildAnAsset_keyAsset_{themeName}`. It is found by uniqueName on every request because the drawer may have been opened from a dropped asset or a sign, not the key asset.
+- **World**, when there is no key asset for the theme.
+
+The first time a key asset is used, the theme's entries and settings are copied to it from the world data object (once; world data is left untouched). After that the world data for that theme is ignored.
+
+Keyed by theme name, then by profileId:
 
 ```ts
 {
@@ -64,16 +72,20 @@ The only data-object surface this app writes. Keyed by theme name, then by profi
     [profileId]: {
       droppedAssetId: string;   // The visitor's dropped asset in this theme
       s3Url: string;            // Composite image location in S3
+      droppedAt?: number;       // Pickup themes: drop time, used to remove the oldest when capped
     };
+  };
+  settings?: {
+    [themeName]: { maxDroppedAssets?: number | null };  // Admin cap (pickup themes); null = unlimited
   };
 }
 ```
 
 Written on claim (empty themes) and drop (pickup themes). Set to `null` on clear, and reset to `{}` on `Clear all`.
 
-#### Key Asset / Visitor
+#### Visitor
 
-Not used. Ownership is tracked entirely via the world data object.
+Not used.
 
 ### S3 Layout
 
@@ -87,17 +99,17 @@ Not used. Ownership is tracked entirely via the world data object.
 
 All routes mount under `/api`.
 
-| Method | Route                       | Description                                                                                                                                                                        |
-| ------ | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GET`  | `/system/health`            | App version + env-var status.                                                                                                                                                      |
-| `GET`  | `/world-and-visitor`        | Fetches the world data object (initializes `{[themeName]: {}}` if missing), returns `visitorIsAdmin` + `worldDataObject`. Fires `{theme}-starts` analytic.                         |
-| `POST` | `/dropped-assets/claim`     | Empty themes: validates the sign isn't taken, swaps the sign's web image to `{themeName}/claimedAsset.png`, records ownership.                                                     |
-| `POST` | `/dropped-assets/clear`     | Empty themes: reverts the sign to `unclaimedAsset.png`, nulls the ownership entry, fires `{theme}-unclaims`.                                                                       |
-| `POST` | `/dropped-assets/clear-all` | Admin-only. Iterates all `{themeName}System-*` dropped assets and resets or deletes them; wipes `worldDataObject[themeName]`.                                                      |
-| `POST` | `/dropped-assets/drop`      | Pickup themes: composites the layers, uploads to S3, drops a new webImageAsset at the visitor's position, deletes any previous drop for that profileId, updates world dataObject.  |
-| `POST` | `/dropped-assets/edit`      | Both flavors: updates the claimed asset with new top/bottom layer S3 uploads, validates required categories, refreshes `clickableLink`, fires a toast + `firework1_gold` particle. |
-| `POST` | `/dropped-assets/move-to`   | Teleports the visitor to their own dropped asset's position (from `worldDataObject[theme][profileId].droppedAssetId`).                                                             |
-| `POST` | `/dropped-assets/pickup`    | Closes the iframe. If `isClearAssetFromUnclaimedAsset`, deletes all drops matching `{themeName}System-{profileId}`; otherwise deletes the current dropped asset only.              |
+| Method | Route                       | Description                                                                                                                                                                                                             |
+| ------ | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/system/health`            | App version + env-var status.                                                                                                                                                                                           |
+| `GET`  | `/world-and-visitor`        | Fetches the theme's data object (initializes `{[themeName]: {}}` if missing, copying from the world the first time a key asset is used), returns `visitorIsAdmin` + `worldDataObject`. Fires `{theme}-starts` analytic. |
+| `POST` | `/dropped-assets/claim`     | Empty themes: validates the sign isn't taken, swaps the sign's web image to `{themeName}/claimedAsset.png`, records ownership.                                                                                          |
+| `POST` | `/dropped-assets/clear`     | Empty themes: reverts the sign to `unclaimedAsset.png`, nulls the ownership entry, fires `{theme}-unclaims`.                                                                                                            |
+| `POST` | `/dropped-assets/clear-all` | Admin-only. Iterates all `{themeName}System-*` dropped assets and resets or deletes them; wipes `dataObject[themeName]`.                                                                                                |
+| `POST` | `/dropped-assets/drop`      | Pickup themes: composites the layers, uploads to S3, drops a new webImageAsset at the visitor's position, deletes any previous drop for that profileId, updates the data object.                                        |
+| `POST` | `/dropped-assets/edit`      | Both flavors: updates the claimed asset with new top/bottom layer S3 uploads, validates required categories, refreshes `clickableLink`, fires a toast + `firework1_gold` particle.                                      |
+| `POST` | `/dropped-assets/move-to`   | Teleports the visitor to their own dropped asset's position (from `dataObject[theme][profileId].droppedAssetId`).                                                                                                       |
+| `POST` | `/dropped-assets/pickup`    | Closes the iframe. If `isClearAssetFromUnclaimedAsset`, deletes all drops matching `{themeName}System-{profileId}`; otherwise deletes the current dropped asset only.                                                   |
 
 Every request goes through the `cleanReturnPayload` middleware before responding.
 
@@ -121,9 +133,10 @@ If the Google Sheets vars are set, `{theme}-starts` events are also appended to 
 
 The app uses the following unique name patterns for managing dropped assets:
 
-| Unique Name Pattern               | Description           |
-| --------------------------------- | --------------------- |
-| `${themeName}System-${profileId}` | Claimed/dropped asset |
+| Unique Name Pattern                  | Description                             |
+| ------------------------------------ | --------------------------------------- |
+| `BuildAnAsset_keyAsset_${themeName}` | Theme key asset (holds the data object) |
+| `${themeName}System-${profileId}`    | Claimed/dropped asset                   |
 
 ## Environment Variables
 

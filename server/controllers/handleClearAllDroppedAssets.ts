@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
 import {
   Visitor,
-  World,
   clearAllDroppedAssets,
   errorHandler,
-  getCredentials,
+  getKeyAssetDataObject,
+  getRequiredCredentials,
   pickupAllDroppedAssets,
 } from "../utils/index.js";
 import { VisitorInterface } from "@rtsdk/topia";
 
 export const handleClearAllDroppedAssets = async (req: Request, res: Response) => {
   try {
-    const credentials = getCredentials(req.query);
+    const credentials = getRequiredCredentials(req.query);
     const { assetId, profileId, themeName, urlSlug, visitorId } = credentials;
 
     const { shouldDelete } = req.body;
@@ -22,7 +22,7 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
     const { isAdmin } = visitor as VisitorInterface;
     if (!isAdmin) throw "Only admins have enough permissions to pick up all assets";
 
-    const world = await World.create(urlSlug, { credentials });
+    const { world, dataObjectEntity } = await getKeyAssetDataObject(credentials);
 
     const droppedAssets = await world.fetchDroppedAssetsWithUniqueName({
       isPartial: true,
@@ -36,7 +36,7 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
     }
 
     promises.push(
-      world.updateDataObject(
+      dataObjectEntity.updateDataObject(
         { [themeName]: {} },
         {
           analytics: [
@@ -44,6 +44,7 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
               analyticName: `${themeName}-${shouldDelete ? "pickupAllAssets" : "resets"}`,
               uniqueKey: profileId,
               profileId,
+              urlSlug,
             },
           ],
         },
@@ -62,9 +63,9 @@ export const handleClearAllDroppedAssets = async (req: Request, res: Response) =
 
     await Promise.all(promises);
 
-    await world.fetchDataObject();
+    await dataObjectEntity.fetchDataObject();
 
-    return res.json({ worldDataObject: world.dataObject });
+    return res.json({ worldDataObject: dataObjectEntity.dataObject });
   } catch (error) {
     return errorHandler({
       error,

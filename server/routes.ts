@@ -8,6 +8,7 @@ import {
   handleGetWorldAndVisitor,
   handleMoveToDroppedAsset,
   handlePickupDroppedAsset,
+  handleUpdateSettings,
 } from "./controllers/index.js";
 import { getVersion } from "./utils/getVersion.js";
 
@@ -36,6 +37,7 @@ router.get("/system/health", (req, res) => {
 });
 
 router.get("/world-and-visitor", handleGetWorldAndVisitor);
+router.post("/admin/settings", handleUpdateSettings);
 
 // Dropped Assets
 router.post("/dropped-assets/claim", handleClaimDroppedAsset);
